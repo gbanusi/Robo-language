@@ -10,8 +10,6 @@ import java.util.List;
 
 public class DefStatement extends Node {
 
-	private VarEnvironment ivs;
-
 	/**
 	 * Lista imena varijabli koje se definiraju.
 	 */
@@ -22,7 +20,6 @@ public class DefStatement extends Node {
 	 * @param variables lista imena varijabli
 	 */
 	public DefStatement(List<Token> variables, List<NodeVariable> nv, VarEnvironment ivs) {
-		this.ivs = ivs;
 		this.variables = new ArrayList<>(variables);
 		for(int i = 0; i < variables.size(); i++){
 			ivs.put(variables.get(i), nv.get(i));

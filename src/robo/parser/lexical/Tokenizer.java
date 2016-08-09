@@ -61,18 +61,18 @@ public class Tokenizer {
     }
 
     /**
-     * Metoda dohvaća trenutni currToken. Metoda se može zvati više puta i uvijek
-     * će vratiti isti currToken, sve dok se ne zatraži izlučivanje sljedećeg
+     * Metoda dohvaća trenutni peek. Metoda se može zvati više puta i uvijek
+     * će vratiti isti peek, sve dok se ne zatraži izlučivanje sljedećeg
      * tokena.
      *
-     * @return trenutni currToken
+     * @return trenutni peek
      */
     public Token getCurrentToken() {
         return currentToken;
     }
 
     /**
-     * Metoda izlučuje sljedeći currToken, postavlja ga kao trenutnog i odmah ga
+     * Metoda izlučuje sljedeći peek, postavlja ga kao trenutnog i odmah ga
      * i vraća.
      *
      * @throws TokenizerException ako dođe do problema pri tokenizaciji
@@ -83,7 +83,7 @@ public class Tokenizer {
     }
 
     /**
-     * Metoda izlučuje sljedeći currToken iz izvornog koda.
+     * Metoda izlučuje sljedeći peek iz izvornog koda.
      *
      * @throws TokenizerException ako dođe do pogreške pri tokenizaciji
      */
@@ -96,7 +96,7 @@ public class Tokenizer {
         // Inače preskoči praznine:
         skipBlanks();
 
-        // Ako više nema znakova, generiraj currToken za kraj izvornog koda programa
+        // Ako više nema znakova, generiraj peek za kraj izvornog koda programa
         if (curPos >= data.length) {
             currentToken = new Token(TokenType.EOF, null);
             return;
@@ -150,7 +150,7 @@ public class Tokenizer {
             }
         }
 
-        // Vidi je li trenutni znak neki od onih koji direktno generiraju currToken:
+        // Vidi je li trenutni znak neki od onih koji direktno generiraju peek:
         TokenType mappedType = charMapper.get(Character.valueOf(data[curPos]));
         if (mappedType != null) {
             // provjera je li unarny ili binarny minus
@@ -167,13 +167,13 @@ public class Tokenizer {
             return;
         }
 
-        // Ako znak direktno ne generira currToken, provjeri što je.
+        // Ako znak direktno ne generira peek, provjeri što je.
         if(Character.isLetter(data[curPos])){
 
 
         }
 
-        // Ako znak direktno ne generira currToken, provjeri što je.
+        // Ako znak direktno ne generira peek, provjeri što je.
         if (Character.isLetter(data[curPos])) {
             StringBuffer b = new StringBuffer();
             do{

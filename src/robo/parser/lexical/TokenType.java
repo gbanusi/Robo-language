@@ -1,58 +1,68 @@
 package robo.parser.lexical;
 
 /**
- * All currToken types
+ * All peek types
  */
 public enum TokenType {
 
     /** END OF FILE **/
-    EOF,
+    EOF("END"),
 
     /** HELPERS **/
-    SEMICOLON,
-    COMMA,
+    SEMICOLON("HELPER"),
+    COMMA("HELPER"),
 
     /** BRACKETS **/
-    OPEN_PARENTHESES,
-    CLOSED_PARENTHESES,
-    OPEN_CURLY,
-    CLOSED_CURLY,
+    OPEN_PARENTHESES("BRACKET"),
+    CLOSED_PARENTHESES("BRACKET"),
+    OPEN_CURLY("BRACKET"),
+    CLOSED_CURLY("BRACKET"),
 
     /** OPERATIONS **/
-    OP_PLUS,
-    OP_MINUS,
-    OP_DIV,
-    OP_MULT,
-    UN_MINUS,
-    ASSIGN,
+    OP_PLUS("OPERATOR"),
+    OP_MINUS("OPERATOR"),
+    OP_DIV("OPERATOR"),
+    OP_MULT("OPERATOR"),
+    UN_MINUS("OPERATOR"),
+    ASSIGN("OPERATOR"),
 
     /** KEYWORDS **/
-    PRINT,
-    IDENT,
-    KEYWORD,
-    FUNCTION,
-    BREAK,
-    DO,
-    WHILE,
-    ELSE,
-    IF,
+    PRINT("KEYWORD"),
+    IDENT("KEYWORD"),
+    KEYWORD("KEYWORD"),
+    FUNCTION("KEYWORD"),
+    BREAK("KEYWORD"),
+    DO("KEYWORD"),
+    WHILE("KEYWORD"),
+    ELSE("KEYWORD"),
+    IF("KEYWORD"),
 
     /** TYPES **/
-    BASIC,
-    TRUE,
-    FALSE,
-    CONSTANT,
-    VECTOR_CONSTANT,
+    BASIC("TYPE"),
+    TRUE("TYPE"),
+    FALSE("TYPE"),
+    CONSTANT("TYPE"),
+    VECTOR_CONSTANT("TYPE"),
 
     /** LOGICAL OP **/
-    AND,
-    OR,
+    AND("LOGOP"),
+    OR("LOGOP"),
 
     /** RELATIONS **/
-    LE,
-    NE,
-    EQ,
-    GE,
-    LT,
-    GT
+    LE("RELATION"),
+    NE("RELATION"),
+    EQ("RELATION"),
+    GE("RELATION"),
+    LT("RELATION"),
+    GT("RELATION");
+
+    private final String code;
+
+    TokenType(String code){
+        this.code = code;
+    }
+
+    public String getCode(){
+        return code;
+    }
 }

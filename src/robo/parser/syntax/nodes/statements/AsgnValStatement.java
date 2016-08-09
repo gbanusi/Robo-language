@@ -5,7 +5,7 @@ import com.sun.org.apache.xpath.internal.ExpressionNode;
 /**
  * Created by gregor on 09.08.16..
  */
-public class InitStatement {
+public class AsgnValStatement {
 
 
     private String varName;
@@ -14,7 +14,7 @@ public class InitStatement {
     private ExpressionNode expression;
 
 
-    public InitStatement(String varName, ExpressionNode expression) {
+    public AsgnValStatement(String varName, ExpressionNode expression) {
         super();
         this.varName = varName;
         this.expression = expression;

@@ -34,16 +34,23 @@ public class Parser {
     }
 
     public boolean match(TokenType t){
-        if(currToken().getTokenType() == t){
+        if(peek().getTokenType() == t){
             tokenizer.nextToken();
             return true;
         }
         return false;
     }
 
-    public Token currToken(){
+    public Token peek(){
         return tokenizer.getCurrentToken();
     }
+
+    public Token pop(){
+        Token t = tokenizer.getCurrentToken();
+        tokenizer.nextToken();
+        return t;
+    }
+
 
     private ProgramNode parse() {
         List<Node> statements = new ArrayList<>();
@@ -55,72 +62,63 @@ public class Parser {
                 break;
             }
 
-            // Inače prema sintaksi mora doći ključna riječ:
-            if (currToken().getTokenType() == TokenType.IDENT ) {
-                if(VarEnvironment.get(currToken()) == null) {
+            // Prema sintaksi može ići varijabla
+            if (peek().getTokenType() == TokenType.IDENT ) {
+                // ako je već deklarirana
+                if(VarEnvironment.get(peek()) == null) {
                     throw new SyntaxException("Variable not declared!");
                 } else {
-
+                    statements.add(parseAsgnVal());
+                    continue;
                 }
             }
 
-            // Ako gledam naredbu "def":
-            if ("def".equals(currToken().getValue())) {
-                tokenizer.nextToken();
-                statements.add(parseDef());
-                continue;
+            // ili ključna riječ
+            if(! peek().getTokenType().getCode().equals("KEYWORD")){
+                throw new SyntaxException("Keyword expected!");
             }
 
-            // Ako gledam naredbu "let":
-            if ("let".equals(currToken().getValue())) {
-                tokenizer.nextToken();
-                statements.add(parseLet());
-                continue;
-            }
-
-            // Ako gledam naredbu "print":
-            if ("print".equals(currToken().getValue())) {
-                tokenizer.nextToken();
-                statements.add(parsePrint());
-                continue;
-            }
-
-            // Inače imam nepoznatu naredbu:
-            throw new SyntaxException("Unexpected keyword found.");
+            parseKeyword();
         }
         // Obradili smo čitav program:
         return new ProgramNode(statements);
     }
 
-    /**
-     * Pomoćna metoda koja predstavlja implementaciju parsera naredbe "def".
-     *
-     * @return čvor koji predstavlja ovu naredbu
-     */
+    private void parseKeyword() {
+
+        switch (peek().getTokenType()){
+            case TokenType.
+        }
+    }
+
+
+
+
+
     private Node parseDef() {
         List<String> variables = new ArrayList<>();
         while (true) {
-            if (currToken().getTokenType() != TokenType.IDENT) {
+            if (peek().getTokenType() != TokenType.IDENT) {
                 throw new SyntaxException("Identifier was expected.");
             }
-            variables.add((String) currToken().getValue());
+            variables.add((String) peek().getValue());
             tokenizer.nextToken();
-            if (currToken().getTokenType() == TokenType.COMMA) {
+            if (peek().getTokenType() == TokenType.COMMA) {
                 tokenizer.nextToken();
                 continue;
             }
             break;
         }
         tokenizer.nextToken();
-        if (currToken().getTokenType() != TokenType.KEYWORD) {
+        if (peek().getTokenType() != TokenType.KEYWORD) {
             throw new SyntaxException("A keyword was expected.");
         }
-        String varType = (String) currToken().getValue();
+        String varType = (String) peek().getValue();
         if (!"vector".equals(varType)) {
             throw new SyntaxException("Keyword 'vector' was expected.");
         }
         tokenizer.nextToken();
-        if (currToken().getTokenType() != TokenType.SEMICOLON) {
+        if (peek().getTokenType() != TokenType.SEMICOLON) {
             throw new SyntaxException("A semicolon was expected.");
         }
         tokenizer.nextToken();
@@ -128,46 +126,36 @@ public class Parser {
         return null;
     }
 
-    /**
-     * Pomoćna metoda koja predstavlja implementaciju parsera naredbe "let".
-     *
-     * @return čvor koji predstavlja ovu naredbu
-     */
+
     private Node parseLet() {
-        if (currToken().getTokenType() != TokenType.IDENT) {
+        if (peek().getTokenType() != TokenType.IDENT) {
             throw new SyntaxException("Identifier was expected.");
         }
-        String varName = (String) currToken().getValue();
+        String varName = (String) peek().getValue();
         tokenizer.nextToken();
-        if (currToken().getTokenType() != TokenType.ASSIGN) {
+        if (peek().getTokenType() != TokenType.ASSIGN) {
             throw new SyntaxException("Assignment was expected.");
         }
         tokenizer.nextToken();
         NodeExpression expr = parseExpression();
-        if (currToken().getTokenType() != TokenType.SEMICOLON) {
+        if (peek().getTokenType() != TokenType.SEMICOLON) {
             throw new SyntaxException("Semicolon was expected.");
         }
         tokenizer.nextToken();
         return new IfStatement(varName, expr);
     }
 
-    /**
-     * Pomoćna metoda koja predstavlja implementaciju parsera izraza
-     * (ono što se nalazi s desne strane u naredbi pridruživanja ili
-     * pak u naredbi print).
-     *
-     * @return čvor koji predstavlja čitav izraz
-     */
+
     private NodeExpression parseExpression() {
         NodeExpression first = parseAtomicValue();
         while (true) {
-            if (currToken().getTokenType() == TokenType.OP_PLUS) {
+            if (peek().getTokenType() == TokenType.OP_PLUS) {
                 tokenizer.nextToken();
                 NodeExpression second = parseAtomicValue();
                 first = new NodeExpressionAdd(first, second);
                 continue;
             }
-            if (currToken().getTokenType() == TokenType.OP_MINUS) {
+            if (peek().getTokenType() == TokenType.OP_MINUS) {
                 tokenizer.nextToken();
                 NodeExpression second = parseAtomicValue();
                 first = new NodeExpressionSub(first, second);
@@ -178,51 +166,42 @@ public class Parser {
         return first;
     }
 
-    /**
-     * Metoda koja parsira atomički izraz: to je vektorska konstanta, varijabla
-     * ili pak podizraz u oblim zagradama.
-     *
-     * @return čvor koji predstavlja ovaj izraz
-     */
+
     private NodeExpression parseAtomicValue() {
-        if (currToken().getTokenType() == TokenType.IDENT) {
-            String varName = (String) currToken().getValue();
+        if (peek().getTokenType() == TokenType.IDENT) {
+            String varName = (String) peek().getValue();
             tokenizer.nextToken();
 //			return new NodeVariable(varName); TODO
         }
-        if (currToken().getTokenType() == TokenType.VECTOR_CONSTANT) {
-            Vector vector = (Vector) currToken().getValue();
+        if (peek().getTokenType() == TokenType.VECTOR_CONSTANT) {
+            Vector vector = (Vector) peek().getValue();
             tokenizer.nextToken();
 //            return new NodeVector(vector); TODO
         }
-        if (currToken().getTokenType() == TokenType.OPEN_PARENTHESES) {
+        if (peek().getTokenType() == TokenType.OPEN_PARENTHESES) {
             tokenizer.nextToken();
             NodeExpression expression = parseExpression();
-            if (currToken().getTokenType() != TokenType.CLOSED_PARENTHESES) {
+            if (peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
                 throw new SyntaxException("Closed parentheses was expected.");
             }
             tokenizer.nextToken();
             return expression;
         }
-        throw new SyntaxException("Unexpeced currToken type.");
+        throw new SyntaxException("Unexpeced peek type.");
     }
 
-    /**
-     * Implementacija parsera naredbe "print".
-     *
-     * @return čvor koji predstavlja ovu naredbu.
-     */
+
     private Node parsePrint() {
         List<NodeExpression> list = new ArrayList<>();
         list.add(parseExpression());
         while (true) {
-            if (currToken().getTokenType() != TokenType.COMMA) {
+            if (peek().getTokenType() != TokenType.COMMA) {
                 break;
             }
             tokenizer.nextToken();
             list.add(parseExpression());
         }
-        if (currToken().getTokenType() != TokenType.SEMICOLON) {
+        if (peek().getTokenType() != TokenType.SEMICOLON) {
             throw new SyntaxException("Semicolon was expected.");
         }
         tokenizer.nextToken();

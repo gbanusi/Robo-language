@@ -34,7 +34,7 @@ public class Token {
 	
 	/**
 	 * Dohvat vrijednosti tokena.
-	 * @return vrijednost tokena ili <code>null</code> ako currToken ove vrste nema pridruženu vrijednost
+	 * @return vrijednost tokena ili <code>null</code> ako peek ove vrste nema pridruženu vrijednost
 	 */
 	public Object getValue() {
 		return value;

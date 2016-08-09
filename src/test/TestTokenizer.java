@@ -25,7 +25,7 @@ public class TestTokenizer {
 				;
 		Tokenizer tokenizer = new Tokenizer(program);
 		while(tokenizer.getCurrentToken().getTokenType()!= TokenType.EOF) {
-			System.out.println("Trenutni currToken: "+tokenizer.getCurrentToken().getTokenType()
+			System.out.println("Trenutni peek: "+tokenizer.getCurrentToken().getTokenType()
 					+", vrijednost '"+tokenizer.getCurrentToken().getValue()+"'");
 			tokenizer.nextToken();
 		}
