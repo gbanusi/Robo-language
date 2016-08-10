@@ -1,20 +1,22 @@
 package robo.parser.syntax.nodes.statements;
 
-import com.sun.org.apache.xpath.internal.ExpressionNode;
+
+import robo.parser.syntax.nodes.Node;
+import robo.parser.syntax.nodes.value.NodeExpression;
 
 /**
  * Created by gregor on 09.08.16..
  */
-public class AsgnValStatement {
+public class AsgnValStatement extends Node {
 
 
     private String varName;
 
 
-    private ExpressionNode expression;
+    private NodeExpression expression;
 
 
-    public AsgnValStatement(String varName, ExpressionNode expression) {
+    public AsgnValStatement(String varName, NodeExpression expression) {
         super();
         this.varName = varName;
         this.expression = expression;
@@ -26,7 +28,7 @@ public class AsgnValStatement {
     }
 
 
-    public ExpressionNode getExpression() {
+    public NodeExpression getExpression() {
         return expression;
     }
 

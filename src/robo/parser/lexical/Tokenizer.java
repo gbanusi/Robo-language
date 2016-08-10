@@ -181,7 +181,7 @@ public class Tokenizer {
             } while( Character.isLetterOrDigit(data[curPos]) && curPos < data.length);
             String s = b.toString();
             if (keywords.containsKey(s)) {
-                currentToken = new Token(keywords.get(s).getTokenType(), s);
+                currentToken = new Token(keywords.get(s).getTokenType(), keywords.get(s));
             } else {
                 currentToken = new Token(TokenType.IDENT, s);
             }

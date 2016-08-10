@@ -1,4 +1,6 @@
-package robo.parser.syntax.nodes.operations;
+package robo.parser.syntax.nodes.value.expression;
+
+import robo.parser.syntax.nodes.value.NodeExpression;
 
 /**
  * Model izraza koji predstavlja operator <i>sub</i>, odnosno

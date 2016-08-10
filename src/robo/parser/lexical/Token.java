@@ -19,7 +19,7 @@ public class Token {
 	 */
 	public Token(TokenType tokenType, Object value) {
 		super();
-		if(tokenType==null) throw new IllegalArgumentException("Token type can not be null.");
+		if(tokenType==null) throw new IllegalArgumentException("Token value can not be null.");
 		this.tokenType = tokenType;
 		this.value = value;
 	}

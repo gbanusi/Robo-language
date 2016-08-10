@@ -1,11 +1,11 @@
-package robo.parser.syntax.nodes.types;
+package robo.parser.syntax.nodes.value;
 
 import robo.parser.lexical.Type;
 
 /**
  * Created by gregor on 07.08.16.
  */
-public class NodeConstant {
+public class NodeConstant extends NodeExpression {
 
     /**
      * Naziv varijable.

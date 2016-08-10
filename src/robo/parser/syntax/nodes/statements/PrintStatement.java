@@ -1,7 +1,7 @@
 package robo.parser.syntax.nodes.statements;
 
 import robo.parser.syntax.nodes.Node;
-import robo.parser.syntax.nodes.operations.NodeExpression;
+import robo.parser.syntax.nodes.value.NodeExpression;
 
 import java.util.ArrayList;
 import java.util.List;

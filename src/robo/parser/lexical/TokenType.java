@@ -1,7 +1,7 @@
 package robo.parser.lexical;
 
 /**
- * All peek types
+ * All peek value
  */
 public enum TokenType {
 
@@ -28,8 +28,6 @@ public enum TokenType {
 
     /** KEYWORDS **/
     PRINT("KEYWORD"),
-    IDENT("KEYWORD"),
-    KEYWORD("KEYWORD"),
     FUNCTION("KEYWORD"),
     BREAK("KEYWORD"),
     DO("KEYWORD"),
@@ -38,6 +36,7 @@ public enum TokenType {
     IF("KEYWORD"),
 
     /** TYPES **/
+    IDENT("TYPE"),
     BASIC("TYPE"),
     TRUE("TYPE"),
     FALSE("TYPE"),
@@ -45,6 +44,7 @@ public enum TokenType {
     VECTOR_CONSTANT("TYPE"),
 
     /** LOGICAL OP **/
+    // TODO NOT (!) TO AD
     AND("LOGOP"),
     OR("LOGOP"),
 

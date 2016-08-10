@@ -1,4 +1,6 @@
-package robo.parser.syntax.nodes.operations;
+package robo.parser.syntax.nodes.value.expression;
+
+import robo.parser.syntax.nodes.value.NodeExpression;
 
 /**
  * Model izraza koji predstavlja neki binarni operator, odnosno
@@ -6,27 +8,23 @@ package robo.parser.syntax.nodes.operations;
  * 
  * @author marcupic
  */
-public abstract class NodeExpressionBinaryOper extends NodeExpression {
-	
+public abstract class NodeExpressionUnaryOper extends NodeExpression {
+
 	/**
 	 * Prvi izraz.
 	 */
 	private NodeExpression first;
-	/**
-	 * Drugi izraz.
-	 */
-	private NodeExpression second;
-	
+
+
 	/**
 	 * Konstruktor objekta koji računa <tt>first OPER second</tt> gdje je
-	 * <i>OPER</i> neki binarni (u ovom trenutku još uvijek nepoznati) 
+	 * <i>OPER</i> neki binarni (u ovom trenutku još uvijek nepoznati)
 	 * operator.
 	 * @param first prvi izraz
 	 * @param second drugi izraz
 	 */
-	public NodeExpressionBinaryOper(NodeExpression first, NodeExpression second) {
+	public NodeExpressionUnaryOper(NodeExpression first) {
 		this.first = first;
-		this.second = second;
 	}
 
 	/**
@@ -35,14 +33,6 @@ public abstract class NodeExpressionBinaryOper extends NodeExpression {
 	 */
 	public NodeExpression getFirst() {
 		return first;
-	}
-	
-	/**
-	 * Dohvat drugog (desnog) izraza.
-	 * @return drugi izraz
-	 */
-	public NodeExpression getSecond() {
-		return second;
 	}
 
 }

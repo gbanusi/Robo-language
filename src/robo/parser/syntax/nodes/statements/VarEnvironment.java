@@ -1,7 +1,6 @@
 package robo.parser.syntax.nodes.statements;
 
 import robo.parser.lexical.Token;
-import robo.parser.syntax.nodes.types.NodeVariable;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -23,13 +22,13 @@ public class VarEnvironment {
         prev.remove(this);
     }
 
-    public void put(Token var, NodeVariable nv){
+    public void put(Token var, String nv){
         table.put(var, nv);
     }
 
-    public static NodeVariable get(Token w){
+    public static String get(Token w){
         for(VarEnvironment e : prev){
-            NodeVariable found = (NodeVariable)(e.table.get(w));
+            String found = (String)(e.table.get(w));
             if(found != null){
                 return found;
             }

@@ -26,10 +26,10 @@ public class Type extends Word {
     }
 
     /**
-     * Get the most specific common type of parameters p1 and p2.
-     * @param p1 is the first variable type.
-     * @param p2 is the second variable type.
-     * @return the most specific common type for given two variables
+     * Get the most specific common value of parameters p1 and p2.
+     * @param p1 is the first variable value.
+     * @param p2 is the second variable value.
+     * @return the most specific common value for given two variables
      */
     public static Type max(Type p1, Type p2){
         if( ! numeric(p1) || ! numeric(p2)){

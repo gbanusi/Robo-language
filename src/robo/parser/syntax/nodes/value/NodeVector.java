@@ -1,4 +1,4 @@
-package robo.parser.syntax.nodes.types;
+package robo.parser.syntax.nodes.value;
 
 import robo.parser.Vector;
 
@@ -7,7 +7,7 @@ import robo.parser.Vector;
  * 
  * @author marcupic
  */
-public class NodeVector {
+public class NodeVector extends NodeExpression{
 
 	/**
 	 * Vektorska konstanta.

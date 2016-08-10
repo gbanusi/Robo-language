@@ -1,28 +1,23 @@
-package robo.parser.syntax.nodes.types;
-
-import robo.parser.lexical.Type;
+package robo.parser.syntax.nodes.value;
 
 /**
  * Model izraza koji predstavlja varijablu.
  * 
  * @author marcupic
  */
-public class NodeVariable {
+public class NodeVariable extends NodeExpression {
 
 	/**
 	 * Naziv varijable.
 	 */
 	private String varName;
-
-	private Type type;
 	
 	/**
 	 * Konstruktor.
 	 * @param varName naziv varijable
 	 */
-	public NodeVariable(String varName, Type type) {
+	public NodeVariable(String varName) {
 		this.varName = varName;
-		this.type = type;
 	}
 
 	/**

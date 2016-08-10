@@ -1,4 +1,4 @@
-package robo.parser.syntax.nodes.operations;
+package robo.parser.syntax.nodes.value;
 
 /**
  * Vršni razred koji predstavlja bilo kakav izraz.
