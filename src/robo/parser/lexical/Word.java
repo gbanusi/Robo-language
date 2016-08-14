@@ -29,8 +29,9 @@ public class Word extends Token {
             _do = new Word("do", TokenType.DO, null),
             _while = new Word("while", TokenType.WHILE, null),
             _break = new Word("break", TokenType.BREAK, null),
+            _return = new Word("return", TokenType.RETURN, null),
             _if = new Word("if", TokenType.IF, null),
-            _else = new Word("else", TokenType.ELSE,null),
+            _else = new Word("else", TokenType.ELSE, null),
             _true = new Word("true", TokenType.TRUE, true),
             _false = new Word("false", TokenType.FALSE, false);
 

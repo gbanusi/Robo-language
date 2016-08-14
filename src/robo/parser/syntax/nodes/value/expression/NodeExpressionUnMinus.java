@@ -1,6 +1,7 @@
 package robo.parser.syntax.nodes.value.expression;
 
 import robo.parser.syntax.nodes.value.NodeExpression;
+import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
 
 /**
  * Created by gregor on 10.08.16..
@@ -12,8 +13,8 @@ public class NodeExpressionUnMinus extends NodeExpressionUnaryOper{
         super(first);
     }
 
-//	@Override
-//	public void accept(ExpressionNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+	@Override
+	public void accept(ExpressionNodeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

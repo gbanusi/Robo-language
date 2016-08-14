@@ -1,6 +1,7 @@
 package robo.parser.syntax.nodes.value;
 
 import robo.parser.Vector;
+import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
 
 /**
  * Model izraza koji predstavlja vektorsku konstantu.
@@ -30,9 +31,9 @@ public class NodeVector extends NodeExpression{
 		return vector;
 	}
 	
-//	@Override
-//	public void accept(ExpressionNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+	@Override
+	public void accept(ExpressionNodeVisitor visitor) {
+		visitor.visit(this);
+	}
 	
 }

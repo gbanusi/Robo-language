@@ -7,12 +7,10 @@ import robo.parser.lexical.Tokenizer;
 import robo.parser.lexical.Type;
 import robo.parser.syntax.nodes.Node;
 import robo.parser.syntax.nodes.ProgramNode;
-import robo.parser.syntax.nodes.statements.AsgnValStatement;
-import robo.parser.syntax.nodes.statements.DefStatement;
-import robo.parser.syntax.nodes.statements.PrintStatement;
-import robo.parser.syntax.nodes.statements.VarEnvironment;
+import robo.parser.syntax.nodes.statements.*;
 import robo.parser.syntax.nodes.value.NodeConstant;
 import robo.parser.syntax.nodes.value.NodeExpression;
+import robo.parser.syntax.nodes.value.NodeFunction;
 import robo.parser.syntax.nodes.value.NodeVariable;
 import robo.parser.syntax.nodes.value.expression.*;
 
@@ -21,7 +19,6 @@ import java.util.List;
 
 public class Parser {
 
-    private VarEnvironment env;
 
     private Tokenizer tokenizer;
 
@@ -29,7 +26,7 @@ public class Parser {
 
     public Parser(Tokenizer tokenizer) {
         this.tokenizer = tokenizer;
-        programNode = parse();
+        programNode = new ProgramNode(parse());
     }
 
     public ProgramNode getProgramNode() {
@@ -38,7 +35,9 @@ public class Parser {
 
     public boolean match(TokenType t) {
         if (peek().getTokenType() == t) {
-            tokenizer.nextToken();
+            if (TokenType.EOF != t) {
+                tokenizer.nextToken();
+            }
             return true;
         }
         return false;
@@ -55,13 +54,12 @@ public class Parser {
     }
 
 
-    private ProgramNode parse() {
+    private List<Node> parse() {
         List<Node> statements = new ArrayList<>();
-        env = new VarEnvironment();
 
         while (true) {
             // Ako je kraj programa, gotovi smo:
-            if (match(TokenType.EOF)) {
+            if (match(TokenType.EOF) || match(TokenType.CLOSED_CURLY)) {
                 break;
             }
 
@@ -81,62 +79,154 @@ public class Parser {
             if (!peek().getTokenType().getCode().equals("KEYWORD")) {
                 throw new SyntaxException("Keyword expected!");
             } else {
-                parseKeyword();
+                statements.add(parseKeyword());
             }
         }
         // Obradili smo čitav program:
-        return new ProgramNode(statements);
+        return statements;
     }
 
-    private void parseKeyword() {
+    private Node parseKeyword() {
 
         switch (peek().getTokenType()) {
             case PRINT:
-                parsePrint();
-                break;
+                match(TokenType.PRINT);
+                return parsePrint();
             case IF:
-                parseIf();
-                break;
-//            case BREAK:
-//                parsePrint();
-//                break;
-//            case DO:
-//                parsePrint();
-//                break;
-//            case ELSE:
-//                parsePrint();
-//                break;
-//            case WHILE:
-//                parsePrint();
-//                break;
-//            case TokenType.FUNCTION:
-//                parseFunction();
-//                break;
+                // no match because of do-while block in parseIf()
+                return parseIf();
+            case BREAK:
+                match(TokenType.BREAK);
+                return parseBreak();
+            case DO:
+                match(TokenType.DO);
+                return parseDo();
+            case WHILE:
+                match(TokenType.WHILE);
+                return parseWhile();
+            case FUNCTION:
+                match(TokenType.FUNCTION);
+                return parseFunction();
+            default:
+                throw new SyntaxException("Keyword not found?");
         }
+
+    }
+
+    private Node parseFunction() {
+        if( peek().getTokenType() != TokenType.BASIC){
+            throw new SyntaxException("Declaration type missing...");
+        }
+        Type type = (Type) pop().getValue();
+        if( peek().getTokenType() != TokenType.IDENT){
+            throw new SyntaxException("Declaration type missing...");
+        }
+        String fName = (String) pop().getValue();
+        List<Node> parameters = new ArrayList<>();
+        match(TokenType.OPEN_PARENTHESES);
+
+        if(peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
+            while (peek().getTokenType() == TokenType.BASIC) {
+                List<Token> stmts = new ArrayList<>();
+                Type varType = (Type) pop().getValue();
+
+                if (peek().getTokenType() != TokenType.IDENT) {
+                    throw new SyntaxException("Identifier was expected.");
+                }
+                stmts.add(pop());
+
+                parameters.add(new DefStatement(stmts, varType));
+                if (match(TokenType.COMMA)) {
+                    continue;
+                }
+                break;
+            }
+        }
+        match(TokenType.CLOSED_PARENTHESES);
+        match(TokenType.OPEN_CURLY);
+        List<Node> statements = parse();
+
+        return new DefFunctionStatement(statements, parse(), type, fName);
+    }
+
+
+    private Node parseBreak() {
+        return new BreakStatement();
+    }
+
+
+    private Node parseDo() {
+        List<Node> statements;
+        match(TokenType.OPEN_CURLY);
+        statements = parse();
+        match(TokenType.WHILE);
+        match(TokenType.OPEN_PARENTHESES);
+        NodeExpression cond = parseValue();
+        match(TokenType.CLOSED_PARENTHESES);
+        return new WhileStatement(statements, cond);
+    }
+
+    private Node parseWhile() {
+        List<Node> statements;
+        match(TokenType.OPEN_PARENTHESES);
+        NodeExpression cond = parseValue();
+        match(TokenType.CLOSED_PARENTHESES);
+        match(TokenType.OPEN_CURLY);
+        statements = parse();
+        return new WhileStatement(statements, cond);
+    }
+
+    private Node parseIf() {
+        List<Node> ifStatements = new ArrayList<>();
+        boolean hasElse;
+        do {
+            pop();
+            hasElse = false;
+            List<Node> statements;
+            match(TokenType.OPEN_PARENTHESES);
+            NodeExpression cond = parseValue();
+            match(TokenType.CLOSED_PARENTHESES);
+            match(TokenType.OPEN_CURLY);
+            statements = parse();
+            ifStatements.add(new IfStatement(statements, cond));
+            if (peek().getTokenType() == TokenType.ELSE) {
+                pop();
+                hasElse = true;
+            }
+        } while (peek().getTokenType() == TokenType.IF);
+
+        if (hasElse) {
+            match(TokenType.OPEN_CURLY);
+            List<Node> statements = parse();
+            ifStatements.add(new IfStatement(statements, new NodeConstant(Type.Bool, true)));
+        }
+        return new IfBlockStatement(ifStatements);
     }
 
 
     private Node parseDef() {
+        if( peek().getTokenType() != TokenType.BASIC){
+            throw new SyntaxException("Declaration type missing...");
+        }
         Type type = (Type) pop().getValue();
-        List<String> variables = new ArrayList<>();
+        List<Token> variables = new ArrayList<>();
         while (true) {
             if (peek().getTokenType() != TokenType.IDENT) {
                 throw new SyntaxException("Identifier was expected.");
             }
-            variables.add((String) pop().getValue());
+            variables.add(pop());
             if (match(TokenType.COMMA)) {
                 continue;
             }
             break;
         }
-        tokenizer.nextToken();
         match(TokenType.SEMICOLON);
         return new DefStatement(variables, type);
     }
 
 
     private Node parseAsgnVal() {
-        String name = (String) pop().getValue();
+        Token name = pop();
         match(TokenType.ASSIGN);
         NodeExpression exp = parseValue();
         match(TokenType.SEMICOLON);
@@ -171,7 +261,7 @@ public class Parser {
                 x = new NodeExpressionEquality(x, parseRelation());
             } else {
                 pop();
-                x = new NodeExpressionNotEquality(x, parseRelation());
+                x = new NodeExpressionNoEquality(x, parseRelation());
             }
         }
         return x;
@@ -182,16 +272,16 @@ public class Parser {
         switch (peek().getTokenType()) {
             case LT:
                 pop();
-                return new NodeExpressionRelation(x, parsePlusMinusOp(), TokenType.LT);
+                return new NodeExpressionLTRelation(x, parsePlusMinusOp());
             case LE:
                 pop();
-                return new NodeExpressionRelation(x, parsePlusMinusOp(), TokenType.LE);
+                return new NodeExpressionLERelation(x, parsePlusMinusOp());
             case GE:
                 pop();
-                return new NodeExpressionRelation(x, parsePlusMinusOp(), TokenType.GE);
+                return new NodeExpressionGERelation(x, parsePlusMinusOp());
             case GT:
                 pop();
-                return new NodeExpressionRelation(x, parsePlusMinusOp(), TokenType.GT);
+                return new NodeExpressionGTRelation(x, parsePlusMinusOp());
             default:
                 return x;
         }
@@ -220,12 +310,11 @@ public class Parser {
 
             if (peek().getTokenType().equals(TokenType.OP_MULT)) {
                 pop();
-                x = new NodeExpressionAdd(x, parseUnary());
+                x = new NodeExpressionMult(x, parseUnary());
             } else {
                 pop();
-                x = new NodeExpressionSub(x, parseUnary());
+                x = new NodeExpressionDiv(x, parseUnary());
             }
-            pop();
         }
         return x;
     }
@@ -251,35 +340,50 @@ public class Parser {
             case CONSTANT:
                 x = createConstant();
                 return x;
-//            TODO
-//            case .TRUE:
-//                x = .True;
-//                move();
-//                return x;
-//            case .FALSE:
-//                x = .False;
-//                move();
-//                return x;
+            case TRUE:
+                pop();
+                x = new NodeConstant(Type.Bool, true);
+                return x;
+            case FALSE:
+                pop();
+                x = new NodeConstant(Type.Bool, false);
+                return x;
             case IDENT:
                 String name = (String) pop().getValue();
+                if(peek().getTokenType() == TokenType.OPEN_PARENTHESES){
+                    pop();
+                    return parseFuncCall(name);
+                }
                 return new NodeVariable(name);
             default:
                 return x;
         }
     }
 
+    private NodeExpression parseFuncCall(String name) {
+        List<NodeExpression> vars = new ArrayList<>();
+        if(peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
+            while (true) {
+                vars.add(factor());
+                if(match(TokenType.COMMA)){
+                    continue;
+                }
+                break;
+            }
+        }
+        match(TokenType.CLOSED_PARENTHESES);
+        return new NodeFunction(vars, name);
+    }
+
     private NodeExpression createConstant() {
-        if(peek().getValue() instanceof Integer){
+        if (peek().getValue() instanceof Integer) {
             return new NodeConstant(Type.Int, pop().getValue());
-        } else if(peek().getValue() instanceof Double){
+        } else if (peek().getValue() instanceof Double) {
             return new NodeConstant(Type.Double, pop().getValue());
         }
 //        TODO
 //        else if(peek().getValue() instanceof Char){
 //            return new NodeConstant(Type.Char, pop().getValue());
-//        } else if(peek().getValue() instanceof Double){
-//            return new NodeConstant(Type.Double, pop().getValue());
-//        }
         else {
             throw new SyntaxException("syntax error");
         }

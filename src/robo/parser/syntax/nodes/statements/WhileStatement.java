@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class IfStatement extends Node {
+public class WhileStatement extends Node {
 
 	private List<Node> statements = new ArrayList<>();
 
 	private NodeExpression expression;
 
-	public IfStatement(List<Node> statements, NodeExpression expression) {
+	public WhileStatement(List<Node> statements, NodeExpression expression) {
 		super();
 		this.statements=statements;
 		this.expression = expression;

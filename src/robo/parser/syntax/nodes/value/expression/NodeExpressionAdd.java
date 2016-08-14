@@ -1,6 +1,7 @@
 package robo.parser.syntax.nodes.value.expression;
 
 import robo.parser.syntax.nodes.value.NodeExpression;
+import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
 
 /**
  * Model izraza koji predstavlja operator <i>add</i>, odnosno
@@ -19,8 +20,8 @@ public class NodeExpressionAdd extends NodeExpressionBinaryOper {
 		super(first, second);
 	}
 
-//	@Override
-//	public void accept(ExpressionNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+	@Override
+	public void accept(ExpressionNodeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

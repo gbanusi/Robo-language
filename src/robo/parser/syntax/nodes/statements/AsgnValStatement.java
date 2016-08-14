@@ -1,6 +1,7 @@
 package robo.parser.syntax.nodes.statements;
 
 
+import robo.parser.lexical.Token;
 import robo.parser.syntax.nodes.Node;
 import robo.parser.syntax.nodes.value.NodeExpression;
 
@@ -9,22 +10,17 @@ import robo.parser.syntax.nodes.value.NodeExpression;
  */
 public class AsgnValStatement extends Node {
 
-
-    private String varName;
+    // TODO RIJESITI SE TOKENA
+    private Token var;
 
 
     private NodeExpression expression;
 
 
-    public AsgnValStatement(String varName, NodeExpression expression) {
+    public AsgnValStatement(Token var, NodeExpression expression) {
         super();
-        this.varName = varName;
+        this.var = var;
         this.expression = expression;
-    }
-
-
-    public String getVarName() {
-        return varName;
     }
 
 

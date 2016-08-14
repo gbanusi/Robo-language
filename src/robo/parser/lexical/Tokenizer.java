@@ -51,7 +51,7 @@ public class Tokenizer {
         keywords.put("double", Type.Double);
         keywords.put("char", Type.Char);
         keywords.put("bool", Type.Bool);
-
+        keywords.put("return", Type._return);
     }
 
     public Tokenizer(String program) {

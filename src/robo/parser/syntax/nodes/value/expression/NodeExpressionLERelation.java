@@ -6,19 +6,21 @@ import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
 /**
  * Created by gregor on 10.08.16..
  */
-public class NodeExpressionOr extends NodeExpressionBinaryOper {
+public class NodeExpressionLERelation extends NodeExpressionBinaryOper {
 
     /**
      * Konstruktor objekta koji predstavlja <tt>first + second</tt>.
-     * @param first prvi izraz
+     *
+     * @param first  prvi izraz
      * @param second drugi izraz
      */
-    public NodeExpressionOr(NodeExpression first, NodeExpression second) {
+    public NodeExpressionLERelation(NodeExpression first, NodeExpression second) {
         super(first, second);
     }
 
-	@Override
-	public void accept(ExpressionNodeVisitor visitor) {
-		visitor.visit(this);
-	}
+
+    @Override
+    public void accept(ExpressionNodeVisitor visitor) {
+        visitor.visit(this);
+    }
 }

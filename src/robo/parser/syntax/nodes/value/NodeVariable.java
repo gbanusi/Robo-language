@@ -1,5 +1,7 @@
 package robo.parser.syntax.nodes.value;
 
+import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+
 /**
  * Model izraza koji predstavlja varijablu.
  * 
@@ -28,8 +30,8 @@ public class NodeVariable extends NodeExpression {
 		return varName;
 	}
 	
-//	@Override
-//	public void accept(ExpressionNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+	@Override
+	public void accept(ExpressionNodeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

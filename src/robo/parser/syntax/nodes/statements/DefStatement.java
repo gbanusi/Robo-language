@@ -10,14 +10,14 @@ import java.util.List;
 
 public class DefStatement extends Node {
 
-
+    // TODO RIJESITI SE TOKENA
     private List<Token> variables;
 
     private Type type;
 
 
-    public DefStatement(List<String> nv, Type type) {
-        this.variables = new ArrayList<>(variables);
+    public DefStatement(List<Token> nv, Type type) {
+        this.variables = new ArrayList<>(nv);
         this.type = type;
     }
 

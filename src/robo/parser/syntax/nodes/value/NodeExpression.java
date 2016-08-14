@@ -1,5 +1,7 @@
 package robo.parser.syntax.nodes.value;
 
+import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+
 /**
  * Vršni razred koji predstavlja bilo kakav izraz.
  * 
@@ -18,6 +20,6 @@ public abstract class NodeExpression {
 	 * 
 	 * @param visitor posjetitelj
 	 */
-//	public abstract void accept(ExpressionNodeVisitor visitor);
+	public abstract void accept(ExpressionNodeVisitor visitor);
 	
 }

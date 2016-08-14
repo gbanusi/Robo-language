@@ -5,30 +5,36 @@ import robo.parser.lexical.Tokenizer;
 
 /**
  * Demonstracija rada tokenizatora.
- * 
+ *
  * @author marcupic
  */
 public class TestTokenizer {
 
-	/**
-	 * Metoda s kojom započinje izvođenje programa. Argumenti se ignoriraju.
-	 * @param args argumenti naredbenog retka
-	 */
-	public static void main(String[] args) {
-		String program = "int a, b, c;\r\n" +
-				"a = -2;\r\n" +
-				"b = 1;" +
-				"b = 6;\r\n" +
-				"c = a - (-1 / 5 + ) - b;\r\n" +
-				"if(a == b){ int a; a = b - 2; print a;}" +
-				"print a;"
-				;
-		Tokenizer tokenizer = new Tokenizer(program);
-		while(tokenizer.getCurrentToken().getTokenType()!= TokenType.EOF) {
-			System.out.println("Trenutni peek: "+tokenizer.getCurrentToken().getTokenType()
-					+", vrijednost '"+tokenizer.getCurrentToken().getValue()+"'");
-			tokenizer.nextToken();
-		}
-	}
+    /**
+     * Metoda s kojom započinje izvođenje programa. Argumenti se ignoriraju.
+     *
+     * @param args argumenti naredbenog retka
+     */
+    public static void main(String[] args) {
+        String program = "int a, b;" +
+                "a = 10;" +
+                "if ( a >= 10 ) {" +
+                " b = -1;" +
+                "} else if (true) {" +
+                " b = 1;" +
+                "} else {" +
+                " a = a * b -(-a);" +
+                "}" +
+                "print a, b, c;";
+        String program2 =   "function int kvadrat(int a, double b){" +
+                            " return 2;" +
+                            "}";
+        Tokenizer tokenizer = new Tokenizer(program2);
+        while (tokenizer.getCurrentToken().getTokenType() != TokenType.EOF) {
+            System.out.println("Trenutni peek: " + tokenizer.getCurrentToken().getTokenType()
+                    + ", vrijednost '" + tokenizer.getCurrentToken().getValue() + "'");
+            tokenizer.nextToken();
+        }
+    }
 
 }
