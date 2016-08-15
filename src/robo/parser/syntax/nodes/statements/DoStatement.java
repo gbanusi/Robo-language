@@ -1,13 +1,14 @@
 package robo.parser.syntax.nodes.statements;
 
+import robo.parser.execution.visitor.node.NodeVisitor;
 import robo.parser.syntax.nodes.Node;
-import robo.parser.syntax.nodes.value.NodeExpression;
+import robo.parser.syntax.nodes.expression.NodeExpression;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class DoStatement extends Node {
+public class DoStatement extends Node implements LoopStatement{
 
 	private List<Node> statements = new ArrayList<>();
 
@@ -23,8 +24,12 @@ public class DoStatement extends Node {
 		return expression;
 	}
 
-//	@Override
-//	public void accept(VLangNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+	public List<Node> getStatements() {
+		return statements;
+	}
+
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

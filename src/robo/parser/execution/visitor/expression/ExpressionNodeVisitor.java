@@ -1,10 +1,10 @@
-package robo.parser.syntax.nodes.visitor;
+package robo.parser.execution.visitor.expression;
 
-import robo.parser.syntax.nodes.value.NodeConstant;
-import robo.parser.syntax.nodes.value.NodeFunction;
-import robo.parser.syntax.nodes.value.NodeVariable;
-import robo.parser.syntax.nodes.value.NodeVector;
-import robo.parser.syntax.nodes.value.expression.*;
+import robo.parser.syntax.nodes.expression.NodeConstant;
+import robo.parser.syntax.nodes.expression.NodeFunction;
+import robo.parser.syntax.nodes.expression.NodeVariable;
+import robo.parser.syntax.nodes.expression.NodeVector;
+import robo.parser.syntax.nodes.expression.*;
 
 /**
  * Created by gregor on 14.08.16..

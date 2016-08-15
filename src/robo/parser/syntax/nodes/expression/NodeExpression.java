@@ -1,13 +1,13 @@
-package robo.parser.syntax.nodes.value;
+package robo.parser.syntax.nodes.expression;
 
-import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+import robo.parser.execution.visitor.expression.ExpressionNodeVisitor;
 
 /**
  * Vršni razred koji predstavlja bilo kakav izraz.
  * 
  * @author marcupic
  */
-public abstract class NodeExpression {
+public abstract class NodeExpression{
 
 	/**
 	 * Konstruktor.

@@ -1,7 +1,7 @@
-package robo.parser.syntax.nodes.value;
+package robo.parser.syntax.nodes.expression;
 
 import robo.parser.Vector;
-import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+import robo.parser.execution.visitor.expression.ExpressionNodeVisitor;
 
 /**
  * Model izraza koji predstavlja vektorsku konstantu.

@@ -1,6 +1,8 @@
 package robo.parser.syntax;
 
 import robo.parser.Vector;
+import robo.parser.execution.values.RoboBoolean;
+import robo.parser.execution.values.RoboDouble;
 import robo.parser.lexical.Token;
 import robo.parser.lexical.TokenType;
 import robo.parser.lexical.Tokenizer;
@@ -8,11 +10,11 @@ import robo.parser.lexical.Type;
 import robo.parser.syntax.nodes.Node;
 import robo.parser.syntax.nodes.ProgramNode;
 import robo.parser.syntax.nodes.statements.*;
-import robo.parser.syntax.nodes.value.NodeConstant;
-import robo.parser.syntax.nodes.value.NodeExpression;
-import robo.parser.syntax.nodes.value.NodeFunction;
-import robo.parser.syntax.nodes.value.NodeVariable;
-import robo.parser.syntax.nodes.value.expression.*;
+import robo.parser.syntax.nodes.expression.NodeConstant;
+import robo.parser.syntax.nodes.expression.NodeExpression;
+import robo.parser.syntax.nodes.expression.NodeFunction;
+import robo.parser.syntax.nodes.expression.NodeVariable;
+import robo.parser.syntax.nodes.expression.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +103,9 @@ public class Parser {
             case DO:
                 match(TokenType.DO);
                 return parseDo();
+            case RETURN:
+                match(TokenType.RETURN);
+                return parseReturn();
             case WHILE:
                 match(TokenType.WHILE);
                 return parseWhile();
@@ -113,27 +118,33 @@ public class Parser {
 
     }
 
+    private Node parseReturn() {
+        NodeExpression val = parseValue();
+        match(TokenType.SEMICOLON);
+        return new ReturnStatement(val);
+    }
+
     private Node parseFunction() {
-        if( peek().getTokenType() != TokenType.BASIC){
+        if (peek().getTokenType() != TokenType.BASIC) {
             throw new SyntaxException("Declaration type missing...");
         }
         Type type = (Type) pop().getValue();
-        if( peek().getTokenType() != TokenType.IDENT){
+        if (peek().getTokenType() != TokenType.IDENT) {
             throw new SyntaxException("Declaration type missing...");
         }
         String fName = (String) pop().getValue();
         List<Node> parameters = new ArrayList<>();
         match(TokenType.OPEN_PARENTHESES);
 
-        if(peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
+        if (peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
             while (peek().getTokenType() == TokenType.BASIC) {
-                List<Token> stmts = new ArrayList<>();
+                List<String> stmts = new ArrayList<>();
                 Type varType = (Type) pop().getValue();
 
                 if (peek().getTokenType() != TokenType.IDENT) {
                     throw new SyntaxException("Identifier was expected.");
                 }
-                stmts.add(pop());
+                stmts.add((String) pop().getValue());
 
                 parameters.add(new DefStatement(stmts, varType));
                 if (match(TokenType.COMMA)) {
@@ -163,7 +174,7 @@ public class Parser {
         match(TokenType.OPEN_PARENTHESES);
         NodeExpression cond = parseValue();
         match(TokenType.CLOSED_PARENTHESES);
-        return new WhileStatement(statements, cond);
+        return new DoStatement(statements, cond);
     }
 
     private Node parseWhile() {
@@ -198,23 +209,23 @@ public class Parser {
         if (hasElse) {
             match(TokenType.OPEN_CURLY);
             List<Node> statements = parse();
-            ifStatements.add(new IfStatement(statements, new NodeConstant(Type.Bool, true)));
+            ifStatements.add(new IfStatement(statements, new NodeConstant(Type.Bool, new RoboBoolean(true))));
         }
         return new IfBlockStatement(ifStatements);
     }
 
 
     private Node parseDef() {
-        if( peek().getTokenType() != TokenType.BASIC){
+        if (peek().getTokenType() != TokenType.BASIC) {
             throw new SyntaxException("Declaration type missing...");
         }
         Type type = (Type) pop().getValue();
-        List<Token> variables = new ArrayList<>();
+        List<String> variables = new ArrayList<>();
         while (true) {
             if (peek().getTokenType() != TokenType.IDENT) {
                 throw new SyntaxException("Identifier was expected.");
             }
-            variables.add(pop());
+            variables.add((String) pop().getValue());
             if (match(TokenType.COMMA)) {
                 continue;
             }
@@ -226,7 +237,7 @@ public class Parser {
 
 
     private Node parseAsgnVal() {
-        Token name = pop();
+        String name = (String) pop().getValue();
         match(TokenType.ASSIGN);
         NodeExpression exp = parseValue();
         match(TokenType.SEMICOLON);
@@ -342,15 +353,15 @@ public class Parser {
                 return x;
             case TRUE:
                 pop();
-                x = new NodeConstant(Type.Bool, true);
+                x = new NodeConstant(Type.Bool, new RoboBoolean(true));
                 return x;
             case FALSE:
                 pop();
-                x = new NodeConstant(Type.Bool, false);
+                x = new NodeConstant(Type.Bool, new RoboBoolean(false));
                 return x;
             case IDENT:
                 String name = (String) pop().getValue();
-                if(peek().getTokenType() == TokenType.OPEN_PARENTHESES){
+                if (peek().getTokenType() == TokenType.OPEN_PARENTHESES) {
                     pop();
                     return parseFuncCall(name);
                 }
@@ -362,10 +373,10 @@ public class Parser {
 
     private NodeExpression parseFuncCall(String name) {
         List<NodeExpression> vars = new ArrayList<>();
-        if(peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
+        if (peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
             while (true) {
                 vars.add(factor());
-                if(match(TokenType.COMMA)){
+                if (match(TokenType.COMMA)) {
                     continue;
                 }
                 break;
@@ -377,9 +388,9 @@ public class Parser {
 
     private NodeExpression createConstant() {
         if (peek().getValue() instanceof Integer) {
-            return new NodeConstant(Type.Int, pop().getValue());
+            return new NodeConstant(Type.Int, new RoboDouble(Double.valueOf((Integer)pop().getValue())));
         } else if (peek().getValue() instanceof Double) {
-            return new NodeConstant(Type.Double, pop().getValue());
+            return new NodeConstant(Type.Double, new RoboDouble((Double) pop().getValue()));
         }
 //        TODO
 //        else if(peek().getValue() instanceof Char){

@@ -1,6 +1,6 @@
-package robo.parser.syntax.nodes.value;
+package robo.parser.syntax.nodes.expression;
 
-import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+import robo.parser.execution.visitor.expression.ExpressionNodeVisitor;
 
 import java.util.List;
 

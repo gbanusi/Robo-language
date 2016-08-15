@@ -1,5 +1,7 @@
 package robo.parser.syntax.nodes;
 
+import robo.parser.execution.visitor.node.NodeVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +34,8 @@ public class ProgramNode extends Node {
 		return new ArrayList<>(statements);
 	}
 	
-//	@Override
-//	public void accept(VLangNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+	@Override
+	public void accept(NodeVisitor visitor) {
+		visitor.visit(this);
+	}
 }

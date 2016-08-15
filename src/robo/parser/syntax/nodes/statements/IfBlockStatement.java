@@ -1,5 +1,6 @@
 package robo.parser.syntax.nodes.statements;
 
+import robo.parser.execution.visitor.node.NodeVisitor;
 import robo.parser.syntax.nodes.Node;
 
 import java.util.ArrayList;
@@ -14,8 +15,12 @@ public class IfBlockStatement extends Node {
         this.ifStatements=statements;
     }
 
-//	@Override
-//	public void accept(VLangNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+    @Override
+    public void accept(NodeVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    public List<Node> getIfStatements() {
+        return ifStatements;
+    }
 }

@@ -1,7 +1,8 @@
-package robo.parser.syntax.nodes.value;
+package robo.parser.syntax.nodes.expression;
 
+import robo.parser.execution.values.RoboValue;
 import robo.parser.lexical.Type;
-import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+import robo.parser.execution.visitor.expression.ExpressionNodeVisitor;
 
 /**
  * Created by gregor on 07.08.16.
@@ -11,19 +12,19 @@ public class NodeConstant extends NodeExpression {
     /**
      * Naziv varijable.
      */
-    private Object value;
+    private RoboValue value;
 
     private Type type;
 
     /**
      * Konstruktor.
      */
-    public NodeConstant(Type type, Object value) {
+    public NodeConstant(Type type, RoboValue value) {
         this.value = value;
         this.type = type;
     }
 
-    public Object getValue() {
+    public RoboValue getValue() {
         return value;
     }
 

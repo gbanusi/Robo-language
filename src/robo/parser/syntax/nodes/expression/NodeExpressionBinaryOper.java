@@ -1,6 +1,4 @@
-package robo.parser.syntax.nodes.value.expression;
-
-import robo.parser.syntax.nodes.value.NodeExpression;
+package robo.parser.syntax.nodes.expression;
 
 /**
  * Model izraza koji predstavlja neki binarni operator, odnosno

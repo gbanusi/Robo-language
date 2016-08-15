@@ -1,5 +1,7 @@
 package robo.parser.syntax.nodes;
 
+import robo.parser.execution.visitor.node.NodeVisitor;
+
 /**
  * Općeniti čvor stabla programa napisanog jezikom <i>vlang</i>
  * pri čemu konkretne implementacije ovog čvora predstavljaju
@@ -19,5 +21,5 @@ public abstract class Node {
 	 * Prihvat posjetitelja.
 	 * @param visitor posjetitelj
 	 */
-//	public abstract void accept(VLangNodeVisitor visitor);
+	public abstract void accept(NodeVisitor visitor);
 }

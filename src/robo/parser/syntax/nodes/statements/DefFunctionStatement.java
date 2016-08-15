@@ -1,5 +1,6 @@
 package robo.parser.syntax.nodes.statements;
 
+import robo.parser.execution.visitor.node.NodeVisitor;
 import robo.parser.lexical.Type;
 import robo.parser.syntax.nodes.Node;
 
@@ -27,8 +28,8 @@ public class DefFunctionStatement extends Node {
         this.fName = fName;
     }
 
-//	@Override
-//	public void accept(VLangNodeVisitor visitor) {
-//		visitor.visit(this);
-//	}
+    @Override
+    public void accept(NodeVisitor visitor) {
+        visitor.visit(this);
+    }
 }

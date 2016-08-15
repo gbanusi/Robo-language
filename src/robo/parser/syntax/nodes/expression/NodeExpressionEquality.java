@@ -1,7 +1,6 @@
-package robo.parser.syntax.nodes.value.expression;
+package robo.parser.syntax.nodes.expression;
 
-import robo.parser.syntax.nodes.value.NodeExpression;
-import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+import robo.parser.execution.visitor.expression.ExpressionNodeVisitor;
 
 /**
  * Created by gregor on 10.08.16..

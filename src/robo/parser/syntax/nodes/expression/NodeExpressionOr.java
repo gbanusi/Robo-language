@@ -1,19 +1,18 @@
-package robo.parser.syntax.nodes.value.expression;
+package robo.parser.syntax.nodes.expression;
 
-import robo.parser.syntax.nodes.value.NodeExpression;
-import robo.parser.syntax.nodes.visitor.ExpressionNodeVisitor;
+import robo.parser.execution.visitor.expression.ExpressionNodeVisitor;
 
 /**
  * Created by gregor on 10.08.16..
  */
-public class NodeExpressionAnd extends NodeExpressionBinaryOper {
+public class NodeExpressionOr extends NodeExpressionBinaryOper {
 
     /**
      * Konstruktor objekta koji predstavlja <tt>first + second</tt>.
      * @param first prvi izraz
      * @param second drugi izraz
      */
-    public NodeExpressionAnd(NodeExpression first, NodeExpression second) {
+    public NodeExpressionOr(NodeExpression first, NodeExpression second) {
         super(first, second);
     }
 
