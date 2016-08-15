@@ -49,7 +49,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         mult.getSecond().accept(this);
         RoboValue right = stack.pop();
         RoboValue left = stack.pop();
-        stack.push(left.sub(right));
+        stack.push(left.mult(right));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         div.getSecond().accept(this);
         RoboValue right = stack.pop();
         RoboValue left = stack.pop();
-        stack.push(left.sub(right));
+        stack.push(left.div(right));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         neo.getSecond().accept(this);
         RoboValue right = stack.pop();
         RoboValue left = stack.pop();
-        stack.push(left.and(right));
+        stack.push(left.or(right));
     }
 
     @Override
