@@ -1,8 +1,8 @@
 package robo.parser.execution.visitor.node;
 
+import robo.parser.execution.ExecEnv;
 import robo.parser.execution.ExecutionException;
 import robo.parser.execution.values.RoboBoolean;
-import robo.parser.execution.values.RoboNull;
 import robo.parser.execution.values.RoboValue;
 import robo.parser.execution.visitor.expression.ExpressionEvalVisitor;
 import robo.parser.syntax.nodes.Node;
@@ -10,37 +10,23 @@ import robo.parser.syntax.nodes.ProgramNode;
 import robo.parser.syntax.nodes.expression.NodeExpression;
 import robo.parser.syntax.nodes.statements.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
-
 /**
  * Created by gregor on 15.08.16..
  */
 public class ProgramExecutorVisitor implements NodeVisitor {
 
-    private Map<String, RoboValue> vars = new HashMap<>();
-
-    private Stack<LoopStatement> loops;
-
-
     public ProgramExecutorVisitor() {
-        loops = new Stack<>();
     }
 
     @Override
     public void visit(AsgnValStatement node) {
-        if (vars.containsKey(node.getVar())) {
-            RoboValue val = calculateExpression(node.getExpression());
-            vars.put(node.getVar(), val);
-        } else {
-            throw new ExecutionException("Variable " + node.getVar() + " not defined!");
-        }
+        RoboValue val = calculateExpression(node.getExpression());
+        ExecEnv.asgnVarValue(node.getVar(), val);
     }
 
     @Override
     public void visit(BreakStatement node) {
-        loops.pop();
+        ExecEnv.popLoop();
     }
 
     @Override
@@ -50,17 +36,12 @@ public class ProgramExecutorVisitor implements NodeVisitor {
 
     @Override
     public void visit(DefStatement node) {
-        for (String s : node.getVariables()) {
-            if (vars.containsKey(s)) {
-                throw new ExecutionException("Variable " + s + " already defined!");
-            }
-            vars.put(s, new RoboNull());
-        }
+        node.getVariables().stream().forEach(var -> ExecEnv.defineVar(var));
     }
 
     @Override
     public void visit(DoStatement node) {
-        loops.add(node);
+        ExecEnv.pushLoop(node);
         RoboValue rb = calculateExpression(node.getExpression());
         if (!(rb instanceof RoboBoolean)) {
             throw new ExecutionException("Only boolean value in 'do-while' condition are allowed.");
@@ -115,7 +96,7 @@ public class ProgramExecutorVisitor implements NodeVisitor {
 
     @Override
     public void visit(WhileStatement node) {
-        loops.add(node);
+        ExecEnv.pushLoop(node);
         RoboValue rb = calculateExpression(node.getExpression());
         if (!(rb instanceof RoboBoolean)) {
             throw new ExecutionException("Only boolean value in 'do-while' condition are allowed.");
@@ -142,7 +123,7 @@ public class ProgramExecutorVisitor implements NodeVisitor {
     }
 
     private RoboValue calculateExpression(NodeExpression node) {
-        ExpressionEvalVisitor visitor = new ExpressionEvalVisitor(vars);
+        ExpressionEvalVisitor visitor = new ExpressionEvalVisitor(ExecEnv.currentEnv(), this);
         node.accept(visitor);
         return visitor.getResult();
     }

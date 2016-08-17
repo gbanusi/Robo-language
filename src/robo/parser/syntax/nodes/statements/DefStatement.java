@@ -10,7 +10,6 @@ import java.util.List;
 
 public class DefStatement extends Node {
 
-    // TODO RIJESITI SE TOKENA
     private List<String> variables;
 
     private Type type;

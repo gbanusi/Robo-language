@@ -157,7 +157,7 @@ public class Parser {
         match(TokenType.OPEN_CURLY);
         List<Node> statements = parse();
 
-        return new DefFunctionStatement(statements, parse(), type, fName);
+        return new DefFunctionStatement(statements, parameters, type, fName);
     }
 
 

@@ -1,6 +1,6 @@
 package test;
 
-import robo.parser.execution.RoboCompile;
+import robo.parser.execution.RoboExec;
 import robo.parser.lexical.Tokenizer;
 import robo.parser.syntax.Parser;
 import robo.parser.syntax.nodes.ProgramNode;
@@ -32,7 +32,7 @@ public class TestExecutor {
 
 		ProgramNode pn = parser.getProgramNode();
 
-		new RoboCompile(pn).execute();
+		new RoboExec(pn).execute();
 	}
 
 }

@@ -18,6 +18,13 @@ public class NodeFunction extends NodeExpression{
         this.fName = fName;
     }
 
+    public List<NodeExpression> getVars() {
+        return vars;
+    }
+
+    public String getfName() {
+        return fName;
+    }
 
     @Override
     public void accept(ExpressionNodeVisitor visitor) {

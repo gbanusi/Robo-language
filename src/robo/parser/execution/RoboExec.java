@@ -6,11 +6,11 @@ import robo.parser.syntax.nodes.ProgramNode;
 /**
  * Created by gregor on 15.08.16..
  */
-public class RoboCompile {
+public class RoboExec {
 
     private ProgramNode programNode;
 
-    public RoboCompile(ProgramNode programNode) {
+    public RoboExec(ProgramNode programNode) {
         this.programNode = programNode;
     }
 

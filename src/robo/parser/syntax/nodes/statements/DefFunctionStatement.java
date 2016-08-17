@@ -28,6 +28,22 @@ public class DefFunctionStatement extends Node {
         this.fName = fName;
     }
 
+    public List<Node> getStatements() {
+        return statements;
+    }
+
+    public List<Node> getParameters() {
+        return parameters;
+    }
+
+    public Type getReturnType() {
+        return returnType;
+    }
+
+    public String getfName() {
+        return fName;
+    }
+
     @Override
     public void accept(NodeVisitor visitor) {
         visitor.visit(this);
