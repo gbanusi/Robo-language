@@ -97,7 +97,7 @@ public class ExecEnv {
                 return e.getEnvVariableValue(name);
             }
         }
-        return new RoboNull();
+        throw new ExecutionException("Variable, '" + name + "' not defined!");
     }
 
     public static void asgnVarValue(String name, RoboValue val) {

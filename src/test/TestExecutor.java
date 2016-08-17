@@ -19,7 +19,7 @@ public class TestExecutor {
                 "} else {" +
                 " a = a * b -(-a);" +
                 "}" +
-				"print a, b, c;" +
+				"print a, b;" +
                 "b = b * (-1);" +
                 "print b;" +
 				"do {" +

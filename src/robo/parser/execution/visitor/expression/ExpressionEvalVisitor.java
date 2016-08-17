@@ -64,7 +64,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
     @Override
     public void visit(NodeVariable nv) {
-        execEnv.pushExpr(execEnv.getVarValue(nv.getVarName()));
+        execEnv.pushExpr(ExecEnv.getVarValue(nv.getVarName()));
     }
 
     @Override
