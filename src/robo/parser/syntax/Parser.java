@@ -174,6 +174,7 @@ public class Parser {
         match(TokenType.OPEN_PARENTHESES);
         NodeExpression cond = parseValue();
         match(TokenType.CLOSED_PARENTHESES);
+        match(TokenType.SEMICOLON);
         return new DoStatement(statements, cond);
     }
 

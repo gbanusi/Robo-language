@@ -122,6 +122,7 @@ public class ExecEnv {
         DefFunctionStatement dfs = functions.get(nf.getfName());
         for (int i = 0; i < nf.getVars().size(); i++) {
             Node defs = dfs.getParameters().get(i);
+            defs.accept(funcExec);
             String varName = ((DefStatement) defs).getVariables().get(0);
             NodeExpression ne = nf.getVars().get(0);
             funcExec.visit(new AsgnValStatement(varName, ne));
@@ -129,8 +130,9 @@ public class ExecEnv {
         for (Node n : dfs.getStatements()) {
             n.accept(funcExec);
         }
-
+        RoboValue returnValue = currentEnv().popExpr();
         currEnv.pop();
+        currentEnv().pushExpr(returnValue);
     }
 
 }

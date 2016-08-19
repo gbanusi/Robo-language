@@ -69,12 +69,12 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
     @Override
     public void visit(NodeVector nv) {
-        throw new SyntaxException("Vector type not supported currently");
+        throw new SyntaxException("Vector type not supported currently..");
     }
 
     @Override
     public void visit(NodeFunction nf) {
-        throw new SyntaxException("Vector type not supported currently");
+        ExecEnv.executeFunc(nf, programExecutorVisitor);
     }
 
     @Override

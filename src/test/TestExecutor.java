@@ -25,7 +25,15 @@ public class TestExecutor {
 				"do {" +
 				"  a = a + b;" +
 				"  print a, b;" +
-				"} while ( a >= 15 && b < 0)";
+				"} while ( a >= 40 && b < 0 &&  (a+b) != 38);" +
+				"" +
+				"function double kvadriraj(int x){" +
+				"  a = x / 10 + 1 * 2;" +
+				"  return x*x;" +
+				"}" +
+				"" +
+				"print kvadriraj(a);" +
+				"print a;";
 
 		Tokenizer tokenizer = new Tokenizer(program);
 		Parser parser = new Parser(tokenizer);

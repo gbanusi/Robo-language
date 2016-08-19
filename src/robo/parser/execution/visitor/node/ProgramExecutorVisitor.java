@@ -31,7 +31,7 @@ public class ProgramExecutorVisitor implements NodeVisitor {
 
     @Override
     public void visit(DefFunctionStatement node) {
-        throw new ExecutionException("Function definition implemented currently...");
+        ExecEnv.defineFunc(node.getfName(), node);
     }
 
     @Override
@@ -91,7 +91,8 @@ public class ProgramExecutorVisitor implements NodeVisitor {
 
     @Override
     public void visit(ReturnStatement node) {
-        throw new ExecutionException("Return not implemented currently...");
+        RoboValue rv = calculateExpression(node.getValue());
+        ExecEnv.currentEnv().pushExpr(rv);
     }
 
     @Override
