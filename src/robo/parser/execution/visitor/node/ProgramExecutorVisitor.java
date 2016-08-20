@@ -31,12 +31,12 @@ public class ProgramExecutorVisitor implements NodeVisitor {
 
     @Override
     public void visit(DefFunctionStatement node) {
-        ExecEnv.defineFunc(node.getfName(), node);
+        ExecEnv.declareFunc(node.getfName(), node);
     }
 
     @Override
     public void visit(DefStatement node) {
-        node.getVariables().stream().forEach(var -> ExecEnv.defineVar(var));
+        node.getVariables().stream().forEach(var -> ExecEnv.declareVar(var));
     }
 
     @Override

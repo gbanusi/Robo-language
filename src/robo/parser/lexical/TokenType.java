@@ -24,6 +24,7 @@ public enum TokenType {
     OP_DIV("OPERATOR"),
     OP_MULT("OPERATOR"),
     UN_MINUS("OPERATOR"),
+    UN_REFERENCE("OPERATOR"),
     ASSIGN("OPERATOR"),
 
     /** KEYWORDS **/

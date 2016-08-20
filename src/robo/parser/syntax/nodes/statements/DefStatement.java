@@ -15,6 +15,7 @@ public class DefStatement extends Node {
     private Type type;
 
 
+
     public DefStatement(List<String> nv, Type type) {
         this.variables = new ArrayList<>(nv);
         this.type = type;

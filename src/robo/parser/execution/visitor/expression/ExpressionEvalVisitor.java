@@ -2,6 +2,7 @@ package robo.parser.execution.visitor.expression;
 
 import robo.parser.execution.ExecEnv;
 import robo.parser.execution.ExecutionException;
+import robo.parser.execution.values.RoboReference;
 import robo.parser.execution.values.RoboValue;
 import robo.parser.execution.visitor.node.ProgramExecutorVisitor;
 import robo.parser.syntax.SyntaxException;
@@ -154,6 +155,14 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         neu.getFirst().accept(this);
         RoboValue val = execEnv.popExpr();
         execEnv.pushExpr(val.unMinus());
+    }
+
+    @Override
+    public void visit(NodeExpressionUnReference neu) {
+        neu.getFirst().accept(this);
+        RoboValue val = execEnv.popExpr();
+        RoboValue refer = new RoboReference(val, neu.getVarName());
+        execEnv.pushExpr(refer);
     }
 
     public RoboValue getResult(){

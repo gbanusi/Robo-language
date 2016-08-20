@@ -12,41 +12,42 @@ import robo.parser.syntax.nodes.expression.*;
 public interface ExpressionNodeVisitor {
 
     // OPERATIONS
-    public void visit(NodeExpressionAdd nea);
+    void visit(NodeExpressionAdd nea);
 
-    public void visit(NodeExpressionSub nes);
+    void visit(NodeExpressionSub nes);
 
-    public void visit(NodeExpressionMult nem);
+    void visit(NodeExpressionMult nem);
 
-    public void visit(NodeExpressionDiv ned);
+    void visit(NodeExpressionDiv ned);
 
     // VALUE HOLDERS
-    public void visit(NodeConstant nc);
+    void visit(NodeConstant nc);
 
-    public void visit(NodeVariable nv);
+    void visit(NodeVariable nv);
 
-    public void visit(NodeVector nv);
+    void visit(NodeVector nv);
 
-    public void visit(NodeFunction nf);
+    void visit(NodeFunction nf);
 
     // LOGICAL
-    public void visit(NodeExpressionAnd nea);
+    void visit(NodeExpressionAnd nea);
 
-    public void visit(NodeExpressionOr neo);
+    void visit(NodeExpressionOr neo);
 
     // RELATIONS
-    public void visit(NodeExpressionEquality nee);
+    void visit(NodeExpressionEquality nee);
 
-    public void visit(NodeExpressionNoEquality nen);
+    void visit(NodeExpressionNoEquality nen);
 
-    public void visit(NodeExpressionLTRelation ner);
+    void visit(NodeExpressionLTRelation ner);
 
-    public void visit(NodeExpressionLERelation ner);
+    void visit(NodeExpressionLERelation ner);
 
-    public void visit(NodeExpressionGERelation ner);
+    void visit(NodeExpressionGERelation ner);
 
-    public void visit(NodeExpressionGTRelation ner);
+    void visit(NodeExpressionGTRelation ner);
 
-    public void visit(NodeExpressionUnMinus neu);
+    void visit(NodeExpressionUnMinus neu);
 
+    void visit(NodeExpressionUnReference neu);
 }

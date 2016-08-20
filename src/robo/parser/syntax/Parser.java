@@ -1,6 +1,5 @@
 package robo.parser.syntax;
 
-import robo.parser.Vector;
 import robo.parser.execution.values.RoboBoolean;
 import robo.parser.execution.values.RoboDouble;
 import robo.parser.lexical.Token;
@@ -9,12 +8,8 @@ import robo.parser.lexical.Tokenizer;
 import robo.parser.lexical.Type;
 import robo.parser.syntax.nodes.Node;
 import robo.parser.syntax.nodes.ProgramNode;
-import robo.parser.syntax.nodes.statements.*;
-import robo.parser.syntax.nodes.expression.NodeConstant;
-import robo.parser.syntax.nodes.expression.NodeExpression;
-import robo.parser.syntax.nodes.expression.NodeFunction;
-import robo.parser.syntax.nodes.expression.NodeVariable;
 import robo.parser.syntax.nodes.expression.*;
+import robo.parser.syntax.nodes.statements.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,6 +148,7 @@ public class Parser {
                 break;
             }
         }
+
         match(TokenType.CLOSED_PARENTHESES);
         match(TokenType.OPEN_CURLY);
         List<Node> statements = parse();
@@ -232,23 +228,43 @@ public class Parser {
             }
             break;
         }
-        match(TokenType.SEMICOLON);
+        if (! match(TokenType.SEMICOLON)) {
+            throw new SyntaxException("Semicolon was expected.");
+        }
         return new DefStatement(variables, type);
+    }
+
+    private Node parsePrint() {
+        List<NodeExpression> list = new ArrayList<>();
+        list.add(parseValue());
+        while (true) {
+            if (! match(TokenType.COMMA)) {
+                break;
+            }
+            list.add(parseValue());
+        }
+        if (! match(TokenType.SEMICOLON)) {
+            throw new SyntaxException("Semicolon was expected.");
+        }
+        return new PrintStatement(list);
     }
 
 
     private Node parseAsgnVal() {
         String name = (String) pop().getValue();
-        match(TokenType.ASSIGN);
+        if (! match(TokenType.ASSIGN)) {
+            throw new SyntaxException("Assign was expected.");
+        }
         NodeExpression exp = parseValue();
-        match(TokenType.SEMICOLON);
+        if (! match(TokenType.SEMICOLON)) {
+            throw new SyntaxException("Semicolon was expected.");
+        }
         return new AsgnValStatement(name, exp);
     }
 
     private NodeExpression parseValue() {
         NodeExpression x = parseJoin();
-        while (peek().getTokenType().equals(TokenType.OR)) {
-            pop();
+        while (match(TokenType.OR)) {
             x = new NodeExpressionOr(x, parseJoin());
         }
         return x;
@@ -256,8 +272,7 @@ public class Parser {
 
     private NodeExpression parseJoin() {
         NodeExpression x = parseEquality();
-        while (peek().getTokenType().equals(TokenType.AND)) {
-            pop();
+        while (match(TokenType.AND)) {
             x = new NodeExpressionAnd(x, parseEquality());
         }
         return x;
@@ -268,11 +283,10 @@ public class Parser {
         while (peek().getTokenType().equals(TokenType.EQ)
                 || peek().getTokenType().equals(TokenType.NE)) {
 
-            if (peek().getTokenType().equals(TokenType.EQ)) {
-                pop();
+            if (match(TokenType.EQ)) {
                 x = new NodeExpressionEquality(x, parseRelation());
             } else {
-                pop();
+                match(TokenType.NE);
                 x = new NodeExpressionNoEquality(x, parseRelation());
             }
         }
@@ -304,11 +318,10 @@ public class Parser {
         while (peek().getTokenType().equals(TokenType.OP_PLUS)
                 || peek().getTokenType().equals(TokenType.OP_MINUS)) {
 
-            if (peek().getTokenType().equals(TokenType.OP_PLUS)) {
-                pop();
+            if (match(TokenType.OP_PLUS)) {
                 x = new NodeExpressionAdd(x, parseMultDivOp());
             } else {
-                pop();
+                match(TokenType.OP_MINUS);
                 x = new NodeExpressionSub(x, parseMultDivOp());
             }
         }
@@ -320,22 +333,22 @@ public class Parser {
         while (peek().getTokenType().equals(TokenType.OP_MULT)
                 || peek().getTokenType().equals(TokenType.OP_DIV)) {
 
-            if (peek().getTokenType().equals(TokenType.OP_MULT)) {
-                pop();
+            if (match(TokenType.OP_MULT)) {
                 x = new NodeExpressionMult(x, parseUnary());
             } else {
-                pop();
+                match(TokenType.OP_DIV);
                 x = new NodeExpressionDiv(x, parseUnary());
             }
         }
         return x;
     }
 
-    //  TODO NOT (!) TO ADD
+    //  TODO NOT (!) TO ADD, check if factor() works instead of parseUnary()
     private NodeExpression parseUnary() {
-        if (peek().getTokenType().equals(TokenType.UN_MINUS)) {
-            pop();
-            return new NodeExpressionUnMinus(parseUnary());
+        if (match(TokenType.UN_MINUS)) {
+            return new NodeExpressionUnMinus(factor());
+        } else if (match(TokenType.UN_REFERENCE)) {
+            return new NodeExpressionUnReference(parseIdent(true));
         } else {
             return factor();
         }
@@ -361,22 +374,28 @@ public class Parser {
                 x = new NodeConstant(Type.Bool, new RoboBoolean(false));
                 return x;
             case IDENT:
-                String name = (String) pop().getValue();
-                if (peek().getTokenType() == TokenType.OPEN_PARENTHESES) {
-                    pop();
-                    return parseFuncCall(name);
-                }
-                return new NodeVariable(name);
+                return parseIdent(false);
             default:
-                return x;
+                throw new SyntaxException("Expression not recognized '" + peek().getTokenType() + "' ...");
         }
+    }
+
+    private NodeExpression parseIdent(boolean isVariable) {
+        String name = (String) pop().getValue();
+        if (match(TokenType.OPEN_PARENTHESES)) {
+            if(isVariable){
+                throw new SyntaxException("Functions cannot have reference operator!");
+            }
+            return parseFuncCall(name);
+        }
+        return new NodeVariable(name);
     }
 
     private NodeExpression parseFuncCall(String name) {
         List<NodeExpression> vars = new ArrayList<>();
-        if (peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
+        if (! match(TokenType.CLOSED_PARENTHESES)) {
             while (true) {
-                vars.add(factor());
+                vars.add(parseValue());
                 if (match(TokenType.COMMA)) {
                     continue;
                 }
@@ -399,47 +418,5 @@ public class Parser {
         else {
             throw new SyntaxException("syntax error");
         }
-    }
-
-
-    private NodeExpression parseAtomicValue() {
-        if (peek().getTokenType() == TokenType.IDENT) {
-            String varName = (String) peek().getValue();
-            tokenizer.nextToken();
-//			return new NodeVariable(varName); TODO
-        }
-        if (peek().getTokenType() == TokenType.VECTOR_CONSTANT) {
-            Vector vector = (Vector) peek().getValue();
-            tokenizer.nextToken();
-//            return new NodeVector(vector); TODO
-        }
-        if (peek().getTokenType() == TokenType.OPEN_PARENTHESES) {
-            tokenizer.nextToken();
-            NodeExpression expression = parseValue();
-            if (peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
-                throw new SyntaxException("Closed parentheses was expected.");
-            }
-            tokenizer.nextToken();
-            return expression;
-        }
-        throw new SyntaxException("Unexpeced peek value.");
-    }
-
-
-    private Node parsePrint() {
-        List<NodeExpression> list = new ArrayList<>();
-        list.add(parseValue());
-        while (true) {
-            if (peek().getTokenType() != TokenType.COMMA) {
-                break;
-            }
-            tokenizer.nextToken();
-            list.add(parseValue());
-        }
-        if (peek().getTokenType() != TokenType.SEMICOLON) {
-            throw new SyntaxException("Semicolon was expected.");
-        }
-        tokenizer.nextToken();
-        return new PrintStatement(list);
     }
 }

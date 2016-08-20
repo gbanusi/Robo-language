@@ -1,6 +1,7 @@
 package robo.parser.execution;
 
 import robo.parser.execution.values.RoboNull;
+import robo.parser.execution.values.RoboReference;
 import robo.parser.execution.values.RoboValue;
 import robo.parser.execution.visitor.node.ProgramExecutorVisitor;
 import robo.parser.syntax.nodes.Node;
@@ -20,7 +21,7 @@ import java.util.*;
  */
 public class ExecEnv {
 
-    private static LinkedList<ExecEnv> currEnv = new LinkedList<>();
+    private static LinkedList<ExecEnv> envList = new LinkedList<>();
 
     static {
         createExecEnvInstance();
@@ -40,24 +41,22 @@ public class ExecEnv {
         this.exprsCalculated = new Stack<>();
     }
 
-    private static void createExecEnvInstance(){
-        currEnv.push(new ExecEnv());
+    private static void createExecEnvInstance() {
+        envList.push(new ExecEnv());
     }
 
-    public static ExecEnv currentEnv(){
-        return currEnv.peek();
+    public static ExecEnv currentEnv() {
+        return envList.peek();
     }
-
 
 
     public static void pushLoop(LoopStatement ls) {
-        currEnv.peek().loops.push(ls);
+        envList.peek().loops.push(ls);
     }
 
-    public static void popLoop(){
-        currEnv.peek().loops.pop();
+    public static void popLoop() {
+        envList.peek().loops.pop();
     }
-
 
 
     public RoboValue popExpr() {
@@ -77,22 +76,19 @@ public class ExecEnv {
     }
 
 
-
-
-
-    public static void defineVar(String name) {
-        if(currEnv.peek().vars.get(name) != null){
+    public static void declareVar(String name) {
+        if (envList.peek().vars.get(name) != null) {
             throw new ExecutionException("Variable '" + name + "' already defined!");
         }
-        currEnv.peek().vars.put(name, new RoboNull());
+        envList.peek().vars.put(name, new RoboNull());
     }
 
-    public RoboValue getEnvVariableValue(String name){
+    public RoboValue getEnvVariableValue(String name) {
         return vars.get(name);
     }
 
     public static RoboValue getVarValue(String name) {
-        for (ExecEnv e : currEnv) {
+        for (ExecEnv e : envList) {
             if (e.getEnvVariableValue(name) != null) {
                 return e.getEnvVariableValue(name);
             }
@@ -101,9 +97,13 @@ public class ExecEnv {
     }
 
     public static void asgnVarValue(String name, RoboValue val) {
-        for (ExecEnv e : currEnv) {
+        for (ExecEnv e : envList) {
             if (e.getEnvVariableValue(name) != null) {
-                e.vars.put(name, val);
+                if(getVarValue(name) instanceof RoboReference){
+                    ((RoboReference) getVarValue(name)).setValue(val);
+                } else {
+                    e.vars.put(name, val);
+                }
                 return;
             }
         }
@@ -111,8 +111,7 @@ public class ExecEnv {
     }
 
 
-
-    public static void defineFunc(String name, DefFunctionStatement val) {
+    public static void declareFunc(String name, DefFunctionStatement val) {
         functions.put(name, val);
     }
 
@@ -124,14 +123,23 @@ public class ExecEnv {
             Node defs = dfs.getParameters().get(i);
             defs.accept(funcExec);
             String varName = ((DefStatement) defs).getVariables().get(0);
-            NodeExpression ne = nf.getVars().get(0);
+            NodeExpression ne = nf.getVars().get(i);
             funcExec.visit(new AsgnValStatement(varName, ne));
         }
         for (Node n : dfs.getStatements()) {
             n.accept(funcExec);
         }
+        // TODO smisliti bolji algoritam
+        Map<String, RoboValue> varMap = currentEnv().vars;
         RoboValue returnValue = currentEnv().popExpr();
-        currEnv.pop();
+        envList.pop();
+        for (String key : varMap.keySet()) {
+            if(varMap.get(key) instanceof RoboReference){
+                RoboReference rr = (RoboReference) varMap.get(key);
+                asgnVarValue(rr.getVarName(), rr.getValue());
+            }
+        }
+
         currentEnv().pushExpr(returnValue);
     }
 

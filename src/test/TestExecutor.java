@@ -27,13 +27,12 @@ public class TestExecutor {
 				"  print a, b;" +
 				"} while ( a >= 40 && b < 0 &&  (a+b) != 38);" +
 				"" +
-				"function double kvadriraj(int x){" +
-				"  a = x / 10 + 1 * 2;" +
+				"function double kvadriraj(int x, int a){" +
+				"  a = -100;" +
 				"  return x*x;" +
 				"}" +
-				"" +
-				"print kvadriraj(a);" +
-				"print a;";
+				"print kvadriraj(a, b);" +
+				"print b;";
 
 		Tokenizer tokenizer = new Tokenizer(program);
 		Parser parser = new Parser(tokenizer);

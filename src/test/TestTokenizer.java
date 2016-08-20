@@ -16,20 +16,33 @@ public class TestTokenizer {
      * @param args argumenti naredbenog retka
      */
     public static void main(String[] args) {
+
         String program = "int a, b;" +
-                "a = 10;" +
-                "if ( a >= 10 ) {" +
+                "a = 14;" +
+                "b = 2;" +
+                "if ( a <= 10 ) {" +
                 " b = -1;" +
-                "} else if (true) {" +
+                "} else if (false) {" +
                 " b = 1;" +
                 "} else {" +
                 " a = a * b -(-a);" +
                 "}" +
-                "print a, b, c;";
-        String program2 =   "function int kvadrat(int a, double b){" +
-                            " return 2;" +
-                            "}";
-        Tokenizer tokenizer = new Tokenizer(program2);
+                "print a, b;" +
+                "b = b * (-1);" +
+                "print b;" +
+                "do {" +
+                "  a = a + b;" +
+                "  print a, b;" +
+                "} while ( a >= 40 && b < 0 &&  (a+b) != 38);" +
+                "" +
+                "function double kvadriraj(int x, int a){" +
+                "  a = x / 10 + 1 * 2;" +
+                "  return x*x;" +
+                "}" +
+                "print kvadriraj(a, &b);" +
+                "print a, b;";
+
+        Tokenizer tokenizer = new Tokenizer(program);
         while (tokenizer.getCurrentToken().getTokenType() != TokenType.EOF) {
             System.out.println("Trenutni peek: " + tokenizer.getCurrentToken().getTokenType()
                     + ", vrijednost '" + tokenizer.getCurrentToken().getValue() + "'");

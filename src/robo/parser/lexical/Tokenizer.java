@@ -51,7 +51,7 @@ public class Tokenizer {
         keywords.put("double", Type.Double);
         keywords.put("char", Type.Char);
         keywords.put("bool", Type.Bool);
-        keywords.put("return", Type._return);
+        keywords.put("return", Word._return);
     }
 
     public Tokenizer(String program) {
@@ -111,7 +111,9 @@ public class Tokenizer {
                         currentToken = new Token(Word.and.getTokenType(), null);
                         return;
                     }
-                    break;
+                    curPos++;
+                    currentToken = new Token(TokenType.UN_REFERENCE, null);
+                    return;
                 case '|':
                     if (data[curPos + 1] == '|') {
                         curPos += 2;

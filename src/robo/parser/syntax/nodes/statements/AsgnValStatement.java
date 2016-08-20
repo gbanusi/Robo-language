@@ -12,9 +12,7 @@ public class AsgnValStatement extends Node {
 
     private String var;
 
-
     private NodeExpression expression;
-
 
     public AsgnValStatement(String var, NodeExpression expression) {
         super();
