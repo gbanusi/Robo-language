@@ -1,4 +1,4 @@
-package robo.parser.execution.visitor.node;
+package robo.parser.execution.visitor.statement;
 
 import robo.parser.execution.ExecEnv;
 import robo.parser.execution.ExecutionException;
@@ -13,9 +13,9 @@ import robo.parser.syntax.nodes.statements.*;
 /**
  * Created by gregor on 15.08.16..
  */
-public class ProgramExecutorVisitor implements NodeVisitor {
+public class ProgramStatementVisitor implements NodeVisitor {
 
-    public ProgramExecutorVisitor() {
+    public ProgramStatementVisitor() {
     }
 
     @Override

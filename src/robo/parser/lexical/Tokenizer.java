@@ -52,6 +52,7 @@ public class Tokenizer {
         keywords.put("char", Type.Char);
         keywords.put("bool", Type.Bool);
         keywords.put("return", Word._return);
+        keywords.put(Word._const.getLexeme(), Word._const);
     }
 
     public Tokenizer(String program) {
@@ -167,12 +168,6 @@ public class Tokenizer {
             // Postavi trenutnu poziciju na sljedeći znak:
             curPos++;
             return;
-        }
-
-        // Ako znak direktno ne generira peek, provjeri što je.
-        if(Character.isLetter(data[curPos])){
-
-
         }
 
         // Ako znak direktno ne generira peek, provjeri što je.

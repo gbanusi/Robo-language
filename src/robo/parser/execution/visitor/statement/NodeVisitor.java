@@ -1,4 +1,4 @@
-package robo.parser.execution.visitor.node;
+package robo.parser.execution.visitor.statement;
 
 import robo.parser.syntax.nodes.ProgramNode;
 import robo.parser.syntax.nodes.statements.*;

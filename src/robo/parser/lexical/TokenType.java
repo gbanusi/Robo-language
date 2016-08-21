@@ -36,6 +36,7 @@ public enum TokenType {
     ELSE("KEYWORD"),
     IF("KEYWORD"),
     RETURN("KEYWORD"),
+    CONST("KEYWORD"),
 
     /** TYPES **/
     IDENT("TYPE"),

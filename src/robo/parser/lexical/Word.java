@@ -32,6 +32,7 @@ public class Word extends Token {
             _return = new Word("return", TokenType.RETURN, null),
             _if = new Word("if", TokenType.IF, null),
             _else = new Word("else", TokenType.ELSE, null),
+            _const = new Word("const", TokenType.CONST, true),
             _true = new Word("true", TokenType.TRUE, true),
             _false = new Word("false", TokenType.FALSE, false);
 
@@ -44,6 +45,10 @@ public class Word extends Token {
 
         return !(lexeme != null ? !lexeme.equals(word.lexeme) : word.lexeme != null);
 
+    }
+
+    public String getLexeme() {
+        return lexeme;
     }
 
     @Override
