@@ -58,7 +58,7 @@ public class RoboDouble extends RoboValue {
     @Override
     public RoboValue equal(RoboValue equal) {
         checkType(equal);
-        return new RoboBoolean(aboutEqual(this.getValue(), ((RoboDouble) equal).getValue()));
+        return new RoboBool(aboutEqual(this.getValue(), ((RoboDouble) equal).getValue()));
     }
 
     public static Boolean aboutEqual(double x, double y) {
@@ -69,31 +69,31 @@ public class RoboDouble extends RoboValue {
     @Override
     public RoboValue notEqual(RoboValue nequal) {
         checkType(nequal);
-        return new RoboBoolean(!aboutEqual(this.getValue(), ((RoboDouble) nequal).getValue()));
+        return new RoboBool(!aboutEqual(this.getValue(), ((RoboDouble) nequal).getValue()));
     }
 
     @Override
     public RoboValue lowerThan(RoboValue lowerThan) {
         checkType(lowerThan);
-        return new RoboBoolean(value < ((RoboDouble) lowerThan).getValue());
+        return new RoboBool(value < ((RoboDouble) lowerThan).getValue());
     }
 
     @Override
     public RoboValue lowerEqual(RoboValue lowerEqual) {
         checkType(lowerEqual);
-        return new RoboBoolean(value <= ((RoboDouble) lowerEqual).getValue());
+        return new RoboBool(value <= ((RoboDouble) lowerEqual).getValue());
     }
 
     @Override
     public RoboValue greaterThan(RoboValue greaterThan) {
         checkType(greaterThan);
-        return new RoboBoolean(value > ((RoboDouble) greaterThan).getValue());
+        return new RoboBool(value > ((RoboDouble) greaterThan).getValue());
     }
 
     @Override
     public RoboValue greaterEqual(RoboValue greaterEqual) {
         checkType(greaterEqual);
-        return new RoboBoolean(value >= ((RoboDouble) greaterEqual).getValue());
+        return new RoboBool(value >= ((RoboDouble) greaterEqual).getValue());
     }
 
     @Override

@@ -16,11 +16,11 @@ public class Type extends Word {
             Int = new Type("int", TokenType.BASIC, null, 4),
             Double = new Type("double", TokenType.BASIC, null, 8),
             Reference = new Type("&", TokenType.BASIC, null, 1),
-            Char = new Type("char", TokenType.BASIC, null, 1),
-            Bool = new Type("bool", TokenType.BASIC, null, 1);
+            Bool = new Type("bool", TokenType.BASIC, null, 1),
+            String = new Type("string", TokenType.BASIC, null, 1);
 
     public static boolean numeric(Type p) {
-        if (p == Type.Char || p == Type.Int || p == Type.Double) {
+        if (p == Type.Int || p == Type.Double) {
             return true;
         }
         return false;
@@ -38,10 +38,8 @@ public class Type extends Word {
             return null;
         } else if (p1 == Type.Double || p2 == Type.Double) {
             return Type.Double;
-        } else if (p1 == Type.Int || p2 == Type.Int) {
-            return Type.Int;
         } else {
-            return Type.Char;
+            return Type.Int;
         }
     }
 

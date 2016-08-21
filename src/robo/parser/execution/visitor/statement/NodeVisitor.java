@@ -8,26 +8,27 @@ import robo.parser.syntax.nodes.statements.*;
  */
 public interface NodeVisitor {
 
-    public void visit(AsgnValStatement node);
+    void visit(AsgnValStatement node);
 
-    public void visit(BreakStatement node);
+    void visit(BreakStatement node);
 
-    public void visit(DefFunctionStatement node);
+    void visit(DefFunctionStatement node);
 
-    public void visit(DefStatement node);
+    void visit(DefStatement node);
 
-    public void visit(DoStatement node);
+    void visit(DoStatement node);
 
-    public void visit(IfBlockStatement node);
+    void visit(IfBlockStatement node);
 
-    public void visit(IfStatement node);
+    void visit(IfStatement node);
 
-    public void visit(PrintStatement node);
+    void visit(PrintStatement node);
 
-    public void visit(ReturnStatement node);
+    void visit(ReturnStatement node);
 
-    public void visit(WhileStatement node);
+    void visit(WhileStatement node);
 
-    public void visit(ProgramNode node);
+    void visit(ProgramNode node);
 
+    void visit(ContinueStatement continueStatement);
 }

@@ -6,13 +6,13 @@ import robo.parser.lexical.Type;
 /**
  * Created by gregor on 15.08.16..
  */
-public class RoboBoolean extends RoboValue {
+public class RoboBool extends RoboValue {
 
     private Type type = Type.Bool;
 
     private Boolean value;
 
-    public RoboBoolean(Boolean value) {
+    public RoboBool(Boolean value) {
         this.value = value;
     }
 
@@ -45,25 +45,25 @@ public class RoboBoolean extends RoboValue {
     @Override
     public RoboValue and(RoboValue and) {
         checkType(and);
-        return new RoboBoolean(this.getValue() && ((RoboBoolean) and).getValue());
+        return new RoboBool(this.getValue() && ((RoboBool) and).getValue());
     }
 
     @Override
     public RoboValue or(RoboValue or) {
         checkType(or);
-        return new RoboBoolean(this.getValue() || ((RoboBoolean) or).getValue());
+        return new RoboBool(this.getValue() || ((RoboBool) or).getValue());
     }
 
     @Override
     public RoboValue equal(RoboValue equal) {
         checkType(equal);
-        return new RoboBoolean(this.getValue().equals(((RoboBoolean) equal).getValue()));
+        return new RoboBool(this.getValue().equals(((RoboBool) equal).getValue()));
     }
 
     @Override
     public RoboValue notEqual(RoboValue nequal) {
         checkType(nequal);
-        return new RoboBoolean(value.equals(((RoboBoolean) nequal).getValue()));
+        return new RoboBool(value.equals(((RoboBool) nequal).getValue()));
     }
 
     @Override

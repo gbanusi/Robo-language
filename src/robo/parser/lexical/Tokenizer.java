@@ -49,10 +49,12 @@ public class Tokenizer {
         keywords.put("true", Word._true);
         keywords.put("int", Type.Int);
         keywords.put("double", Type.Double);
-        keywords.put("char", Type.Char);
-        keywords.put("bool", Type.Bool);
-        keywords.put("return", Word._return);
+        keywords.put(Type.String.getLexeme(), Type.String);
+        keywords.put(Type.Bool.getLexeme(), Type.Bool);
+        keywords.put(Word._return.getLexeme(), Word._return);
         keywords.put(Word._const.getLexeme(), Word._const);
+        keywords.put(Word._continue.getLexeme(), Word._continue);
+
     }
 
     public Tokenizer(String program) {

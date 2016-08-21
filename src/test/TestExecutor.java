@@ -11,7 +11,7 @@ public class TestExecutor {
 	public static void main(String[] args) {
 		String program = "int a, b;" +
 				"int const c;" +
-				"a = 14;" +
+				"a = 9;" +
                 "b = 2;" +
 				"c = 6;" +
 				"if ( a <= 10 ) {" +
@@ -26,15 +26,16 @@ public class TestExecutor {
                 "print b;" +
 				"do {" +
 				"  a = a + b;" +
+				"  continue;" +
 				"  print a, b;" +
-				"} while ( a >= 40 && b < 0 &&  (a+b - c) != 38);" +
+				"} while ( a <= 40 && b < 0 &&  (a+b - c) != 38);" +
 				"" +
 				"function double kvadriraj(int x, int a){" +
 				"  a = -100*2 + 1 * 3;" +
 				"  " +
 				"  return x*x;" +
 				"}" +
-				"print kvadriraj(1, &b);" +
+				"print kvadriraj(1, c);" +
 				"print b-10, c;";
 
 		Tokenizer tokenizer = new Tokenizer(program);

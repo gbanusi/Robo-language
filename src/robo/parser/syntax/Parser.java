@@ -1,6 +1,6 @@
 package robo.parser.syntax;
 
-import robo.parser.execution.values.RoboBoolean;
+import robo.parser.execution.values.RoboBool;
 import robo.parser.execution.values.RoboDouble;
 import robo.parser.lexical.Token;
 import robo.parser.lexical.TokenType;
@@ -95,6 +95,9 @@ public class Parser {
             case BREAK:
                 match(TokenType.BREAK);
                 return parseBreak();
+            case CONTINUE:
+                match(TokenType.CONTINUE);
+                return parseContinue();
             case DO:
                 match(TokenType.DO);
                 return parseDo();
@@ -111,6 +114,13 @@ public class Parser {
                 throw new SyntaxException("Keyword not found?");
         }
 
+    }
+
+    private Node parseContinue() {
+        if (! match(TokenType.SEMICOLON)) {
+            throw new SyntaxException("Declaration type missing...");
+        }
+        return new ContinueStatement();
     }
 
     private Node parseReturn() {
@@ -137,15 +147,15 @@ public class Parser {
                 List<String> stmts = new ArrayList<>();
                 Type varType = (Type) pop().getValue();
 
-                if (peek().getTokenType() != TokenType.IDENT) {
-                    throw new SyntaxException("Identifier was expected.");
-                }
-                stmts.add((String) pop().getValue());
-
                 boolean isConst = false;
                 if (match(TokenType.CONST)) {
                     isConst = true;
                 }
+
+                if (peek().getTokenType() != TokenType.IDENT) {
+                    throw new SyntaxException("Identifier was expected.");
+                }
+                stmts.add((String) pop().getValue());
 
                 parameters.add(new DefStatement(stmts, varType, isConst));
                 if (match(TokenType.COMMA)) {
@@ -164,6 +174,9 @@ public class Parser {
 
 
     private Node parseBreak() {
+        if (! match(TokenType.SEMICOLON)) {
+            throw new SyntaxException("Declaration type missing...");
+        }
         return new BreakStatement();
     }
 
@@ -212,7 +225,7 @@ public class Parser {
         if (hasElse) {
             match(TokenType.OPEN_CURLY);
             List<Node> statements = parse();
-            ifStatements.add(new IfStatement(statements, new NodeConstant(Type.Bool, new RoboBoolean(true))));
+            ifStatements.add(new IfStatement(statements, new NodeConstant(Type.Bool, new RoboBool(true))));
         }
         return new IfBlockStatement(ifStatements);
     }
@@ -378,11 +391,11 @@ public class Parser {
                 return x;
             case TRUE:
                 pop();
-                x = new NodeConstant(Type.Bool, new RoboBoolean(true));
+                x = new NodeConstant(Type.Bool, new RoboBool(true));
                 return x;
             case FALSE:
                 pop();
-                x = new NodeConstant(Type.Bool, new RoboBoolean(false));
+                x = new NodeConstant(Type.Bool, new RoboBool(false));
                 return x;
             case IDENT:
                 return parseIdent(false);

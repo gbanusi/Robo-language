@@ -2,7 +2,7 @@ package robo.parser.execution.visitor.statement;
 
 import robo.parser.execution.ExecEnvironment;
 import robo.parser.execution.ExecutionException;
-import robo.parser.execution.values.RoboBoolean;
+import robo.parser.execution.values.RoboBool;
 import robo.parser.execution.values.RoboValue;
 import robo.parser.execution.visitor.expression.ExpressionEvalVisitor;
 import robo.parser.syntax.nodes.Node;
@@ -30,6 +30,11 @@ public class ProgramStatementVisitor implements NodeVisitor {
     }
 
     @Override
+    public void visit(ContinueStatement continueStatement) {
+        // TODO refactor?
+    }
+
+    @Override
     public void visit(DefFunctionStatement node) {
         ExecEnvironment.declareFunc(node.getfName(), node);
     }
@@ -51,21 +56,30 @@ public class ProgramStatementVisitor implements NodeVisitor {
     public void visit(DoStatement node) {
         ExecEnvironment.pushLoop(node);
         RoboValue rb = calculateExpression(node.getExpression());
-        if (!(rb instanceof RoboBoolean)) {
+        if (!(rb instanceof RoboBool)) {
             throw new ExecutionException("Only boolean value in 'do-while' condition are allowed.");
         }
-        boolean expr;
+        boolean expr = true;
         LOOP:
         do {
             for (Node child : node.getStatements()) {
                 child.accept(this);
                 if (child instanceof BreakStatement) {
                     break LOOP;
+                } else if (child instanceof ContinueStatement){
+                    rb = calculateExpression(node.getExpression());
+                    expr = ((RoboBool) rb).getValue();
+                    if(expr) {
+                        continue LOOP;
+                    } else {
+                        break LOOP;
+                    }
                 }
             }
             rb = calculateExpression(node.getExpression());
-            expr = ((RoboBoolean) rb).getValue();
+            expr = ((RoboBool) rb).getValue();
         } while (expr);
+        ExecEnvironment.popLoop();
     }
 
     @Override
@@ -73,7 +87,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
         for(Node child : node.getIfStatements()){
             IfStatement is = (IfStatement) child;
             RoboValue rb = calculateExpression(is.getExpression());
-            boolean cond = ((RoboBoolean) rb).getValue();
+            boolean cond = ((RoboBool) rb).getValue();
             if(cond){
                 is.accept(this);
                 break;
@@ -107,10 +121,10 @@ public class ProgramStatementVisitor implements NodeVisitor {
     public void visit(WhileStatement node) {
         ExecEnvironment.pushLoop(node);
         RoboValue rb = calculateExpression(node.getExpression());
-        if (!(rb instanceof RoboBoolean)) {
+        if (!(rb instanceof RoboBool)) {
             throw new ExecutionException("Only boolean value in 'do-while' condition are allowed.");
         }
-        boolean expr = ((RoboBoolean) rb).getValue();
+        boolean expr = ((RoboBool) rb).getValue();
         LOOP:
         while (expr) {
             for (Node child : node.getStatements()) {
@@ -120,7 +134,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
                 }
             }
             rb = calculateExpression(node.getExpression());
-            expr = ((RoboBoolean) rb).getValue();
+            expr = ((RoboBool) rb).getValue();
         }
     }
 
