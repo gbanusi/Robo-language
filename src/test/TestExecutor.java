@@ -10,7 +10,9 @@ public class TestExecutor {
 
 	public static void main(String[] args) {
 		String program = "int a, b;" +
-				"int const c;" +
+				"double const c;" +
+				"string rijec;" +
+				"rijec = \"Ovo radi ko satic mali!\";" +
 				"a = 9;" +
                 "b = 2;" +
 				"c = 6;" +
@@ -36,7 +38,7 @@ public class TestExecutor {
 				"  return x*x;" +
 				"}" +
 				"print kvadriraj(1, c);" +
-				"print b-10, c;";
+				"print b-10, c, rijec;";
 
 		Tokenizer tokenizer = new Tokenizer(program);
 		Parser parser = new Parser(tokenizer);

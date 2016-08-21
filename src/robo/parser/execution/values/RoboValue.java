@@ -1,19 +1,11 @@
 package robo.parser.execution.values;
 
-import robo.parser.execution.ExecutionException;
 import robo.parser.lexical.Type;
 
 /**
  * Created by gregor on 15.08.16..
  */
 public abstract class RoboValue {
-
-    public void checkType(RoboValue val){
-        if(this.getType() == val.getType()){
-            return;
-        }
-        throw new ExecutionException("Cannot evaluate expression!");
-    }
 
     public abstract Type getType();
 
@@ -42,6 +34,8 @@ public abstract class RoboValue {
     public abstract RoboValue greaterEqual(RoboValue greaterEqual);
 
     public abstract RoboValue unMinus();
+
+    public abstract Object getValue();
 
     @Override
     public abstract String toString();

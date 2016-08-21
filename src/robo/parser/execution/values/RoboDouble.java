@@ -23,26 +23,22 @@ public class RoboDouble extends RoboValue {
 
     @Override
     public RoboValue add(RoboValue add) {
-        checkType(add);
-        return new RoboDouble(value + ((RoboDouble) add).getValue());
+        return new RoboDouble(value + (Double) add.getValue());
     }
 
     @Override
     public RoboValue sub(RoboValue sub) {
-        checkType(sub);
-        return new RoboDouble(value - ((RoboDouble) sub).getValue());
+        return new RoboDouble(value - (Double) sub.getValue());
     }
 
     @Override
     public RoboValue div(RoboValue div) {
-        checkType(div);
-        return new RoboDouble(value / ((RoboDouble) div).getValue());
+        return new RoboDouble(value / (Double) div.getValue());
     }
 
     @Override
     public RoboValue mult(RoboValue mult) {
-        checkType(mult);
-        return new RoboDouble(value * ((RoboDouble) mult).getValue());
+        return new RoboDouble(value * (Double) mult.getValue());
     }
 
     @Override
@@ -57,7 +53,6 @@ public class RoboDouble extends RoboValue {
 
     @Override
     public RoboValue equal(RoboValue equal) {
-        checkType(equal);
         return new RoboBool(aboutEqual(this.getValue(), ((RoboDouble) equal).getValue()));
     }
 
@@ -68,32 +63,27 @@ public class RoboDouble extends RoboValue {
 
     @Override
     public RoboValue notEqual(RoboValue nequal) {
-        checkType(nequal);
-        return new RoboBool(!aboutEqual(this.getValue(), ((RoboDouble) nequal).getValue()));
+        return new RoboBool(!aboutEqual(this.getValue(), (Double) nequal.getValue()));
     }
 
     @Override
     public RoboValue lowerThan(RoboValue lowerThan) {
-        checkType(lowerThan);
-        return new RoboBool(value < ((RoboDouble) lowerThan).getValue());
+        return new RoboBool(value < (Double) lowerThan.getValue());
     }
 
     @Override
     public RoboValue lowerEqual(RoboValue lowerEqual) {
-        checkType(lowerEqual);
-        return new RoboBool(value <= ((RoboDouble) lowerEqual).getValue());
+        return new RoboBool(value <= (Double) lowerEqual.getValue());
     }
 
     @Override
     public RoboValue greaterThan(RoboValue greaterThan) {
-        checkType(greaterThan);
-        return new RoboBool(value > ((RoboDouble) greaterThan).getValue());
+        return new RoboBool(value > (Double) greaterThan.getValue());
     }
 
     @Override
     public RoboValue greaterEqual(RoboValue greaterEqual) {
-        checkType(greaterEqual);
-        return new RoboBool(value >= ((RoboDouble) greaterEqual).getValue());
+        return new RoboBool(value >= (Double) greaterEqual.getValue());
     }
 
     @Override

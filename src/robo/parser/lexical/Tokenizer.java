@@ -209,6 +209,19 @@ public class Tokenizer {
 
         }
 
+        // Ako pak imamo početak string konstante:
+        if (data[curPos] == '"') {
+            curPos++;
+            StringBuffer b = new StringBuffer();
+            do{
+                b.append(data[curPos]); curPos++;
+            } while( data[curPos] != '"');
+            curPos++;
+            String s = b.toString();
+            currentToken = new Token(TokenType.CONSTANT, s);
+            return;
+        }
+
         // Ako pak imamo početak vektorske konstante:
         if (data[curPos] == '[') {
             curPos++;

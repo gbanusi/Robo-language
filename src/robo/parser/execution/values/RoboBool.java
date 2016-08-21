@@ -44,25 +44,21 @@ public class RoboBool extends RoboValue {
 
     @Override
     public RoboValue and(RoboValue and) {
-        checkType(and);
         return new RoboBool(this.getValue() && ((RoboBool) and).getValue());
     }
 
     @Override
     public RoboValue or(RoboValue or) {
-        checkType(or);
         return new RoboBool(this.getValue() || ((RoboBool) or).getValue());
     }
 
     @Override
     public RoboValue equal(RoboValue equal) {
-        checkType(equal);
         return new RoboBool(this.getValue().equals(((RoboBool) equal).getValue()));
     }
 
     @Override
     public RoboValue notEqual(RoboValue nequal) {
-        checkType(nequal);
         return new RoboBool(value.equals(((RoboBool) nequal).getValue()));
     }
 

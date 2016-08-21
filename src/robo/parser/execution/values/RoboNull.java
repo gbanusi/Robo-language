@@ -84,6 +84,11 @@ public class RoboNull extends RoboValue {
     }
 
     @Override
+    public Object getValue() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "null";
     }

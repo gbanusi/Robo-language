@@ -2,6 +2,8 @@ package robo.parser.syntax;
 
 import robo.parser.execution.values.RoboBool;
 import robo.parser.execution.values.RoboDouble;
+import robo.parser.execution.values.RoboInteger;
+import robo.parser.execution.values.RoboString;
 import robo.parser.lexical.Token;
 import robo.parser.lexical.TokenType;
 import robo.parser.lexical.Tokenizer;
@@ -432,14 +434,13 @@ public class Parser {
 
     private NodeExpression createConstant() {
         if (peek().getValue() instanceof Integer) {
-            return new NodeConstant(Type.Int, new RoboDouble(Double.valueOf((Integer)pop().getValue())));
+            return new NodeConstant(Type.Int, new RoboInteger((Integer) pop().getValue()));
         } else if (peek().getValue() instanceof Double) {
             return new NodeConstant(Type.Double, new RoboDouble((Double) pop().getValue()));
         }
-//        TODO
-//        else if(peek().getValue() instanceof Char){
-//            return new NodeConstant(Type.Char, pop().getValue());
-        else {
+        else if(peek().getValue() instanceof String) {
+            return new NodeConstant(Type.String, new RoboString((String) pop().getValue()));
+        } else {
             throw new SyntaxException("syntax error");
         }
     }
