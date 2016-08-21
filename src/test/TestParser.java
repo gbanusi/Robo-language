@@ -7,7 +7,7 @@ import robo.parser.syntax.Parser;
 public class TestParser {
 
 	public static void main(String[] args) {
-		String program = "int a, b;" +
+		String program = "int const a, b;" +
 				"a = 14;" +
 				"b = 2;" +
 //				"if ( a <= 10 ) {" +

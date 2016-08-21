@@ -133,6 +133,7 @@ public class Parser {
 
         if (peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
             while (peek().getTokenType() == TokenType.BASIC) {
+
                 List<String> stmts = new ArrayList<>();
                 Type varType = (Type) pop().getValue();
 
@@ -141,7 +142,12 @@ public class Parser {
                 }
                 stmts.add((String) pop().getValue());
 
-                parameters.add(new DefStatement(stmts, varType));
+                boolean isConst = false;
+                if (match(TokenType.CONST)) {
+                    isConst = true;
+                }
+
+                parameters.add(new DefStatement(stmts, varType, isConst));
                 if (match(TokenType.COMMA)) {
                     continue;
                 }
@@ -217,6 +223,11 @@ public class Parser {
             throw new SyntaxException("Declaration type missing...");
         }
         Type type = (Type) pop().getValue();
+
+        boolean isConst = false;
+        if (match(TokenType.CONST)) {
+            isConst = true;
+        }
         List<String> variables = new ArrayList<>();
         while (true) {
             if (peek().getTokenType() != TokenType.IDENT) {
@@ -231,7 +242,7 @@ public class Parser {
         if (! match(TokenType.SEMICOLON)) {
             throw new SyntaxException("Semicolon was expected.");
         }
-        return new DefStatement(variables, type);
+        return new DefStatement(variables, type, isConst);
     }
 
     private Node parsePrint() {

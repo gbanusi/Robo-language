@@ -1,7 +1,7 @@
 package robo.parser.syntax.nodes.statements;
 
 
-import robo.parser.execution.visitor.node.NodeVisitor;
+import robo.parser.execution.visitor.statement.NodeVisitor;
 import robo.parser.syntax.nodes.Node;
 import robo.parser.syntax.nodes.expression.NodeExpression;
 

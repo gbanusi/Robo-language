@@ -18,6 +18,7 @@ public class TestTokenizer {
     public static void main(String[] args) {
 
         String program = "int a, b;" +
+                "int const c;" +
                 "a = 14;" +
                 "b = 2;" +
                 "if ( a <= 10 ) {" +

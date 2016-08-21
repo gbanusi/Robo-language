@@ -1,6 +1,6 @@
 package robo.parser.syntax.nodes;
 
-import robo.parser.execution.visitor.node.NodeVisitor;
+import robo.parser.execution.visitor.statement.NodeVisitor;
 
 /**
  * Općeniti čvor stabla programa napisanog jezikom <i>vlang</i>

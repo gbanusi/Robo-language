@@ -1,6 +1,6 @@
 package robo.parser.syntax.nodes.statements;
 
-import robo.parser.execution.visitor.node.NodeVisitor;
+import robo.parser.execution.visitor.statement.NodeVisitor;
 import robo.parser.lexical.Type;
 import robo.parser.syntax.nodes.Node;
 

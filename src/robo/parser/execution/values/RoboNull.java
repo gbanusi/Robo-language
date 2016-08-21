@@ -7,6 +7,12 @@ import robo.parser.lexical.Type;
  * Created by gregor on 15.08.16..
  */
 public class RoboNull extends RoboValue {
+
+    public static RoboNull roboNull = new RoboNull();
+
+    private RoboNull() {
+    }
+
     @Override
     public Type getType() {
         return null;

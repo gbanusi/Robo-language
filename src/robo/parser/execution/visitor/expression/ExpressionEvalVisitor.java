@@ -1,10 +1,10 @@
 package robo.parser.execution.visitor.expression;
 
-import robo.parser.execution.ExecEnv;
+import robo.parser.execution.ExecEnvironment;
 import robo.parser.execution.ExecutionException;
 import robo.parser.execution.values.RoboReference;
 import robo.parser.execution.values.RoboValue;
-import robo.parser.execution.visitor.node.ProgramExecutorVisitor;
+import robo.parser.execution.visitor.statement.ProgramStatementVisitor;
 import robo.parser.syntax.SyntaxException;
 import robo.parser.syntax.nodes.expression.*;
 
@@ -13,59 +13,59 @@ import robo.parser.syntax.nodes.expression.*;
  */
 public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
-    private ExecEnv execEnv;
+    private ExecEnvironment execEnvironment;
 
-    private ProgramExecutorVisitor programExecutorVisitor;
+    private ProgramStatementVisitor programStatementVisitor;
 
-    public ExpressionEvalVisitor(ExecEnv execEnv, ProgramExecutorVisitor programExecutorVisitor) {
-        this.execEnv = execEnv;
-        this.programExecutorVisitor = programExecutorVisitor;
+    public ExpressionEvalVisitor(ExecEnvironment execEnvironment, ProgramStatementVisitor programStatementVisitor) {
+        this.execEnvironment = execEnvironment;
+        this.programStatementVisitor = programStatementVisitor;
     }
 
     @Override
     public void visit(NodeExpressionAdd add) {
         add.getFirst().accept(this);
         add.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.add(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.add(right));
     }
 
     @Override
     public void visit(NodeExpressionSub sub) {
         sub.getFirst().accept(this);
         sub.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.sub(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.sub(right));
     }
 
     @Override
     public void visit(NodeExpressionMult mult) {
         mult.getFirst().accept(this);
         mult.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.mult(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.mult(right));
     }
 
     @Override
     public void visit(NodeExpressionDiv div) {
         div.getFirst().accept(this);
         div.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.div(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.div(right));
     }
 
     @Override
     public void visit(NodeConstant nc) {
-        execEnv.pushExpr(nc.getValue());
+        execEnvironment.pushExpr(nc.getValue());
     }
 
     @Override
     public void visit(NodeVariable nv) {
-        execEnv.pushExpr(ExecEnv.getVarValue(nv.getVarName()));
+        execEnvironment.pushExpr(ExecEnvironment.getVarValue(nv.getVarName()));
     }
 
     @Override
@@ -75,101 +75,101 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
     @Override
     public void visit(NodeFunction nf) {
-        ExecEnv.executeFunc(nf, programExecutorVisitor);
+        ExecEnvironment.executeFunc(nf, programStatementVisitor, this);
     }
 
     @Override
     public void visit(NodeExpressionAnd nea) {
         nea.getFirst().accept(this);
         nea.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.and(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.and(right));
     }
 
     @Override
     public void visit(NodeExpressionOr neo) {
         neo.getFirst().accept(this);
         neo.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.or(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.or(right));
     }
 
     @Override
     public void visit(NodeExpressionEquality nee) {
         nee.getFirst().accept(this);
         nee.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.equal(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.equal(right));
     }
 
     @Override
     public void visit(NodeExpressionNoEquality nen) {
         nen.getFirst().accept(this);
         nen.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.notEqual(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.notEqual(right));
     }
 
     @Override
     public void visit(NodeExpressionLTRelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.lowerThan(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.lowerThan(right));
     }
 
     @Override
     public void visit(NodeExpressionLERelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.lowerEqual(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.lowerEqual(right));
     }
 
     @Override
     public void visit(NodeExpressionGERelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.greaterEqual(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.greaterEqual(right));
     }
 
     @Override
     public void visit(NodeExpressionGTRelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = execEnv.popExpr();
-        RoboValue left = execEnv.popExpr();
-        execEnv.pushExpr(left.greaterThan(right));
+        RoboValue right = execEnvironment.popExpr();
+        RoboValue left = execEnvironment.popExpr();
+        execEnvironment.pushExpr(left.greaterThan(right));
     }
 
     @Override
     public void visit(NodeExpressionUnMinus neu) {
         neu.getFirst().accept(this);
-        RoboValue val = execEnv.popExpr();
-        execEnv.pushExpr(val.unMinus());
+        RoboValue val = execEnvironment.popExpr();
+        execEnvironment.pushExpr(val.unMinus());
     }
 
     @Override
     public void visit(NodeExpressionUnReference neu) {
         neu.getFirst().accept(this);
-        RoboValue val = execEnv.popExpr();
+        RoboValue val = execEnvironment.popExpr();
         RoboValue refer = new RoboReference(val, neu.getVarName());
-        execEnv.pushExpr(refer);
+        execEnvironment.pushExpr(refer);
     }
 
     public RoboValue getResult(){
-        if(execEnv.sizeExpr() != 1) {
+        if(execEnvironment.sizeExpr() != 1) {
             throw new ExecutionException(
                     "Evaluation of expression failed!");
         }
-        return execEnv.popExpr();
+        return execEnvironment.popExpr();
     }
 }

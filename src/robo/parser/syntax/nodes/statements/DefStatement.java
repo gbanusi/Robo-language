@@ -1,6 +1,6 @@
 package robo.parser.syntax.nodes.statements;
 
-import robo.parser.execution.visitor.node.NodeVisitor;
+import robo.parser.execution.visitor.statement.NodeVisitor;
 import robo.parser.lexical.Type;
 import robo.parser.syntax.nodes.Node;
 
@@ -14,11 +14,12 @@ public class DefStatement extends Node {
 
     private Type type;
 
+    private boolean isConst;
 
-
-    public DefStatement(List<String> nv, Type type) {
+    public DefStatement(List<String> nv, Type type, boolean isConst) {
         this.variables = new ArrayList<>(nv);
         this.type = type;
+        this.isConst = isConst;
     }
 
     public Type getType() {
@@ -27,6 +28,10 @@ public class DefStatement extends Node {
 
     public List<String> getVariables() {
         return new ArrayList<>(variables);
+    }
+
+    public boolean isConst() {
+        return isConst;
     }
 
     @Override

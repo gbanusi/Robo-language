@@ -87,24 +87,30 @@ public class ExecEnvironment {
 
     // VARIABLE AREA
 
-    public RoboValue getEnvVariableValue(String name) {
+    public RoboVariable getEnvVariableValue(String name) {
         return vars.get(name);
     }
 
 
     public static RoboValue getVarValue(String name) {
         if (currentEnv().getEnvVariableValue(name) != null) {
-            return currentEnv().getEnvVariableValue(name);
+            return currentEnv().getEnvVariableValue(name).getValue();
         }
         throw new ExecutionException("Variable, '" + name + "' not defined!");
     }
 
-    public static void asgnVarValue(String name, RoboVariable val) {
+    /**
+     * Method assigns given value val to variable which name is given.
+     * Method checks whether variable is reference or not and handles i that way.
+     * @param name
+     * @param val
+     */
+    public static void asgnVarValue(String name, RoboValue val) {
         if (currentEnv().getEnvVariableValue(name) != null) {
             if (getVarValue(name) instanceof RoboReference) {
                 ((RoboReference) getVarValue(name)).setValue(val);
             } else {
-                currentEnv().vars.put(name, val);
+                currentEnv().getEnvVariableValue(name).setValue(val);
             }
             return;
         }
@@ -120,30 +126,25 @@ public class ExecEnvironment {
 
     public static void executeFunc(NodeFunction nf, ProgramStatementVisitor funcExec, ExpressionEvalVisitor expEval) {
         createExecEnvInstance();
-
         DefFunctionStatement dfs = functions.get(nf.getfName());
+
         for (int i = 0; i < nf.getVars().size(); i++) {
-
             String varName = defineVariable(funcExec, dfs, i);
-
-            ExecEnvironment temp = getCalcExpressionFromLastEnvironment(nf, expEval, i);
-            envList.push(temp);
-
-            RoboValue rv = expEval.getResult();
-            RoboVariable var = (RoboVariable) getVarValue(varName);
-            var.setValue(rv);
-            asgnVarValue(varName, var);
+            calcExpressionFromLastEnvironment(nf, expEval, i);
+            asignValueToVar(expEval, varName);
         }
+
         for (Node n : dfs.getStatements()) {
             n.accept(funcExec);
         }
+
         // TODO smisliti bolji algoritam
-        Map<String, RoboValue> varMap = currentEnv().vars;
+        Map<String, RoboVariable> varMap = currentEnv().vars;
         RoboValue returnValue = currentEnv().popExpr();
         envList.pop();
         for (String key : varMap.keySet()) {
-            if (varMap.get(key) instanceof RoboReference) {
-                RoboReference rr = (RoboReference) varMap.get(key);
+            if (varMap.get(key).getValue() instanceof RoboReference) {
+                RoboReference rr = (RoboReference) varMap.get(key).getValue();
                 asgnVarValue(rr.getVarName(), rr.getValue());
             }
         }
@@ -151,11 +152,16 @@ public class ExecEnvironment {
         currentEnv().pushExpr(returnValue);
     }
 
-    private static ExecEnvironment getCalcExpressionFromLastEnvironment(NodeFunction nf, ExpressionEvalVisitor expEval, int i) {
+    private static void asignValueToVar(ExpressionEvalVisitor expEval, String varName) {
+        RoboValue rv = expEval.getResult();
+        asgnVarValue(varName, rv);
+    }
+
+    private static void calcExpressionFromLastEnvironment(NodeFunction nf, ExpressionEvalVisitor expEval, int i) {
         NodeExpression ne = nf.getVars().get(i);
         ExecEnvironment temp = envList.pop();
         ne.accept(expEval);
-        return temp;
+        envList.push(temp);
     }
 
     private static String defineVariable(ProgramStatementVisitor funcExec, DefFunctionStatement dfs, int i) {

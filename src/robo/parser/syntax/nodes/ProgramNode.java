@@ -1,6 +1,6 @@
 package robo.parser.syntax.nodes;
 
-import robo.parser.execution.visitor.node.NodeVisitor;
+import robo.parser.execution.visitor.statement.NodeVisitor;
 
 import java.util.ArrayList;
 import java.util.List;

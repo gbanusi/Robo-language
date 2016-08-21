@@ -1,6 +1,6 @@
 package robo.parser.execution;
 
-import robo.parser.execution.visitor.node.ProgramExecutorVisitor;
+import robo.parser.execution.visitor.statement.ProgramStatementVisitor;
 import robo.parser.syntax.nodes.ProgramNode;
 
 /**
@@ -15,7 +15,7 @@ public class RoboExec {
     }
 
     public void execute(){
-        ProgramExecutorVisitor exec = new ProgramExecutorVisitor();
+        ProgramStatementVisitor exec = new ProgramStatementVisitor();
         programNode.accept(exec);
     }
 }
