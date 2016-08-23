@@ -9,29 +9,29 @@ public abstract class RoboValue {
 
     public abstract Type getType();
 
-    public abstract RoboValue add(RoboValue add);
+    public abstract RoboValue add(RoboValue rv);
 
-    public abstract RoboValue sub(RoboValue sub);
+    public abstract RoboValue sub(RoboValue rv);
 
-    public abstract RoboValue div(RoboValue div);
+    public abstract RoboValue div(RoboValue rv);
 
-    public abstract RoboValue mult(RoboValue mult);
+    public abstract RoboValue mult(RoboValue rv);
 
-    public abstract RoboValue and(RoboValue and);
+    public abstract RoboValue and(RoboValue rv);
 
-    public abstract RoboValue or(RoboValue or);
+    public abstract RoboValue or(RoboValue rv);
 
-    public abstract RoboValue equal(RoboValue equal);
+    public abstract RoboValue equal(RoboValue rv);
 
-    public abstract RoboValue notEqual(RoboValue nequal);
+    public abstract RoboValue notEqual(RoboValue rv);
 
-    public abstract RoboValue lowerThan(RoboValue lowerThan);
+    public abstract RoboValue lowerThan(RoboValue rv);
 
-    public abstract RoboValue lowerEqual(RoboValue lowerEqual);
+    public abstract RoboValue lowerEqual(RoboValue rv);
 
-    public abstract RoboValue greaterThan(RoboValue greaterThan);
+    public abstract RoboValue greaterThan(RoboValue rv);
 
-    public abstract RoboValue greaterEqual(RoboValue greaterEqual);
+    public abstract RoboValue greaterEqual(RoboValue rv);
 
     public abstract RoboValue unMinus();
 

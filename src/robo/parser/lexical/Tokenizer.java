@@ -205,8 +205,8 @@ public class Tokenizer {
                 }
                 x = x + Character.digit(data[curPos], 10)/d; d *= 10;
             }
-            currentToken = new Token(TokenType.CONSTANT, Double.valueOf(v));
-
+            currentToken = new Token(TokenType.CONSTANT, Double.valueOf(x));
+            return;
         }
 
         // Ako pak imamo početak string konstante:

@@ -1,0 +1,8 @@
+ADDING KEYWORD:
+
+package lexical:
+    Add:
+        - the 'keyword' to the TokenType enums with konstructor parameter 'KEYWORD'
+        - the keyword in static part of class 'robo.parser.lexical.Word'
+        - the keyword to the keywords map in Tokenizer class
+        - testiraj!

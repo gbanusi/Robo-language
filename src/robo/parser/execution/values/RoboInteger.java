@@ -1,12 +1,11 @@
 package robo.parser.execution.values;
 
-import robo.parser.execution.ExecutionException;
 import robo.parser.lexical.Type;
 
 /**
  * Created by gregor on 15.08.16..
  */
-public class RoboInteger extends RoboValue {
+public class RoboInteger extends RoboNumeric {
 
     private Type type = Type.Int;
 
@@ -51,16 +50,6 @@ public class RoboInteger extends RoboValue {
             return new RoboInteger(value * (Integer)rv.getValue());
         }
         return rv.mult(this);
-    }
-
-    @Override
-    public RoboValue and(RoboValue and) {
-        throw new ExecutionException("'&&' operator not supported for integer!");
-    }
-
-    @Override
-    public RoboValue or(RoboValue or) {
-        throw new ExecutionException("'||' operator not supported for integer!");
     }
 
     @Override
@@ -124,4 +113,5 @@ public class RoboInteger extends RoboValue {
     public Integer getValue() {
         return value;
     }
+
 }
