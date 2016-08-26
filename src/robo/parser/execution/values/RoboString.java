@@ -3,6 +3,8 @@ package robo.parser.execution.values;
 import robo.parser.execution.ExecutionException;
 import robo.parser.lexical.Type;
 
+import java.util.List;
+
 /**
  * Created by gregor on 15.08.16..
  */
@@ -82,6 +84,27 @@ public class RoboString extends RoboValue {
     }
 
     @Override
+    public RoboValue index(List<RoboValue> indexes) {
+        if(indexes.size() == 1){
+            Integer i;
+            if(! (indexes.get(0).getValue() instanceof Integer)) {
+                throw new ExecutionException("Indexing for substring can only be done with integers!");
+            }
+            i = (Integer) indexes.get(0).getValue();
+            return new RoboString(value.substring(i));
+        } else if(indexes.size() == 2){
+            Integer i, j;
+            if(! (indexes.get(0).getValue() instanceof Integer) || ! (indexes.get(1).getValue() instanceof Integer)) {
+                throw new ExecutionException("Indexing for substring can only be done with integers!");
+            }
+            i = (Integer) indexes.get(0).getValue();
+            j = (Integer) indexes.get(1).getValue();
+            return new RoboString(value.substring(i, j));
+        }
+        throw new ExecutionException("Indexing for substrings can only be done with one or two integers!");
+    }
+
+    @Override
     public RoboValue unMinus() {
         throw new ExecutionException("Unary '-' operator not supported for string!");
     }
@@ -104,6 +127,11 @@ public class RoboString extends RoboValue {
 
         return !(getValue() != null ? !getValue().equals(that.getValue()) : that.getValue() != null);
 
+    }
+
+    @Override
+    protected void setValue(RoboValue rv) {
+        value = (String) rv.getValue();
     }
 
     @Override

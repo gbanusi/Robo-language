@@ -8,7 +8,7 @@ import robo.parser.syntax.nodes.statements.*;
  */
 public interface NodeVisitor {
 
-    void visit(AsgnValStatement node);
+    void visit(AssignVarStatement node);
 
     void visit(BreakStatement node);
 
@@ -31,4 +31,6 @@ public interface NodeVisitor {
     void visit(ProgramNode node);
 
     void visit(ContinueStatement continueStatement);
+
+    void visit(AssignArrayStatement assignArrayStatement);
 }

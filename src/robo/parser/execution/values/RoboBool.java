@@ -3,6 +3,8 @@ package robo.parser.execution.values;
 import robo.parser.execution.ExecutionException;
 import robo.parser.lexical.Type;
 
+import java.util.List;
+
 /**
  * Created by gregor on 15.08.16..
  */
@@ -83,8 +85,18 @@ public class RoboBool extends RoboValue {
     }
 
     @Override
+    public RoboValue index(List<RoboValue> indexes) {
+        throw new ExecutionException("'[]' operator not supported for boolean!");
+    }
+
+    @Override
     public RoboValue unMinus() {
         throw new ExecutionException("Unary '-' operator not supported for boolean!");
+    }
+
+    @Override
+    protected void setValue(RoboValue rv) {
+        value = (Boolean) rv.getValue();
     }
 
     @Override

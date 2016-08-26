@@ -3,6 +3,8 @@ package robo.parser.execution.values;
 import robo.parser.execution.ExecutionException;
 import robo.parser.lexical.Type;
 
+import java.util.List;
+
 /**
  * Created by gregor on 20.08.16..
  */
@@ -16,16 +18,16 @@ public class RoboVariable extends RoboValue {
 
     private boolean isConstant;
 
-    public RoboVariable(String varName, boolean isConstant) {
+    public RoboVariable(String varName, boolean isConstant, Type type) {
         this.varName = varName;
         this.isConstant = isConstant;
         this.value = RoboNull.roboNull;
-        this.type = value.getType();
+        this.type = type;
     }
 
     @Override
     public Type getType() {
-        return value.getType();
+        return type;
     }
 
     @Override
@@ -89,13 +91,18 @@ public class RoboVariable extends RoboValue {
     }
 
     @Override
+    public RoboValue index(List<RoboValue> indexes) {
+        return value.index(indexes);
+    }
+
+    @Override
     public RoboValue unMinus() {
         return value.unMinus();
     }
 
     @Override
     public String toString() {
-        return value.toString();
+        return varName + " -> " + value.toString();
     }
 
     public String getVarName() {

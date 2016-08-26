@@ -1,9 +1,16 @@
 package robo.parser.execution.values;
 
+import robo.parser.execution.ExecutionException;
 import robo.parser.lexical.Type;
 
+import java.util.List;
+
 /**
- * Created by gregor on 15.08.16..
+ * Created by gregor on 14.08.16..
+ *
+ * WARNING: everything is implemented so that it returns new value so no
+ * object reference can get between.
+ * TODO solve above warning.
  */
 public abstract class RoboValue {
 
@@ -33,7 +40,18 @@ public abstract class RoboValue {
 
     public abstract RoboValue greaterEqual(RoboValue rv);
 
+    public abstract RoboValue index(List<RoboValue> indexes);
+
     public abstract RoboValue unMinus();
+
+    public void setRoboValue(RoboValue rv){
+        if(getType() != rv.getType()){
+            throw new ExecutionException("Cannot assign '"+ getType() +"' to '" + rv.getType() + "'");
+        }
+        setValue(rv);
+    }
+
+    protected abstract void setValue(RoboValue rv);
 
     public abstract Object getValue();
 

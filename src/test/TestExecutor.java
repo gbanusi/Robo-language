@@ -9,13 +9,13 @@ import robo.parser.syntax.nodes.ProgramNode;
 public class TestExecutor {
 
 	public static void main(String[] args) {
-		String program = "int a, b;" +
-				"double const c;" +
+		String program = "int a = 3, b;" +
+				"double const c = 0.2;" +
+				"double[2; 2] d = [[1+2, 5], [1-0.5, 1/10]]" +
 				"string rijec;" +
 				"rijec = \"Ovo radi ko satic mali!\";" +
 				"a = 9;" +
                 "b = 2.8;" +
-				"c = a + 6.5;" +
 				"if ( a <= 10 ) {" +
 				" b = -1;" +
 				"} else if (false) {" +
@@ -38,7 +38,7 @@ public class TestExecutor {
 				"  return x*x;" +
 				"}" +
 				"print kvadriraj(1, c);" +
-				"print b-10, c, rijec;";
+				"print d[1, 1];";
 
 		String program2 = "double c;" +
 				"c = 0.5;" +
@@ -47,7 +47,13 @@ public class TestExecutor {
 				"c = c + a;" +
 				"print a;";
 
-		Tokenizer tokenizer = new Tokenizer(program2);
+		String program3 =
+				"double[2; 2] d = [[1+2, 5], [1-0.5, 1/10]];" +
+						"d[1; 0] = -1;" +
+						"print d[0, 0], \" \", d[0, 1];" +
+						"print d[1, 0], \" \", d[1, 1];";
+
+		Tokenizer tokenizer = new Tokenizer(program3);
 		Parser parser = new Parser(tokenizer);
 
 		ProgramNode pn = parser.getProgramNode();

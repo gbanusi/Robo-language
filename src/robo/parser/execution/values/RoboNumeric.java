@@ -3,6 +3,8 @@ package robo.parser.execution.values;
 import robo.parser.execution.ExecutionException;
 import robo.parser.lexical.Type;
 
+import java.util.List;
+
 /**
  * Created by gregor on 23.08.16..
  */
@@ -31,6 +33,11 @@ public abstract class RoboNumeric extends RoboValue{
     @Override
     public RoboValue or(RoboValue rv) {
         throw new ExecutionException("'||' operator not supported for numeric " + getType() + "!");
+    }
+
+    @Override
+    public RoboValue index(List<RoboValue> indexes) {
+        throw new ExecutionException("'[]' operator not supported for numeric " + getType() + "!");
     }
 
     @Override
@@ -76,6 +83,14 @@ public abstract class RoboNumeric extends RoboValue{
     @Override
     public String toString() {
         return null;
+    }
+
+    @Override
+    public void setRoboValue(RoboValue rv){
+        if(! (rv instanceof RoboNumeric)){
+            throw new ExecutionException("Cannot assign '"+ getType() +"' to '" + rv.getType() + "'");
+        }
+        setValue(rv);
     }
 
 }

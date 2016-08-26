@@ -17,7 +17,8 @@ public class Type extends Word {
             Double = new Type("double", TokenType.BASIC, null, 8),
             Reference = new Type("&", TokenType.BASIC, null, 1),
             Bool = new Type("bool", TokenType.BASIC, null, 1),
-            String = new Type("string", TokenType.BASIC, null, 1);
+            String = new Type("string", TokenType.BASIC, null, 1),
+            Array = new Type("array", TokenType.BASIC, null, -1);
 
     public static boolean numeric(Type p) {
         if (p == Type.Int || p == Type.Double) {

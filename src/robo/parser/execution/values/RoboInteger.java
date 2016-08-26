@@ -22,39 +22,39 @@ public class RoboInteger extends RoboNumeric {
 
     @Override
     public RoboValue add(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboInteger(value + (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboInteger(value + (Integer) rv.getValue());
         }
         return rv.add(this);
     }
 
     @Override
     public RoboValue sub(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboInteger(value - (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboInteger(value - (Integer) rv.getValue());
         }
         return rv.sub(this);
     }
 
     @Override
     public RoboValue div(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboInteger(value / (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboInteger(value / (Integer) rv.getValue());
         }
         return rv.div(rv);
     }
 
     @Override
     public RoboValue mult(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboInteger(value * (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboInteger(value * (Integer) rv.getValue());
         }
         return rv.mult(this);
     }
 
     @Override
     public RoboValue equal(RoboValue rv) {
-        if(rv instanceof RoboInteger){
+        if (rv instanceof RoboInteger) {
             return new RoboBool(value == rv.getValue());
         }
         return rv.equal(this);
@@ -62,7 +62,7 @@ public class RoboInteger extends RoboNumeric {
 
     @Override
     public RoboValue notEqual(RoboValue rv) {
-        if(rv instanceof RoboInteger){
+        if (rv instanceof RoboInteger) {
             return new RoboBool(value != rv.getValue());
         }
         return rv.notEqual(this);
@@ -70,32 +70,32 @@ public class RoboInteger extends RoboNumeric {
 
     @Override
     public RoboValue lowerThan(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboBool(value < (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboBool(value < (Integer) rv.getValue());
         }
         return rv.greaterThan(this);
     }
 
     @Override
     public RoboValue lowerEqual(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboBool(value <= (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboBool(value <= (Integer) rv.getValue());
         }
         return rv.greaterEqual(this);
     }
 
     @Override
     public RoboValue greaterThan(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboBool(value > (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboBool(value > (Integer) rv.getValue());
         }
         return rv.lowerThan(this);
     }
 
     @Override
     public RoboValue greaterEqual(RoboValue rv) {
-        if(rv instanceof RoboInteger){
-            return new RoboBool(value >= (Integer)rv.getValue());
+        if (rv instanceof RoboInteger) {
+            return new RoboBool(value >= (Integer) rv.getValue());
         }
         return rv.lowerEqual(this);
     }
@@ -103,6 +103,11 @@ public class RoboInteger extends RoboNumeric {
     @Override
     public RoboValue unMinus() {
         return new RoboInteger(-getValue());
+    }
+
+    @Override
+    protected void setValue(RoboValue rv) {
+        value = ((Number) rv.getValue()).intValue();
     }
 
     @Override

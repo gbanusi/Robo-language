@@ -2,14 +2,22 @@ package robo.parser.execution.visitor.expression;
 
 import robo.parser.execution.ExecEnvironment;
 import robo.parser.execution.ExecutionException;
+import robo.parser.execution.values.RoboArray;
+import robo.parser.execution.values.RoboInteger;
 import robo.parser.execution.values.RoboReference;
 import robo.parser.execution.values.RoboValue;
 import robo.parser.execution.visitor.statement.ProgramStatementVisitor;
-import robo.parser.syntax.SyntaxException;
 import robo.parser.syntax.nodes.expression.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by gregor on 14.08.16..
+ *
+ * WARNING: everything is implemented so that it push new value on stack so no
+ * object reference can get between.
+ * TODO solve above warning.
  */
 public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
@@ -63,15 +71,13 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         execEnvironment.pushExpr(nc.getValue());
     }
 
+    // TODO returning reference, have to implement factory or sth...
     @Override
     public void visit(NodeVariable nv) {
         execEnvironment.pushExpr(ExecEnvironment.getVarValue(nv.getVarName()));
     }
 
-    @Override
-    public void visit(NodeVector nv) {
-        throw new SyntaxException("Vector type not supported currently..");
-    }
+
 
     @Override
     public void visit(NodeFunction nf) {
@@ -163,6 +169,34 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         RoboValue val = execEnvironment.popExpr();
         RoboValue refer = new RoboReference(val, neu.getVarName());
         execEnvironment.pushExpr(refer);
+    }
+
+    @Override
+    public void visit(NodeArrayIndexing nodeArrayIndexing) {
+        List<RoboValue> rvList = new LinkedList<>();
+        for(NodeExpression ne : nodeArrayIndexing.getIndex()){
+            ne.accept(this);
+            RoboValue val = execEnvironment.popExpr();
+            if(! (val instanceof RoboInteger)){
+                // TODO maknuti exception odavdje...
+                throw new ExecutionException("Indexes can only be integers...");
+            }
+            rvList.add(val);
+        }
+        RoboArray rv = (RoboArray) ExecEnvironment.getVarValue(nodeArrayIndexing.getVarName());
+        execEnvironment.pushExpr(rv.index(rvList));
+    }
+
+    @Override
+    public void visit(NodeArray nodeArray) {
+        List<RoboValue> rvList = new LinkedList<>();
+        for(NodeExpression ne : nodeArray.getValue()){
+            ne.accept(this);
+            RoboValue val = execEnvironment.popExpr();
+            rvList.add(val);
+        }
+        RoboValue array = new RoboArray(rvList);
+        execEnvironment.pushExpr(array);
     }
 
     public RoboValue getResult(){

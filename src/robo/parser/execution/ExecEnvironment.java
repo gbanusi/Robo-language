@@ -5,6 +5,7 @@ import robo.parser.execution.values.RoboValue;
 import robo.parser.execution.values.RoboVariable;
 import robo.parser.execution.visitor.expression.ExpressionEvalVisitor;
 import robo.parser.execution.visitor.statement.ProgramStatementVisitor;
+import robo.parser.lexical.Type;
 import robo.parser.syntax.nodes.Node;
 import robo.parser.syntax.nodes.expression.NodeExpression;
 import robo.parser.syntax.nodes.expression.NodeFunction;
@@ -77,12 +78,12 @@ public class ExecEnvironment {
         return exprsCalculated.size();
     }
 
-
-    public static void declareVar(String name, boolean isConstant) {
+    // TODO add type to every variable and type checking!
+    public static void declareVar(String name, boolean isConstant, Type type) {
         if (currentEnv().vars.get(name) != null) {
             throw new ExecutionException("Variable '" + name + "' already defined!");
         }
-        currentEnv().vars.put(name, new RoboVariable(name, isConstant));
+        currentEnv().vars.put(name, new RoboVariable(name, isConstant, type));
     }
 
     // VARIABLE AREA
@@ -99,15 +100,29 @@ public class ExecEnvironment {
         throw new ExecutionException("Variable, '" + name + "' not defined!");
     }
 
+    public static RoboValue getVar(String name) {
+        if (currentEnv().getEnvVariableValue(name) != null) {
+            return currentEnv().getEnvVariableValue(name);
+        }
+        throw new ExecutionException("Variable, '" + name + "' not defined!");
+    }
+
     /**
      * Method assigns given value val to variable which name is given.
      * Method checks whether variable is reference or not and handles i that way.
+     *
      * @param name
      * @param val
      */
     public static void asgnVarValue(String name, RoboValue val) {
+        // every declared robo variable is a  RoboVariable
         if (currentEnv().getEnvVariableValue(name) != null) {
-            if (getVarValue(name) instanceof RoboReference) {
+
+            if (! getVar(name).getType().equals(val.getType())) {
+                throw new ExecutionException("Cannot assign variable type: '"
+                        + currentEnv().getEnvVariableValue(name).getType()
+                        + "', with variable type: '" + val.getType() + "'.");
+            } else if (getVarValue(name) instanceof RoboReference) {
                 ((RoboReference) getVarValue(name)).setValue(val);
             } else {
                 currentEnv().getEnvVariableValue(name).setValue(val);

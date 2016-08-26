@@ -1,7 +1,5 @@
 package robo.parser.lexical;
 
-import robo.parser.Vector;
-
 import java.util.*;
 
 
@@ -32,6 +30,8 @@ public class Tokenizer {
         charMapper.put(Character.valueOf('}'), TokenType.CLOSED_CURLY);
         charMapper.put(Character.valueOf('<'), TokenType.LT);
         charMapper.put(Character.valueOf('>'), TokenType.GT);
+        charMapper.put(Character.valueOf('['), TokenType.OPEN_SQUARE);
+        charMapper.put(Character.valueOf(']'), TokenType.CLOSED_SQUARE);
     }
 
     private static final Map<String, Word> keywords;
@@ -219,32 +219,6 @@ public class Tokenizer {
             curPos++;
             String s = b.toString();
             currentToken = new Token(TokenType.CONSTANT, s);
-            return;
-        }
-
-        // Ako pak imamo početak vektorske konstante:
-        if (data[curPos] == '[') {
-            curPos++;
-            skipBlanks();
-            List<Double> components = new ArrayList<>();
-            components.add(extractNumber());
-            while (true) {
-                skipBlanks();
-                if (curPos >= data.length) throw new TokenizerException("Invalid vector constant.");
-                if (data[curPos] == ']') {
-                    curPos++;
-                    break;
-                }
-                if (data[curPos] != ',') throw new TokenizerException("Invalid vector constant.");
-                curPos++;
-                skipBlanks();
-                components.add(extractNumber());
-            }
-            double[] values = new double[components.size()];
-            for (int i = 0, n = components.size(); i < n; i++) {
-                values[i] = components.get(i).doubleValue();
-            }
-            currentToken = new Token(TokenType.VECTOR_CONSTANT, new Vector(values));
             return;
         }
 

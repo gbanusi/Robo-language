@@ -1,9 +1,5 @@
 package robo.parser.execution.visitor.expression;
 
-import robo.parser.syntax.nodes.expression.NodeConstant;
-import robo.parser.syntax.nodes.expression.NodeFunction;
-import robo.parser.syntax.nodes.expression.NodeVariable;
-import robo.parser.syntax.nodes.expression.NodeVector;
 import robo.parser.syntax.nodes.expression.*;
 
 /**
@@ -24,8 +20,6 @@ public interface ExpressionNodeVisitor {
     void visit(NodeConstant nc);
 
     void visit(NodeVariable nv);
-
-    void visit(NodeVector nv);
 
     void visit(NodeFunction nf);
 
@@ -50,4 +44,8 @@ public interface ExpressionNodeVisitor {
     void visit(NodeExpressionUnMinus neu);
 
     void visit(NodeExpressionUnReference neu);
+
+    void visit(NodeArrayIndexing nodeArrayIndexing);
+
+    void visit(NodeArray nodeArray);
 }

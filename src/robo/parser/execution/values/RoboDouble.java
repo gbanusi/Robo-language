@@ -81,6 +81,11 @@ public class RoboDouble extends RoboNumeric {
     }
 
     @Override
+    protected void setValue(RoboValue rv) {
+        value = ((Number) rv.getValue()).doubleValue();
+    }
+
+    @Override
     public String toString() {
         return value.toString();
     }

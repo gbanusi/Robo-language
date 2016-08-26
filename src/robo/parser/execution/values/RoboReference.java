@@ -2,6 +2,8 @@ package robo.parser.execution.values;
 
 import robo.parser.lexical.Type;
 
+import java.util.List;
+
 /**
  * Created by gregor on 20.08.16..
  */
@@ -81,6 +83,11 @@ public class RoboReference extends RoboValue {
     @Override
     public RoboValue greaterEqual(RoboValue greaterEqual) {
         return value.greaterEqual(greaterEqual);
+    }
+
+    @Override
+    public RoboValue index(List<RoboValue> indexes) {
+        return value.index(indexes);
     }
 
     @Override

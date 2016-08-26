@@ -16,10 +16,13 @@ public class DefStatement extends Node {
 
     private boolean isConst;
 
-    public DefStatement(List<String> nv, Type type, boolean isConst) {
+    private List<Node> assigns;
+
+    public DefStatement(List<String> nv, Type type, boolean isConst, List<Node> assigns) {
         this.variables = new ArrayList<>(nv);
         this.type = type;
         this.isConst = isConst;
+        this.assigns = assigns;
     }
 
     public Type getType() {
@@ -32,6 +35,10 @@ public class DefStatement extends Node {
 
     public boolean isConst() {
         return isConst;
+    }
+
+    public List<Node> getAssigns() {
+        return assigns;
     }
 
     @Override

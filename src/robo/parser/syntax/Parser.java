@@ -1,9 +1,6 @@
 package robo.parser.syntax;
 
-import robo.parser.execution.values.RoboBool;
-import robo.parser.execution.values.RoboDouble;
-import robo.parser.execution.values.RoboInteger;
-import robo.parser.execution.values.RoboString;
+import robo.parser.execution.values.*;
 import robo.parser.lexical.Token;
 import robo.parser.lexical.TokenType;
 import robo.parser.lexical.Tokenizer;
@@ -64,7 +61,7 @@ public class Parser {
 
             // Prema sintaksi može ići varijabla
             if (peek().getTokenType() == TokenType.IDENT) {
-                statements.add(parseAsgnVal());
+                statements.add(parseAssignValue());
                 continue;
             }
 
@@ -119,7 +116,7 @@ public class Parser {
     }
 
     private Node parseContinue() {
-        if (! match(TokenType.SEMICOLON)) {
+        if (!match(TokenType.SEMICOLON)) {
             throw new SyntaxException("Declaration type missing...");
         }
         return new ContinueStatement();
@@ -144,6 +141,7 @@ public class Parser {
         match(TokenType.OPEN_PARENTHESES);
 
         if (peek().getTokenType() != TokenType.CLOSED_PARENTHESES) {
+            // TODO refaktorirati metodu na tri mjesta se pojavljuje
             while (peek().getTokenType() == TokenType.BASIC) {
 
                 List<String> stmts = new ArrayList<>();
@@ -159,7 +157,8 @@ public class Parser {
                 }
                 stmts.add((String) pop().getValue());
 
-                parameters.add(new DefStatement(stmts, varType, isConst));
+                //TODO UBACITI DEFAULTNE VRIJEDNOSTI?
+                parameters.add(new DefStatement(stmts, varType, isConst, new ArrayList<Node>()));
                 if (match(TokenType.COMMA)) {
                     continue;
                 }
@@ -176,7 +175,7 @@ public class Parser {
 
 
     private Node parseBreak() {
-        if (! match(TokenType.SEMICOLON)) {
+        if (!match(TokenType.SEMICOLON)) {
             throw new SyntaxException("Declaration type missing...");
         }
         return new BreakStatement();
@@ -239,45 +238,70 @@ public class Parser {
         }
         Type type = (Type) pop().getValue();
 
+        if (match(TokenType.OPEN_SQUARE)) {
+            type = Type.Array;
+            if (peek().getTokenType() != TokenType.CONSTANT) {
+                throw new SyntaxException("Array definition must contain integer dimensions.");
+            }
+            List<NodeExpression> matrixDim = new ArrayList<>();
+            while (true) {
+                matrixDim.add(parseValue());
+                if (!match(TokenType.SEMICOLON)) {
+                    break;
+                }
+            }
+            if(! match(TokenType.CLOSED_SQUARE)){
+                throw new SyntaxException("Expected ']', got: '" + peek().getValue() + "', type: '" + peek().getTokenType() + "'.");
+            }
+        }
+
         boolean isConst = false;
         if (match(TokenType.CONST)) {
             isConst = true;
         }
         List<String> variables = new ArrayList<>();
+        List<Node> assigns = new ArrayList<>();
         while (true) {
             if (peek().getTokenType() != TokenType.IDENT) {
-                throw new SyntaxException("Identifier was expected.");
+                throw new SyntaxException("Identifier was expected, got: '" + peek().getValue() + "', type of: '" + peek().getTokenType() + ".");
             }
             variables.add((String) pop().getValue());
+            if (match(TokenType.ASSIGN)) {
+                assigns.add(new AssignVarStatement(variables.get(variables.size() - 1), parseValue()));
+            }
             if (match(TokenType.COMMA)) {
                 continue;
             }
             break;
         }
-        if (! match(TokenType.SEMICOLON)) {
-            throw new SyntaxException("Semicolon was expected.");
+        if (!match(TokenType.SEMICOLON)) {
+            throw new SyntaxException("Semicolon was expected instead of: '" + peek().getTokenType() + "'.");
         }
-        return new DefStatement(variables, type, isConst);
+        return new DefStatement(variables, type, isConst, assigns);
     }
 
     private Node parsePrint() {
-        List<NodeExpression> list = new ArrayList<>();
-        list.add(parseValue());
-        while (true) {
-            if (! match(TokenType.COMMA)) {
-                break;
-            }
-            list.add(parseValue());
-        }
-        if (! match(TokenType.SEMICOLON)) {
+        List<NodeExpression> list = parseSeparateExpressions(TokenType.COMMA);
+        if (!match(TokenType.SEMICOLON)) {
             throw new SyntaxException("Semicolon was expected.");
         }
         return new PrintStatement(list);
     }
 
-
-    private Node parseAsgnVal() {
+    private Node parseAssignValue() {
         String name = (String) pop().getValue();
+        if(match(TokenType.OPEN_SQUARE)){
+            return parseAssignArrayIndex(name);
+        } else {
+            return parseAssignVariable(name);
+        }
+    }
+
+    private Node parseAssignArrayIndex(String name) {
+        List<NodeExpression> values = parseSeparateExpressions(TokenType.SEMICOLON);
+        if (! match(TokenType.CLOSED_SQUARE)) {
+            throw new SyntaxException("Closed square brackets expected, instead of: '" + peek().getTokenType() + "'!");
+        }
         if (! match(TokenType.ASSIGN)) {
             throw new SyntaxException("Assign was expected.");
         }
@@ -285,8 +309,20 @@ public class Parser {
         if (! match(TokenType.SEMICOLON)) {
             throw new SyntaxException("Semicolon was expected.");
         }
-        return new AsgnValStatement(name, exp);
+        return new AssignArrayStatement(name, values, exp);
     }
+
+    private Node parseAssignVariable(String name) {
+        if (!match(TokenType.ASSIGN)) {
+            throw new SyntaxException("Assign was expected.");
+        }
+        NodeExpression exp = parseValue();
+        if (!match(TokenType.SEMICOLON)) {
+            throw new SyntaxException("Semicolon was expected.");
+        }
+        return new AssignVarStatement(name, exp);
+    }
+
 
     private NodeExpression parseValue() {
         NodeExpression x = parseJoin();
@@ -374,7 +410,7 @@ public class Parser {
         if (match(TokenType.UN_MINUS)) {
             return new NodeExpressionUnMinus(factor());
         } else if (match(TokenType.UN_REFERENCE)) {
-            return new NodeExpressionUnReference(parseIdent(true));
+            return new NodeExpressionUnReference(parseIdentFuncArray(true));
         } else {
             return factor();
         }
@@ -386,10 +422,19 @@ public class Parser {
             case OPEN_PARENTHESES:
                 pop();
                 x = parseValue();
-                match(TokenType.CLOSED_PARENTHESES);
+                if (!match(TokenType.CLOSED_PARENTHESES)) {
+                    throw new SyntaxException("Closed parentheses expected!");
+                }
                 return x;
+            case OPEN_SQUARE:
+                pop();
+                List<NodeExpression> values = parseSeparateExpressions(TokenType.COMMA);
+                if (!match(TokenType.CLOSED_SQUARE)) {
+                    throw new SyntaxException("Closed square brackets expected!");
+                }
+                return new NodeArray(Type.Array, values);
             case CONSTANT:
-                x = createConstant();
+                x = parseConstant();
                 return x;
             case TRUE:
                 pop();
@@ -400,48 +445,61 @@ public class Parser {
                 x = new NodeConstant(Type.Bool, new RoboBool(false));
                 return x;
             case IDENT:
-                return parseIdent(false);
+                return parseIdentFuncArray(false);
             default:
                 throw new SyntaxException("Expression not recognized '" + peek().getTokenType() + "' ...");
         }
     }
 
-    private NodeExpression parseIdent(boolean isVariable) {
+    private NodeExpression parseIdentFuncArray(boolean isVariable) {
         String name = (String) pop().getValue();
         if (match(TokenType.OPEN_PARENTHESES)) {
-            if(isVariable){
+            if (isVariable) {
                 throw new SyntaxException("Functions cannot have reference operator!");
             }
             return parseFuncCall(name);
+        } else if (match(TokenType.OPEN_SQUARE)) {
+            List<NodeExpression> vars;
+            vars = parseSeparateExpressions(TokenType.COMMA);
+            if (!match(TokenType.CLOSED_SQUARE)) {
+                throw new SyntaxException("Closed square bracket expected!");
+            }
+            return new NodeArrayIndexing(name, vars);
         }
         return new NodeVariable(name);
     }
 
+
     private NodeExpression parseFuncCall(String name) {
         List<NodeExpression> vars = new ArrayList<>();
-        if (! match(TokenType.CLOSED_PARENTHESES)) {
-            while (true) {
-                vars.add(parseValue());
-                if (match(TokenType.COMMA)) {
-                    continue;
-                }
-                break;
-            }
+        if (!match(TokenType.CLOSED_PARENTHESES)) {
+             vars = parseSeparateExpressions(TokenType.COMMA);
         }
         match(TokenType.CLOSED_PARENTHESES);
         return new NodeFunction(vars, name);
     }
 
-    private NodeExpression createConstant() {
+    private List<NodeExpression> parseSeparateExpressions(TokenType sep) {
+        List<NodeExpression> list = new ArrayList<>();
+        while (true) {
+            list.add(parseValue());
+            if (!match(sep)) {
+                break;
+            }
+        }
+        return list;
+    }
+
+
+    private NodeExpression parseConstant() {
         if (peek().getValue() instanceof Integer) {
             return new NodeConstant(Type.Int, new RoboInteger((Integer) pop().getValue()));
         } else if (peek().getValue() instanceof Double) {
             return new NodeConstant(Type.Double, new RoboDouble((Double) pop().getValue()));
-        }
-        else if(peek().getValue() instanceof String) {
+        } else if (peek().getValue() instanceof String) {
             return new NodeConstant(Type.String, new RoboString((String) pop().getValue()));
         } else {
-            throw new SyntaxException("syntax error");
+            throw new SyntaxException("Syntax error, cannot get type of: '" + peek().getValue() + "', type of: " + peek().getTokenType());
         }
     }
 }

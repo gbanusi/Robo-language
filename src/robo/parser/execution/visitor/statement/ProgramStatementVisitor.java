@@ -3,12 +3,16 @@ package robo.parser.execution.visitor.statement;
 import robo.parser.execution.ExecEnvironment;
 import robo.parser.execution.ExecutionException;
 import robo.parser.execution.values.RoboBool;
+import robo.parser.execution.values.RoboNumeric;
 import robo.parser.execution.values.RoboValue;
 import robo.parser.execution.visitor.expression.ExpressionEvalVisitor;
 import robo.parser.syntax.nodes.Node;
 import robo.parser.syntax.nodes.ProgramNode;
 import robo.parser.syntax.nodes.expression.NodeExpression;
 import robo.parser.syntax.nodes.statements.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by gregor on 15.08.16..
@@ -19,7 +23,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
     }
 
     @Override
-    public void visit(AsgnValStatement node) {
+    public void visit(AssignVarStatement node) {
         RoboValue val = calculateExpression(node.getExpression());
         ExecEnvironment.asgnVarValue(node.getVar(), val);
     }
@@ -34,6 +38,22 @@ public class ProgramStatementVisitor implements NodeVisitor {
         // TODO refactor?
     }
 
+    // TODO directly getting Array element by reference and changing the value, maybe sth better through ExecEnv?
+    @Override
+    public void visit(AssignArrayStatement assignArrayStatement) {
+        List<RoboValue> rvList = new LinkedList<>();
+        for(NodeExpression ne : assignArrayStatement.getIndexes()){
+            RoboValue val = calculateExpression(ne);
+            rvList.add(val);
+        }
+        RoboValue var = ExecEnvironment.getVarValue(assignArrayStatement.getVar()).index(rvList);
+        RoboValue expression = calculateExpression(assignArrayStatement.getExpression());
+        if(var.getType() == expression.getType() ||
+                (var instanceof RoboNumeric && expression instanceof RoboNumeric)){
+            var.setRoboValue(expression);
+        }
+    }
+
     @Override
     public void visit(DefFunctionStatement node) {
         ExecEnvironment.declareFunc(node.getfName(), node);
@@ -46,10 +66,11 @@ public class ProgramStatementVisitor implements NodeVisitor {
         } else {
             declareVar(node, true);
         }
+        node.getAssigns().stream().forEach(asgn -> asgn.accept(this));
     }
 
     private void declareVar(DefStatement node, boolean isConst) {
-        node.getVariables().stream().forEach(var -> ExecEnvironment.declareVar(var, isConst));
+        node.getVariables().stream().forEach(var -> ExecEnvironment.declareVar(var, isConst, node.getType()));
     }
 
     @Override
