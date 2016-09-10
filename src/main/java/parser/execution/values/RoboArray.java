@@ -2,22 +2,38 @@ package parser.execution.values;
 
 import parser.execution.ExecutionException;
 import parser.lexical.Type;
+import parser.lexical.TypeArray;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by gregor on 20.08.16..
+ * TODO-0 reorganize with arrays everything
  */
-public class RoboArray extends RoboValue {
+public class RoboArray extends RoboArrays {
 
-    private List<RoboValue> value;
+    private RoboValue[] value;
 
-    private Type type;
+    private TypeArray type;
 
+    private Integer length;
+
+
+    // TODO-2 implement withput list?
     public RoboArray(List<RoboValue> value, Type type) {
-        this.value = value;
-        this.type = type;
+        this.type = (TypeArray) type;
+        length = this.type.getLength();
+        this.value = new RoboValue[length];
+        for(int i = 0; i < length; i++){
+            this.value[i] = value.get(i);
+        }
+    }
+
+    @Override
+    public Object getValue(){
+        return value;
     }
 
     @Override
@@ -26,90 +42,18 @@ public class RoboArray extends RoboValue {
     }
 
     @Override
-    public RoboValue add(RoboValue rv) {
-        throw new ExecutionException("'+' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue sub(RoboValue rv) {
-        throw new ExecutionException("'-' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue div(RoboValue rv) {
-        throw new ExecutionException("'/' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue mult(RoboValue rv) {
-        throw new ExecutionException("'*' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue and(RoboValue rv) {
-        throw new ExecutionException("'&&' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue or(RoboValue rv) {
-        throw new ExecutionException("'||' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue equal(RoboValue rv) {
-        throw new ExecutionException("'==' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue notEqual(RoboValue rv) {
-        throw new ExecutionException("'!=' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue lowerThan(RoboValue rv) {
-        throw new ExecutionException("'<' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue lowerEqual(RoboValue rv) {
-        throw new ExecutionException("'<=' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue greaterThan(RoboValue rv) {
-        throw new ExecutionException("'>' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue greaterEqual(RoboValue rv) {
-        throw new ExecutionException("'>=' operator not supported for array!");
-    }
-
-    @Override
     public RoboValue index(List<RoboValue> indexes) {
-        Integer i;
-        if(indexes.size() == 0){
-            throw new ExecutionException("Multidimensional (n > 2) arrays not supported and index must be provided!");
-        } else if(indexes.size() == 1){
-            i = (Integer) indexes.get(0).getValue();
-            return value.get(i);
+        if(indexes.size() > 2){
+            throw new ExecutionException("Indexes can have 2 elements maximum!");
+        } else if (indexes.size() > 1 && (int)indexes.get(0).getValue() != 1){
+            throw new ExecutionException("Arrays have only one row, remember indexes are ordered in RS format (RS -> row, column)!");
+        } else if(indexes.size() > 1){
+            int cols = (int) indexes.get(1).getValue();
+            return value[cols];
         } else {
-            i = (Integer) indexes.get(0).getValue();
-            if(! (value.get(i) instanceof RoboArray)){
-                throw new ExecutionException("Cannot index non array type!");
-            }
-            return value.get(i).index(indexes.subList(1, indexes.size()));
+            int cols = (int) indexes.get(0).getValue();
+            return value[cols];
         }
-    }
-
-    @Override
-    public RoboValue unMinus() {
-        throw new ExecutionException("'-' operator not supported for array!");
-    }
-
-    @Override
-    public RoboValue not() {
-        throw new ExecutionException("'!' operator not supported for array!");
     }
 
     @Override
@@ -120,7 +64,7 @@ public class RoboArray extends RoboValue {
         if(rv.getType() != type){
             throw new ExecutionException("Array are not the same dimension or type");
         }
-        value = (List<RoboValue>) ((RoboArray) rv).getValue();
+        this.value = ((RoboArray) rv).value;
     }
 
     @Override
@@ -133,12 +77,8 @@ public class RoboArray extends RoboValue {
     }
 
     @Override
-    public Object getValue() {
-        return this.duplicate();
+    public String toString() {
+        return Arrays.toString(value);
     }
 
-    @Override
-    public String toString() {
-        return value.toString();
-    }
 }

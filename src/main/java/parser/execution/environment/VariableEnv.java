@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * Created by gregor on 28.08.16..
- *
+ * Regulating if the variable is passed by reference or by value.
  */
 public class VariableEnv {
 
@@ -67,8 +67,10 @@ public class VariableEnv {
      * @param type
      */
     public void defineVariable(String name, RoboValue val, Type type) {
-        if (! vars.get(name).getType().equals(type)){
-            throw new ExecutionException("Assigning '" + type + "' to variable '" + name + "' with type '" + vars.get(name).getType() + "'.");
+        if (! vars.get(name).getType().equals(type) ){
+            if( Type.max( vars.get(name).getType(), type) == null ) {
+                throw new ExecutionException("Assigning '" + type + "' to variable '" + name + "' with type '" + vars.get(name).getType() + "'.");
+            }
         }
         vars.get(name).setValue(val);
     }

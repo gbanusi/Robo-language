@@ -18,11 +18,14 @@ public class RoboVariable extends RoboValue {
 
     private boolean isConstant;
 
+    private boolean defaultInit;
+
     public RoboVariable(String varName, boolean isConstant, Type type) {
         this.varName = varName;
         this.isConstant = isConstant;
-        this.value = RoboNull.roboNull;
+        this.value = Type.getDefaultValue(type);
         this.type = type;
+        this.defaultInit = true;
     }
 
     @Override
@@ -119,14 +122,17 @@ public class RoboVariable extends RoboValue {
     }
 
     public void setValue(RoboValue rv) {
+
         if(this.value == RoboNull.roboNull) {
             this.value = rv;
-            return;
+        } else if (defaultInit){
+            defaultInit = false;
+            this.value = rv;
         } else if (!isConstant){
             this.value.setValue(rv);
-            return;
+        } else {
+            throw new ExecutionException("Cannot assign value to constant variable more than once!");
         }
-        throw new ExecutionException("Cannot assign value to constant variable more than once!");
     }
 
     @Override

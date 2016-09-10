@@ -44,7 +44,7 @@ public class TypeMatrix extends Type {
 
         TypeMatrix that = (TypeMatrix) o;
 
-        if (!getType().equals(that.getType())) return false;
+        if (!getType().equals(that.getType()) && max(getType(), that.getType()) == null) return false;
         if (!getRows().equals(that.getRows())) return false;
         return getCols().equals(that.getCols());
 

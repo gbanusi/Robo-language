@@ -1,19 +1,23 @@
 package parser.execution.visitor.statement;
 
 import parser.execution.ExecutionException;
+import parser.execution.RoboExec;
 import parser.execution.environment.ExecutionEnv;
-import parser.execution.values.RoboBool;
-import parser.execution.values.RoboInteger;
-import parser.execution.values.RoboNumeric;
-import parser.execution.values.RoboValue;
+import parser.execution.values.*;
 import parser.execution.visitor.expression.ExpressionEvalVisitor;
+import parser.lexical.Tokenizer;
 import parser.lexical.Type;
 import parser.syntax.SyntaxException;
 import parser.syntax.nodes.Node;
 import parser.syntax.nodes.ProgramNode;
 import parser.syntax.nodes.expression.NodeExpression;
 import parser.syntax.nodes.statements.*;
+import parser.syntax.parser.Parser;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,17 +63,54 @@ public class ProgramStatementVisitor implements NodeVisitor {
     @Override
     public void visit(DefArrayType defArrayType) {
         // TODO-2 beautify
-        RoboValue rows = calculateExpression(defArrayType.getMatrixDim().get(0));
-        RoboValue cols = calculateExpression(defArrayType.getMatrixDim().get(1));
+        RoboValue rows, cols;
+        if(defArrayType.getMatrixDim().size() > 1){
+            rows = calculateExpression(defArrayType.getMatrixDim().get(1));
+            cols = calculateExpression(defArrayType.getMatrixDim().get(1));
+        } else {
+            rows = new RoboInteger(1);
+            cols = calculateExpression(defArrayType.getMatrixDim().get(0));
+        }
+
         if (!(rows instanceof RoboInteger) || !(cols instanceof RoboInteger)) {
             throw new SyntaxException("Column and row dimension must be integer number. E.g. [1, 2].");
         }
+
         // pushing the array type into the execution environment so anyone has access to it...
         if((Integer)rows.getValue() == 1){
-            ExecutionEnv.createArrayType(defArrayType.getType(), (Integer)rows.getValue());
+            ExecutionEnv.createArrayType(defArrayType.getType(), (Integer)cols.getValue());
         } else if ((Integer)rows.getValue() > 1){
             ExecutionEnv.createMatrixType((Integer) rows.getValue(), (Integer) cols.getValue(), defArrayType.getType());
         }
+    }
+
+    @Override
+    public void visit(FunctionCallStatement functionCallStatement) {
+        calculateExpression(functionCallStatement.getExpression());
+    }
+
+    // TODO-1 check if correct extension
+    @Override
+    public void visit(IncludeStatement includeStatement) {
+        String file;
+        String program;
+        RoboValue progName = calculateExpression(includeStatement.getValue());
+        if(! (progName instanceof RoboString)){
+            throw  new ExecutionException("Include must have path to file in string format.");
+        }
+        file = (String) progName.getValue();
+        try {
+            program = new String(Files.readAllBytes(Paths.get(file)));
+        } catch (FileNotFoundException e) {
+            throw  new ExecutionException("Included file: '" + file + "' not found.");
+        } catch (IOException e) {
+            throw  new ExecutionException("Cannot read included file: '" + file + "'.");
+        }
+
+        Parser parser = new Parser(new Tokenizer(program));
+        ProgramNode includedFile = parser.getProgramNode();
+        RoboExec exec = new RoboExec(includedFile);
+        exec.execute();
     }
 
     @Override

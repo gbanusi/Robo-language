@@ -52,7 +52,12 @@ public class Parser {
 
 
     public List<Node> parse() {
-        List<Node> statements = new LinkedList<>();
+        LinkedList<Node> statements = new LinkedList<>();
+
+        // include must be on top of document or function...
+        while(peek().getTokenType() == TokenType.INCLUDE){
+            statements.add(IncludeStatement.parseInclude(parserHelper));
+        }
 
         while (true) {
             // Ako je kraj programa, gotovi smo:
@@ -102,8 +107,10 @@ public class Parser {
                 return WhileStatement.parseWhile(parserHelper, this);
             case FUNCTION:
                 return DefFunctionStatement.parseFunction(parserHelper, this);
+            case INCLUDE:
+                throw new SyntaxException("Keyword 'include' must be on top of file or function!" );
             default:
-                throw new SyntaxException("Keyword not found?");
+                throw new SyntaxException("Keyword not found..." );
         }
 
     }
@@ -115,7 +122,7 @@ public class Parser {
             case OPEN_SQUARE:
                 return AssignArrayIndexStatement.parseAssignArrayIndex(name, parserHelper);
             case OPEN_PARENTHESES:
-                // return parseFuncCall(name);
+                return FunctionCallStatement.parseFunctionCall(parserHelper, name);
             default:
                 return AssignVarStatement.parseAssignVariable(name, parserHelper);
         }

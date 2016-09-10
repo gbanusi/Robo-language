@@ -37,4 +37,8 @@ public interface NodeVisitor {
     void visit(AssignArrayIndexStatement assignArrayStatement);
 
     void visit(DefArrayType defArrayType);
+
+    void visit(FunctionCallStatement functionCallStatement);
+
+    void visit(IncludeStatement includeStatement);
 }

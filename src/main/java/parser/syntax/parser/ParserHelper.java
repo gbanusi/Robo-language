@@ -153,7 +153,7 @@ public class ParserHelper {
                     throw new SyntaxException("Closed square brackets expected instead of '" + peek().getTokenType() + "'!");
                 }
 
-                if(maxDepth > 0) {
+                if(maxDepth <= 1) {
                     Integer rows = values.size();
                     Integer cols = maxDepth;
                     Type type = new TypeMatrix(Type.Unknown, rows, cols);
@@ -201,7 +201,7 @@ public class ParserHelper {
     }
 
 
-    private NodeExpression parseFuncCall(String name) {
+    public NodeExpression parseFuncCall(String name) {
         List<NodeExpression> vars = new ArrayList<>();
         if (!match(TokenType.CLOSED_PARENTHESES)) {
             vars = parseExpressionsArray(TokenType.COMMA);
@@ -242,7 +242,7 @@ public class ParserHelper {
             // we are positioned in a row and don't know it's size
             if (arrayDepth == 2 && arrayLength == -1) {
                 arrayLength = list.size();
-            } else if(arrayDepth == 1){
+            } else if(arrayDepth == 2){
                 // compare the first computed size with others
                 if (arrayLength != list.size()) {
                     throw new SyntaxException("Matrix not properly defined, dimensions incorrect!");

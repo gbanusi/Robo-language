@@ -3,9 +3,7 @@ package parser.execution.visitor.expression;
 
 import parser.execution.ExecutionException;
 import parser.execution.environment.ExecutionEnv;
-import parser.execution.values.RoboArray;
-import parser.execution.values.RoboInteger;
-import parser.execution.values.RoboValue;
+import parser.execution.values.*;
 import parser.execution.visitor.statement.ProgramStatementVisitor;
 import parser.lexical.Type;
 import parser.lexical.TypeArray;
@@ -179,25 +177,34 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
     @Override
     public void visit(NodeArrayIndexing nodeArrayIndexing) {
+        // TODO-0 cast into Integers indexes...
         List<RoboValue> rvList = new LinkedList<>();
         for (NodeExpression ne : nodeArrayIndexing.getIndex()) {
             ne.accept(this);
             RoboValue val = ExecutionEnv.popExpr();
+            val = getVarRealValue(val);
             if (!(val instanceof RoboInteger)) {
                 // TODO-2 maknuti exception odavdje...
-                throw new ExecutionException("Indexes can only be integers...");
+                throw new ExecutionException("Indexes can only be integers, not '" + val.getType() + "'!");
             }
             rvList.add(val);
         }
         if (!passByReference) {
-            RoboArray rv = (RoboArray) ExecutionEnv.getExecEnv().getVariableValue(nodeArrayIndexing.getVarName()).getValue();
+            RoboArrays rv = (RoboArrays) ExecutionEnv.getExecEnv().getVariableValue(nodeArrayIndexing.getVarName());
             ExecutionEnv.pushValue(rv.index(rvList));
         } else {
             passByReference = false;
-            RoboArray rv = (RoboArray) ExecutionEnv.getExecEnv().getVariableValueByReference(nodeArrayIndexing.getVarName()).getValue();
+            RoboArrays rv = (RoboArrays) ExecutionEnv.getExecEnv().getVariableValueByReference(nodeArrayIndexing.getVarName());
             ExecutionEnv.pushValue(rv.index(rvList));
         }
 
+    }
+
+    private RoboValue getVarRealValue(RoboValue val) {
+        while (val instanceof RoboVariable){
+            val = (RoboValue) val.getValue();
+        }
+        return val;
     }
 
     //  TODO-0  empty array supported?
@@ -241,7 +248,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
             }
         }
         rows = rvList.size();
-        ExecutionEnv.pushValue(new RoboArray(rvList, new TypeMatrix(arrayType.getType(), rows, cols)));
+        ExecutionEnv.pushValue(new RoboMatrix(rvList, new TypeMatrix(arrayType.getType(), rows, cols)));
     }
 
     @Override

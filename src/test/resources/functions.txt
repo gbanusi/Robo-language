@@ -1,0 +1,25 @@
+
+function double kvadriraj(int x){
+    return x*x;
+}
+
+function bool kvadrirajNiz(double[10] a){
+    int i = 0;
+    while ( i < 10 ) {
+        a[i] = kvadriraj(a[i]);
+        i = i + 1;
+    }
+    return true;
+}
+
+function bool kvadrirajMatricu(double[10;10] a){
+    int i = 0, j = 0;
+    while ( i < 10 ) {
+        while ( j < 10 ){
+            a[i] = kvadriraj(a[i]);
+            i = i + 1;
+            j = j + 1;
+        }
+    }
+    return true;
+}

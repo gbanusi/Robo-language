@@ -37,7 +37,7 @@ public class TypeArray extends Type {
 
         TypeArray typeArray = (TypeArray) o;
 
-        if (!getType().equals(typeArray.getType())) return false;
+        if (!getType().equals(typeArray.getType()) && max(getType(), typeArray.getType()) == null) return false;
         return getLength().equals(typeArray.getLength());
 
     }

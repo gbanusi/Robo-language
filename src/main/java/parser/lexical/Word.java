@@ -35,7 +35,8 @@ public class Word extends Token {
             _const = new Word("const", TokenType.CONST, true),
             _true = new Word("true", TokenType.TRUE, true),
             _false = new Word("false", TokenType.FALSE, false),
-            _continue = new Word("continue", TokenType.CONTINUE, false);
+            _continue = new Word("continue", TokenType.CONTINUE, false),
+            _include = new Word("include", TokenType.INCLUDE, null);
 
     @Override
     public boolean equals(Object o) {

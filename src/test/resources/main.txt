@@ -1,0 +1,10 @@
+include "src/test/resources/functions.txt";
+
+double[10] array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+kvadrirajNiz(&array);
+
+int k = 0;
+while( k < 10 ){
+    print array[k];
+    k = k + 1;
+}

@@ -2,13 +2,15 @@ package tests;
 
 import parser.execution.RoboExec;
 import parser.lexical.Tokenizer;
-import parser.syntax.parser.Parser;
 import parser.syntax.nodes.ProgramNode;
+import parser.syntax.parser.Parser;
+
+import java.io.IOException;
 
 
 public class TestExecutor {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String program = "int a = 3, b;" +
 				"double c = 0.2;" +
 				"double[2; 2] d = [[1+2, 5], [1-0.5, 1/10]];" +
@@ -50,13 +52,13 @@ public class TestExecutor {
 
 		String program3 =
 						"double[2; 2] d = [[1+2, 5], [1-0.5, 1.0/10]];" +
-                        "int r = 9;" +
-						"function double kvadriraj(int x, double[2; 2] a){" +
-						"  a[1;1] = a[1,1]*a[1,1];" +
+                        "int r;" +
+						"function double kvadriraj(int x, double[2;2] a){" +
+						"  a[1;1] = a[1,1] + 100 + a[1,1];" +
                         "  x = x + 5;" +
 						"  return x*x;" +
 						"}" +
-						"print kvadriraj(r, &d);"+
+						"kvadriraj(&r, &d);"+
 						"print d[0, 0], \" \", d[0, 1];"+
 						"print d[1, 0], \" \", d[1, 1];" +
                         "print r;";
@@ -67,6 +69,8 @@ public class TestExecutor {
 				"  d[1;1] = 10;" +
 				"}" +
 				"print d[1,1];";
+
+//		String main = new String(Files.readAllBytes(Paths.get("/")));
 
 		Tokenizer tokenizer = new Tokenizer(program3);
 		Parser parser = new Parser(tokenizer);

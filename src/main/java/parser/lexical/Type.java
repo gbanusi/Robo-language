@@ -1,5 +1,10 @@
 package parser.lexical;
 
+import parser.execution.values.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Type extends Word {
 
     /**
@@ -19,11 +24,25 @@ public class Type extends Word {
             String = new Type("string", TokenType.BASIC, null, 1),
             Unknown = new Type("unknown", TokenType.BASIC, null, 1);
 
+    public static Map<Type, RoboValue> defaultVals;
+
+    static {
+        defaultVals = new HashMap<>();
+        defaultVals.put(Int, new RoboInteger(0));
+        defaultVals.put(Double, new RoboDouble(0));
+        defaultVals.put(Bool, new RoboBool(true));
+        defaultVals.put(String, new RoboString(""));
+    }
+
     public static boolean numeric(Type p) {
         if (p == Type.Int || p == Type.Double) {
             return true;
         }
         return false;
+    }
+
+    public static RoboValue getDefaultValue(Type type){
+        return defaultVals.get(type) != null ? defaultVals.get(type).duplicate() : RoboNull.roboNull;
     }
 
     public int getWidth() {

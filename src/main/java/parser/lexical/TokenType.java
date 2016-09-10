@@ -2,7 +2,7 @@ package parser.lexical;
 
 /**
  * All peek value
- * TODO-0 implement null!!
+ * TODO-0 implement null, ++, --, +=, -=, *=, /=!!
  */
 public enum TokenType {
 
@@ -41,6 +41,7 @@ public enum TokenType {
     RETURN("KEYWORD"),
     CONST("KEYWORD"),
     CONTINUE("KEYWORD"),
+    INCLUDE("KEYWORD"),
 
     /** TYPES **/
     IDENT("TYPE"),

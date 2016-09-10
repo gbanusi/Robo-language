@@ -55,6 +55,7 @@ public class Tokenizer {
         keywords.put(Word._return.getLexeme(), Word._return);
         keywords.put(Word._const.getLexeme(), Word._const);
         keywords.put(Word._continue.getLexeme(), Word._continue);
+        keywords.put(Word._include.getLexeme(), Word._include);
 
     }
 

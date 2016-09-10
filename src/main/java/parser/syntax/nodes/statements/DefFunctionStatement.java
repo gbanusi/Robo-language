@@ -76,6 +76,7 @@ public class DefFunctionStatement extends Node {
                 boolean isArray = false;
                 DefArrayType typeDef = null;
                 List<NodeExpression> matrixDim;
+                // TODO-1 general array?
                 if (parserHelper.match(TokenType.OPEN_SQUARE)) {
                     isArray = true;
                     matrixDim = parserHelper.parseExpressionsArray(TokenType.SEMICOLON);
@@ -97,7 +98,7 @@ public class DefFunctionStatement extends Node {
 
                 //TODO-5 UBACITI DEFAULTNE VRIJEDNOSTI?
 
-                if(isArray){
+                if (isArray) {
                     parameters.add(new DefArrayStatement(paramNames, isConst, new ArrayList<Node>(), typeDef));
                 } else {
                     parameters.add(new DefVarStatement(paramNames, varType, isConst, new ArrayList<Node>()));
