@@ -45,7 +45,6 @@ public class DefVarStatement extends Node {
         return assigns;
     }
 
-    //  TODO-0 implement default values!
     public static Node parseDef(ParserHelper parserHelper) {
         if (parserHelper.peek().getTokenType() != TokenType.BASIC) {
             throw new SyntaxException("Declaration type missing...");

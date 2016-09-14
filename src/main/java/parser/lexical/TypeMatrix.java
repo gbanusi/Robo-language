@@ -3,7 +3,7 @@ package parser.lexical;
 /**
  * Created by gregor on 06.09.16..
  */
-public class TypeMatrix extends Type {
+public class TypeMatrix extends Type implements ArraysType {
 
     private Type type;
 
@@ -11,6 +11,7 @@ public class TypeMatrix extends Type {
 
     private Integer cols;
 
+    // TODO-2 unify with Integer ... dim?
     public TypeMatrix(Type type, Integer rows, Integer cols) {
         super("matrix", TokenType.BASIC, null, -1);
         this.type = type;
@@ -44,7 +45,7 @@ public class TypeMatrix extends Type {
 
         TypeMatrix that = (TypeMatrix) o;
 
-        if (!getType().equals(that.getType()) && max(getType(), that.getType()) == null) return false;
+        if (!getType().equals(that.getType())) return false;
         if (!getRows().equals(that.getRows())) return false;
         return getCols().equals(that.getCols());
 
@@ -60,7 +61,7 @@ public class TypeMatrix extends Type {
     }
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return "matrix of " + type.getLexeme();
     }
 }

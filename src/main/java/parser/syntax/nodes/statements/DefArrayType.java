@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class DefArrayType extends Node {
 
-    // TODO implement with cols and rows?
+    // TODO-3 implement with cols and rows?
     private List<NodeExpression> matrixDim;
 
     private Type type;

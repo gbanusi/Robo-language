@@ -1,10 +1,33 @@
 include "src/test/resources/functions.txt";
 
-double[10] array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+double[3] array = [1, 2, 3];
 kvadrirajNiz(&array);
 
 int k = 0;
-while( k < 10 ){
+
+print "Niz:";
+while( k < 3 ){
     print array[k];
     k = k + 1;
 }
+
+double[5] norma = [1, 2, 3, 4, 5];
+double[5] norma2 = [1.0, 2.0, 3.0, 4.0, 5.0];
+normiraj(&norma);
+
+
+print "Norma:";
+k = 0;
+while( k < 5 ){
+    print norma[k];
+    k = k + 1;
+}
+
+normiraj2(&norma2);
+printaj(norma2);
+
+print "--------------------";
+
+normiraj(&norma2);
+printaj(norma2);

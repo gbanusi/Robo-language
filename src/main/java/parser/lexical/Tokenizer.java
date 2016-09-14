@@ -12,6 +12,7 @@ public class Tokenizer {
 
     private Token currentToken;
 
+    private int lineNum = 0;
 
     private static final Map<Character, TokenType> charMapper;
 
@@ -99,6 +100,17 @@ public class Tokenizer {
         }
 
         // Inače preskoči praznine:
+        skipBlanks();
+
+        if(data.length > curPos + 1) {
+            if (data[curPos + 1] == '/' && data[curPos] == '/') {
+                curPos += 2;
+                while (data[curPos] != '\n') {
+                    curPos++;
+                }
+            }
+        }
+
         skipBlanks();
 
         // Ako više nema znakova, generiraj peek za kraj izvornog koda programa
@@ -225,7 +237,7 @@ public class Tokenizer {
         }
 
         // Inače nije ništa što razumijemo:
-        throw new TokenizerException("Invalid character found: '" + data[curPos] + "'.");
+        throw new TokenizerException("Invalid character found: '" + data[curPos] + "', line: " + lineNum);
     }
 
     /**
@@ -275,6 +287,9 @@ public class Tokenizer {
         while (curPos < data.length) {
             char c = data[curPos];
             if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
+                if(c == '\n'){
+                    lineNum++;
+                }
                 curPos++;
                 continue;
             }

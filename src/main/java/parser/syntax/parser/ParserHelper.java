@@ -129,7 +129,7 @@ public class ParserHelper {
         } else if (match(TokenType.UN_REFERENCE)) {
             return new NodeExpressionUnReference(parseIdentFuncArray(true));
         } else if (match(TokenType.NOT)) {
-            return new NodeExpNot(factor());
+            return new NodeExpressionNot(factor());
         } else {
             return factor();
         }
@@ -147,21 +147,21 @@ public class ParserHelper {
                 return x;
             case OPEN_SQUARE:
                 pop();
-                readingMatrix = true;
                 List<NodeExpression> values = parseExpressionsArray(TokenType.COMMA);
                 if (!match(TokenType.CLOSED_SQUARE)) {
                     throw new SyntaxException("Closed square brackets expected instead of '" + peek().getTokenType() + "'!");
                 }
 
-                if(maxDepth <= 1) {
+                if(values.get(0) instanceof NodeArray) {
+                    NodeArray na = (NodeArray) values.get(0);
                     Integer rows = values.size();
-                    Integer cols = maxDepth;
+                    Integer cols = na.getValue().size();
                     Type type = new TypeMatrix(Type.Unknown, rows, cols);
-                    return new NodeArray(type, values);
+                    return new NodeMatrix(type, values);
                 } else {
                     Integer length = values.size();
                     Type type = new TypeArray(Type.Unknown, length);
-                    return new NodeMatrix(type, values);
+                    return new NodeArray(type, values);
                 }
 
             case CONSTANT:
@@ -210,25 +210,7 @@ public class ParserHelper {
         return new NodeFunction(vars, name);
     }
 
-    private boolean readingMatrix = false;
-
-    private int arrayLength = -1;
-
-    private int maxDepth = 0;
-
-    private int arrayDepth = 0;
-
     public List<NodeExpression> parseExpressionsArray(TokenType separateBy) {
-
-        if(readingMatrix){
-            arrayDepth++;
-            if(maxDepth < arrayDepth){
-                maxDepth = arrayDepth;
-            }
-            if(arrayDepth > 2){
-                throw new SyntaxException("Only 2-dim arrays supported...");
-            }
-        }
 
         List<NodeExpression> list = new ArrayList<>();
         while (true) {
@@ -238,27 +220,10 @@ public class ParserHelper {
             }
         }
 
-        if(readingMatrix) {
-            // we are positioned in a row and don't know it's size
-            if (arrayDepth == 2 && arrayLength == -1) {
-                arrayLength = list.size();
-            } else if(arrayDepth == 2){
-                // compare the first computed size with others
-                if (arrayLength != list.size()) {
-                    throw new SyntaxException("Matrix not properly defined, dimensions incorrect!");
-                }
-            }
-            arrayDepth--;
-            if(arrayDepth == 0){
-                readingMatrix = false;
-                arrayLength = -1;
-                maxDepth = 0;
-            }
-        }
-
         return list;
     }
 
+    // TODO-1 throw out generating RoboValues and check what type do we need before creating type
     private NodeExpression parseConstant() {
         if (peek().getValue() instanceof Integer) {
             return new NodeConstant(Type.Int, new RoboInteger((Integer) pop().getValue()));

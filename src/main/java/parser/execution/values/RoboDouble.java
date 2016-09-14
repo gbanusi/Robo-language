@@ -1,5 +1,6 @@
 package parser.execution.values;
 
+import parser.execution.ExecutionException;
 import parser.lexical.Type;
 
 /**
@@ -98,4 +99,6 @@ public class RoboDouble extends RoboNumeric {
     public Double getValue() {
         return value;
     }
+
+
 }

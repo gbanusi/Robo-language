@@ -5,6 +5,7 @@ import parser.execution.visitor.expression.ExpressionEvalVisitor;
 import parser.execution.visitor.statement.ProgramStatementVisitor;
 import parser.lexical.Type;
 import parser.lexical.TypeArray;
+import parser.lexical.TypeFuncArray;
 import parser.lexical.TypeMatrix;
 import parser.syntax.nodes.expression.NodeFunction;
 import parser.syntax.nodes.statements.DefFunctionStatement;
@@ -18,19 +19,30 @@ import java.util.Stack;
  */
 public class ExecutionEnv {
 
+    //--------------------------------------STATIC-----------------------------------------
     private static Stack<ExecutionEnv> environment;
 
     private static ExpressionEnv expEnv;
 
-    // TODO-2 implement better?
     private static Type lastArrayType;
+
+    private static boolean stopFunction;
+
+    private static boolean breakLoop;
+
+    private static boolean continueLoop;
 
     static {
         environment = new Stack<>();
         expEnv = new ExpressionEnv();
         lastArrayType = null;
+        stopFunction = false;
+        breakLoop = false;
+        continueLoop = false;
         createNewEnvironment();
     }
+
+    //------------------------------------EXECUTION ENVIRONMENT------------------------------------------------
 
     private FunctionEnv funcEnv;
 
@@ -38,7 +50,7 @@ public class ExecutionEnv {
 
     private ExecutionEnv(Map<String, DefFunctionStatement> declaredFunctions) {
         this.varEnv = new VariableEnv();
-        this.funcEnv = new FunctionEnv(varEnv, declaredFunctions);
+        this.funcEnv = new FunctionEnv(declaredFunctions);
     }
 
     public static ExecutionEnv createNewEnvironment() {
@@ -54,9 +66,11 @@ public class ExecutionEnv {
         environment.pop();
     }
 
-    public static ExecutionEnv getExecEnv(){
+    public static ExecutionEnv getExecutionEnvironment(){
         return environment.peek();
     }
+
+    //--------------------------------------VARIABLE------------------------------------------
 
     public void declareVariable(String name, boolean isConstant, Type type) {
         varEnv.declareVariable(name, isConstant, type);
@@ -74,6 +88,12 @@ public class ExecutionEnv {
         varEnv.defineVariable(name, val, type);
     }
 
+    public Type getVariableType(String name){
+        return varEnv.getVariableType(name);
+    }
+
+    //---------------------------------------FUNCTION-----------------------------------------
+
     public void declareFunc(String name, DefFunctionStatement val){
         funcEnv.declareFunc(name, val);
     }
@@ -82,21 +102,47 @@ public class ExecutionEnv {
         funcEnv.executeFunc(nf, funcExec, expEval);
     }
 
-    public static RoboValue popExpr() {
+    public Type getFunctionReturnType(String funcName){
+        return funcEnv.getFunctionReturnType(funcName);
+    }
+
+    public static Type getCurrentFunctionReturnType(){
+        return FunctionEnv.getCurrentReturnType();
+    }
+
+    //--
+
+    public static void stopFunction(){
+        stopFunction = true;
+    }
+
+    protected static boolean isFunctionStopped(){
+        if(stopFunction){
+            stopFunction = false;
+            return true;
+        }
+        return false;
+    }
+
+    //---------------------------------------EXPRESSION-----------------------------------------
+
+    public static RoboValue popExpression() {
         return expEnv.popValue();
     }
 
-    public static RoboValue peekValue() {
+    public static RoboValue peekExpression() {
         return expEnv.peekValue();
     }
 
-    public static void pushValue(RoboValue rv) {
+    public static void pushExpression(RoboValue rv) {
         expEnv.pushValue(rv);
     }
 
-    public static int sizeValue() {
+    public static int expressionStackSize() {
         return expEnv.sizeValue();
     }
+
+    //---------------------------------------TYPE CREATION--------------------------------------
 
     public static void createMatrixType(Integer rows, Integer cols, Type type){
         lastArrayType = new TypeMatrix(type, rows, cols) ;
@@ -108,6 +154,28 @@ public class ExecutionEnv {
 
     public static Type getDefArrayType(){
         return lastArrayType;
+    }
+
+    public static void createUnknownArrayType(Type type) {
+        lastArrayType = new TypeFuncArray(type);
+    }
+
+    //----------------------------------------LOOPS---------------------------------------------
+
+    public static boolean isLoopStopped() {
+        return breakLoop;
+    }
+
+    public static boolean isLoopContinued() {
+        return continueLoop;
+    }
+
+    public static void setBreakLoop(boolean breakLoop) {
+        ExecutionEnv.breakLoop = breakLoop;
+    }
+
+    public static void setContinueLoop(boolean continueLoop) {
+        ExecutionEnv.continueLoop = continueLoop;
     }
 
 }

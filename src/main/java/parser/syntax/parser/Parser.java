@@ -79,7 +79,7 @@ public class Parser {
 
             // ili ključna riječ
             if (!peek().getTokenType().getCode().equals("KEYWORD")) {
-                throw new SyntaxException("Keyword expected!");
+                throw new SyntaxException("Keyword expected instead of: !");
             } else {
                 statements.add(parseKeyword());
             }

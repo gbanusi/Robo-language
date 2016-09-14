@@ -11,25 +11,32 @@ public class FunctionCallStatement extends Node {
 
 	private NodeExpression expression;
 
-	public FunctionCallStatement(NodeExpression funcNode) {
+	private String funcName;
+
+	public FunctionCallStatement(NodeExpression funcNode, String name) {
 		super();
 		this.expression = funcNode;
+		this.funcName = name;
 	}
 
 	public NodeExpression getExpression() {
 		return expression;
 	}
 
+	public String getFuncName() {
+		return funcName;
+	}
+
 	public static Node parseFunctionCall(ParserHelper parserHelper, String name) {
-        // throw '('
         parserHelper.match(TokenType.OPEN_PARENTHESES);
-		FunctionCallStatement fcs = new FunctionCallStatement(parserHelper.parseFuncCall(name));
+		FunctionCallStatement fcs = new FunctionCallStatement(parserHelper.parseFuncCall(name), name);
         parserHelper.match(TokenType.SEMICOLON);
         return fcs;
 	}
 
 	@Override
 	public void accept(NodeVisitor visitor) {
+		System.out.println(funcName);
 		visitor.visit(this);
 	}
 }

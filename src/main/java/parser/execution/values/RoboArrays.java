@@ -4,7 +4,7 @@ import parser.execution.ExecutionException;
 
 /**
  * Created by gregor on 20.08.16..
- * TODO-0 reorganize with arrays everything
+ * TODO-1 reorganize with arrays everything
  */
 public abstract class RoboArrays extends RoboValue {
 

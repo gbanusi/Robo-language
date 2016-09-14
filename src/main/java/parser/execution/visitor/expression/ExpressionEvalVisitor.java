@@ -4,6 +4,7 @@ package parser.execution.visitor.expression;
 import parser.execution.ExecutionException;
 import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.*;
+import parser.execution.visitor.TypeCheckingHelper;
 import parser.execution.visitor.statement.ProgramStatementVisitor;
 import parser.lexical.Type;
 import parser.lexical.TypeArray;
@@ -19,12 +20,27 @@ import java.util.List;
  **/
 public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
+    /**
+     * Check whether a variable is passed by reference.
+     */
     private boolean passByReference;
 
     private ProgramStatementVisitor programStatementVisitor;
 
+    /**
+     * Type checking variable.
+     */
+    private Type arrayElemType;
+
+    public ExpressionEvalVisitor(ProgramStatementVisitor programStatementVisitor, Type type) {
+        this.programStatementVisitor = programStatementVisitor;
+        this.arrayElemType = type;
+        passByReference = false;
+    }
+
     public ExpressionEvalVisitor(ProgramStatementVisitor programStatementVisitor) {
         this.programStatementVisitor = programStatementVisitor;
+        this.arrayElemType = null;
         passByReference = false;
     }
 
@@ -32,156 +48,164 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
     public void visit(NodeExpressionAdd add) {
         add.getFirst().accept(this);
         add.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.add(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        RoboValue res = left.add(right);
+        ExecutionEnv.pushExpression(res);
     }
 
     @Override
     public void visit(NodeExpressionSub sub) {
         sub.getFirst().accept(this);
         sub.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.sub(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        RoboValue res = left.sub(right);
+        ExecutionEnv.pushExpression(res);
     }
 
     @Override
     public void visit(NodeExpressionMult mult) {
         mult.getFirst().accept(this);
         mult.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.mult(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        RoboValue res = left.mult(right);
+        ExecutionEnv.pushExpression(res);
     }
 
     @Override
     public void visit(NodeExpressionDiv div) {
         div.getFirst().accept(this);
         div.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.div(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        RoboValue res = left.div(right);
+        ExecutionEnv.pushExpression(res);
     }
 
     @Override
     public void visit(NodeConstant nc) {
-        ExecutionEnv.pushValue(nc.getValue());
+        RoboValue res = nc.getValue().duplicate();
+        ExecutionEnv.pushExpression(res);
     }
 
     @Override
     public void visit(NodeVariable nv) {
+        RoboValue res;
         if (!passByReference) {
-            ExecutionEnv.pushValue(ExecutionEnv.getExecEnv().getVariableValue(nv.getVarName()));
+            res = ExecutionEnv.getExecutionEnvironment().getVariableValue(nv.getVarName());
+            ExecutionEnv.pushExpression(res);
         } else {
+            res = ExecutionEnv.getExecutionEnvironment().getVariableValueByReference((nv.getVarName()));
             passByReference = false;
-            ExecutionEnv.pushValue(ExecutionEnv.getExecEnv().getVariableValueByReference((nv.getVarName())));
+            ExecutionEnv.pushExpression(res);
         }
     }
 
 
     @Override
     public void visit(NodeFunction nf) {
-        ExecutionEnv.getExecEnv().executeFunc(nf, programStatementVisitor, this);
+        ExecutionEnv.getExecutionEnvironment().executeFunc(nf, programStatementVisitor, this);
     }
 
     @Override
     public void visit(NodeExpressionAnd nea) {
         nea.getFirst().accept(this);
         nea.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.and(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.and(right));
     }
 
     @Override
     public void visit(NodeExpressionOr neo) {
         neo.getFirst().accept(this);
         neo.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.or(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.or(right));
     }
 
     @Override
     public void visit(NodeExpressionEquality nee) {
         nee.getFirst().accept(this);
         nee.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.equal(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.equal(right));
     }
 
     @Override
     public void visit(NodeExpressionNoEquality nen) {
         nen.getFirst().accept(this);
         nen.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.notEqual(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.notEqual(right));
     }
 
     @Override
     public void visit(NodeExpressionLTRelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.lowerThan(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.lowerThan(right));
     }
 
     @Override
     public void visit(NodeExpressionLERelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.lowerEqual(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.lowerEqual(right));
     }
 
     @Override
     public void visit(NodeExpressionGERelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.greaterEqual(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.greaterEqual(right));
     }
 
     @Override
     public void visit(NodeExpressionGTRelation ner) {
         ner.getFirst().accept(this);
         ner.getSecond().accept(this);
-        RoboValue right = ExecutionEnv.popExpr();
-        RoboValue left = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(left.greaterThan(right));
+        RoboValue right = ExecutionEnv.popExpression();
+        RoboValue left = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(left.greaterThan(right));
     }
 
     @Override
     public void visit(NodeExpressionUnMinus neu) {
         neu.getFirst().accept(this);
-        RoboValue val = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(val.unMinus());
+        RoboValue val = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(val.unMinus());
     }
 
     @Override
     public void visit(NodeExpressionUnReference neu) {
         passByReference = true;
         neu.getFirst().accept(this);
-        RoboValue val = ExecutionEnv.popExpr();
+        RoboValue val = ExecutionEnv.popExpression();
         if (passByReference) {
             throw new ExecutionException("Only variables and arrays can be passed by reference!");
         }
-        ExecutionEnv.pushValue(val);
+        ExecutionEnv.pushExpression(val);
     }
 
     @Override
     public void visit(NodeArrayIndexing nodeArrayIndexing) {
-        // TODO-0 cast into Integers indexes...
+        // TODO-1 cast into Integers indexes...
         List<RoboValue> rvList = new LinkedList<>();
         for (NodeExpression ne : nodeArrayIndexing.getIndex()) {
             ne.accept(this);
-            RoboValue val = ExecutionEnv.popExpr();
+            RoboValue val = ExecutionEnv.popExpression();
             val = getVarRealValue(val);
             if (!(val instanceof RoboInteger)) {
                 // TODO-2 maknuti exception odavdje...
@@ -190,18 +214,18 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
             rvList.add(val);
         }
         if (!passByReference) {
-            RoboArrays rv = (RoboArrays) ExecutionEnv.getExecEnv().getVariableValue(nodeArrayIndexing.getVarName());
-            ExecutionEnv.pushValue(rv.index(rvList));
+            RoboArrays rv = (RoboArrays) ExecutionEnv.getExecutionEnvironment().getVariableValue(nodeArrayIndexing.getVarName());
+            ExecutionEnv.pushExpression(rv.index(rvList));
         } else {
             passByReference = false;
-            RoboArrays rv = (RoboArrays) ExecutionEnv.getExecEnv().getVariableValueByReference(nodeArrayIndexing.getVarName());
-            ExecutionEnv.pushValue(rv.index(rvList));
+            RoboArrays rv = (RoboArrays) ExecutionEnv.getExecutionEnvironment().getVariableValueByReference(nodeArrayIndexing.getVarName());
+            ExecutionEnv.pushExpression(rv.index(rvList));
         }
 
     }
 
     private RoboValue getVarRealValue(RoboValue val) {
-        while (val instanceof RoboVariable){
+        while (val instanceof RoboVariable) {
             val = (RoboValue) val.getValue();
         }
         return val;
@@ -214,17 +238,13 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         Type arrayType = null;
         for (NodeExpression ne : nodeArray.getValue()) {
             ne.accept(this);
-            RoboValue val = ExecutionEnv.popExpr();
-            rvList.add(val);
-            if(arrayType == null){
-                arrayType = val.getType();
-            } else if(( arrayType = Type.max(arrayType, val.getType()) ) == null){
-                throw new ExecutionException("Array contains more different non numeric types...");
-            }
+            RoboValue val = ExecutionEnv.popExpression();
+            rvList.add(TypeCheckingHelper.convertType(val, arrayElemType));
         }
-        ExecutionEnv.pushValue(new RoboArray(rvList, new TypeArray(arrayType, rvList.size())));
+        ExecutionEnv.pushExpression(new RoboArray(rvList, new TypeArray(arrayElemType, rvList.size())));
     }
 
+    // check if elements are correct
     @Override
     public void visit(NodeMatrix nodeMatrix) {
         List<RoboValue> rvList = new LinkedList<>();
@@ -232,33 +252,23 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         Integer rows, cols = 0;
         for (NodeExpression ne : nodeMatrix.getValue()) {
             ne.accept(this);
-            RoboValue val = ExecutionEnv.popExpr();
+            RoboValue val = ExecutionEnv.popExpression();
             rvList.add(val);
-            TypeArray valType = (TypeArray) val.getType();
-            if(arrayType == null){
-                arrayType = valType;
-                cols = arrayType.getLength();
-            } else if(arrayType != valType){
-                Type t = Type.max(arrayType.getType(), valType.getType());
-                if(t != null){
-                    arrayType.setType(t);
-                } else {
-                    throw new ExecutionException("Matrix contains more arrays of different types...");
-                }
-            }
         }
         rows = rvList.size();
-        ExecutionEnv.pushValue(new RoboMatrix(rvList, new TypeMatrix(arrayType.getType(), rows, cols)));
+        ExecutionEnv.pushExpression(new RoboMatrix(rvList, new TypeMatrix(arrayElemType, rows, cols)));
     }
 
     @Override
-    public void visit(NodeExpNot nen) {
+    public void visit(NodeExpressionNot nen) {
         nen.getFirst().accept(this);
-        RoboValue rv = ExecutionEnv.popExpr();
-        ExecutionEnv.pushValue(rv.not());
+        RoboValue rv = ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(rv.not());
     }
 
+
     public RoboValue getResult() {
-        return ExecutionEnv.popExpr();
+//        System.out.println(ExecutionEnv.peekExpression());
+        return ExecutionEnv.popExpression();
     }
 }

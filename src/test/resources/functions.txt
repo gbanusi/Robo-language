@@ -1,25 +1,51 @@
+include "src/test/resources/math.txt";
 
 function double kvadriraj(int x){
     return x*x;
 }
 
-function bool kvadrirajNiz(double[10] a){
+function bool kvadrirajNiz(double[] a){
     int i = 0;
-    while ( i < 10 ) {
+    print "1. check";
+    while ( i < 3 ) {
         a[i] = kvadriraj(a[i]);
         i = i + 1;
+        print i;
+    }
+    print "ide";
+    return true;
+}
+
+function bool kvadrirajMatricu(double[] a){
+    int i = 0, j = 0;
+    while ( i < 2 ) {
+        while ( j < 2 ){
+            a[i; j] = kvadriraj(a[i, j]);
+            j = j + 1;
+        }
+        i = i + 1;
+        j = 0;
     }
     return true;
 }
 
-function bool kvadrirajMatricu(double[10;10] a){
-    int i = 0, j = 0;
-    while ( i < 10 ) {
-        while ( j < 10 ){
-            a[i] = kvadriraj(a[i]);
-            i = i + 1;
-            j = j + 1;
-        }
+function bool normiraj(double[] x){
+    return norm(&x);
+}
+
+function bool normiraj2(double[] x){
+    include "src/test/resources/math2.txt";
+
+    return norm(&x);
+}
+
+function bool printaj(double[] x){
+    print "Norma2:";
+    int k = 0;
+    while( k < 5 ){
+        print x[k];
+        k = k + 1;
     }
+    print k;
     return true;
 }

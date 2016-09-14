@@ -8,6 +8,7 @@ public class Tester {
 		Object k = new Integer(10);
 		double l = (double) k;
 
+
 	}
 
 }

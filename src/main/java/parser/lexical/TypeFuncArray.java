@@ -3,19 +3,15 @@ package parser.lexical;
 /**
  * Created by gregor on 06.09.16..
  */
-public class TypeArray extends Type implements ArraysType{
+public class TypeFuncArray extends Type implements ArraysType{
 
     private Type type;
 
-    private Integer length;
 
     // TODO-2 unify with Integer ... dim?
-    public TypeArray(Type type, Integer length) {
-        super("array", TokenType.BASIC, null, -1);
+    public TypeFuncArray(Type type) {
+        super("array", TokenType.BASIC, null, 0);
         this.type = type;
-        this.length = length;
-        this.width = type.getWidth();
-        width = width * length;
     }
 
     public void setType(Type type) {
@@ -26,28 +22,22 @@ public class TypeArray extends Type implements ArraysType{
         return type;
     }
 
-    public Integer getLength() {
-        return length;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        TypeArray typeArray = (TypeArray) o;
+        TypeFuncArray that = (TypeFuncArray) o;
 
-        if (!getType().equals(typeArray.getType())) return false;
-        return getLength().equals(typeArray.getLength());
+        return !(getType() != null ? !getType().equals(that.getType()) : that.getType() != null);
 
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + getType().hashCode();
-        result = 31 * result + getLength().hashCode();
+        result = 31 * result + (getType() != null ? getType().hashCode() : 0);
         return result;
     }
 

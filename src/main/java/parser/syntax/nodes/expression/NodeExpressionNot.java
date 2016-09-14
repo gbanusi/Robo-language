@@ -5,10 +5,10 @@ import parser.execution.visitor.expression.ExpressionNodeVisitor;
 /**
  * Created by gregor on 06.09.16..
  */
-public class NodeExpNot extends NodeExpressionUnaryOper{
+public class NodeExpressionNot extends NodeExpressionUnaryOper{
 
 
-    public NodeExpNot(NodeExpression first) {
+    public NodeExpressionNot(NodeExpression first) {
         super(first);
     }
 

@@ -1,0 +1,55 @@
+
+function bool norm(double[] x){
+    int i = 0;
+    double norm = sqrt(sumSquares(x));
+    print "Norma je: ";
+    print norm;
+    while ( i < 5 ) {
+        x[i] = x[i] / norm;
+        i = i + 1;
+    }
+    return true;
+}
+
+function double sumSquares(double[] x){
+    int i = 0;
+    double sum = 0.0;
+    while( i < 5 ) {
+        sum = sum + x[i] * x[i];
+        i = i + 1;
+    }
+    print "Suma je: ";
+    print sum;
+    return sum;
+}
+
+function double sqrt(double x){
+    double top, bottom, middle;
+    if(x < 1){
+        top = 1.0;
+        bottom = 0.0;
+    } else {
+        top = x;
+        bottom = 1.0;
+    }
+    double eps = 0.001;
+    middle = (top + bottom)/2;
+    while ( abs(middle * middle - x) > eps ){
+        if(middle * middle > x){
+            top = middle;
+        } else {
+            bottom = middle;
+        }
+        middle = (top + bottom)/2;
+        print top, middle, bottom;
+    }
+    print "-----";
+    return middle;
+}
+
+function double abs(double x){
+    if ( x < 0 ){
+        x = -x;
+    }
+    return x;
+}

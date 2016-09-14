@@ -16,44 +16,49 @@ public class VariableEnv {
 
     private Map<String, RoboVariable> vars;
 
-    public VariableEnv(){
+    public VariableEnv() {
         vars = new HashMap<>();
     }
 
     /**
-     *
      * @param name
      * @param isConstant
      * @param type
      */
     public void declareVariable(String name, boolean isConstant, Type type) {
-        if(vars.get(name) != null){
+        if (vars.get(name) != null) {
             throw new ExecutionException("Variable '" + name + "' already declared!");
         }
         vars.put(name, new RoboVariable(name, isConstant, type));
     }
 
     /**
-     *
      * @param name
      * @return
      */
     public RoboValue getVariableValue(String name) {
         RoboValue val = vars.get(name);
-        if(val == null){
+        if (val == null) {
             throw new ExecutionException("Variable, '" + name + "' not declared!");
         }
         return val.duplicate();
     }
 
+    public Type getVariableType(String name){
+        RoboValue val = vars.get(name);
+        if (val == null) {
+            throw new ExecutionException("Variable, '" + name + "' not declared!");
+        }
+        return val.getType();
+    }
+
     /**
-     *
      * @param name
      * @return
      */
     public RoboValue getVariableValueByReference(String name) {
         RoboValue val = vars.get(name);
-        if(val == null){
+        if (val == null) {
             throw new ExecutionException("Variable, '" + name + "' not declared!");
         }
         return val;
@@ -62,16 +67,13 @@ public class VariableEnv {
     /**
      * Method assigns given value val to variable which name is given.
      * Method checks whether variable is reference or not and handles i that way.
-     *  @param name
+     *
+     * @param name
      * @param val
      * @param type
      */
     public void defineVariable(String name, RoboValue val, Type type) {
-        if (! vars.get(name).getType().equals(type) ){
-            if( Type.max( vars.get(name).getType(), type) == null ) {
-                throw new ExecutionException("Assigning '" + type + "' to variable '" + name + "' with type '" + vars.get(name).getType() + "'.");
-            }
-        }
+        vars.get(name).setType(type);
         vars.get(name).setValue(val);
     }
 }

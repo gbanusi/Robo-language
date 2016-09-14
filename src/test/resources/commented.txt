@@ -1,0 +1,59 @@
+//------------------BREAK I CONTINUE I RETURN---------------------------
+
+double[2;2] matrix = [
+                        [0.2, 0.5],
+                        [1.1, 9*1 - (2*3)]
+                     ];
+kvadrirajMatricu(&matrix);
+
+int k = 0;
+int l = 0;
+
+print "Matrica:";
+while( k < 2 ){
+    l = 0;
+    while( l < 2 ){
+        print matrix[k, l];
+        l = l + 1;
+    }
+    print " ";
+    k = k + 1;
+}
+
+
+
+
+// komentari rade
+function int test(double t){
+    t = 0.5;
+    if( 5 < 10){
+        return 10;
+    }
+    return 1;
+}
+
+int[5] x = [1, 2, 3, 4, 5];
+
+int k = 0;
+while( k < 5 ){
+    if( x[k] < 3){
+        x[k] = x[k] + 2;
+        k = k + 1;
+        continue;
+    } else if ( x[k] == 5){
+        break;
+    } else {
+        x[k] = -1;
+    }
+    k = k + 1;
+}
+
+k = 0;
+while( k < 5 ){
+    print x[k];
+    k = k + 1;
+}
+
+double t = 1;
+print test(&t);
+print t;

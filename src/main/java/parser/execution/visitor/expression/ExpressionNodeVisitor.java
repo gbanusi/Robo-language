@@ -49,7 +49,7 @@ public interface ExpressionNodeVisitor {
 
     void visit(NodeArray nodeArray);
 
-    void visit(NodeExpNot nodeExpNot);
+    void visit(NodeExpressionNot nodeExpNot);
 
     void visit(NodeMatrix nodeMatrix);
 }

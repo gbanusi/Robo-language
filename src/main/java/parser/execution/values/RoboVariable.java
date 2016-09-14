@@ -18,6 +18,9 @@ public class RoboVariable extends RoboValue {
 
     private boolean isConstant;
 
+    /**
+     * For function initialization, if variable is assigned by reference in function.
+     */
     private boolean defaultInit;
 
     public RoboVariable(String varName, boolean isConstant, Type type) {
@@ -154,5 +157,14 @@ public class RoboVariable extends RoboValue {
     @Override
     public int hashCode() {
         return getVarName().hashCode();
+    }
+
+    /**
+     * Setter primarly created for unknown dimension arrays or matrices.
+     * Used only in variable environment class (VariableEnv).
+     * @param type
+     */
+    public void setType(Type type) {
+        this.type = type;
     }
 }

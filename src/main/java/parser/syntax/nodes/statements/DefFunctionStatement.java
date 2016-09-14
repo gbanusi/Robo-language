@@ -79,11 +79,10 @@ public class DefFunctionStatement extends Node {
                 // TODO-1 general array?
                 if (parserHelper.match(TokenType.OPEN_SQUARE)) {
                     isArray = true;
-                    matrixDim = parserHelper.parseExpressionsArray(TokenType.SEMICOLON);
                     if (!parserHelper.match(TokenType.CLOSED_SQUARE)) {
                         throw new SyntaxException("Expected ']', got: '" + parserHelper.peek().getValue() + "', type: '" + parserHelper.peek().getTokenType() + "'.");
                     }
-                    typeDef = new DefArrayType(varType, matrixDim);
+                    typeDef = new DefArrayType(varType, new ArrayList<>());
                 }
 
                 boolean isConst = false;

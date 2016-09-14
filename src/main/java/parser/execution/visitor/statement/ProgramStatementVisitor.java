@@ -4,13 +4,16 @@ import parser.execution.ExecutionException;
 import parser.execution.RoboExec;
 import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.*;
+import parser.execution.visitor.TypeCheckingHelper;
 import parser.execution.visitor.expression.ExpressionEvalVisitor;
+import parser.lexical.ArraysType;
 import parser.lexical.Tokenizer;
 import parser.lexical.Type;
 import parser.syntax.SyntaxException;
 import parser.syntax.nodes.Node;
 import parser.syntax.nodes.ProgramNode;
 import parser.syntax.nodes.expression.NodeExpression;
+import parser.syntax.nodes.expression.NodeFunction;
 import parser.syntax.nodes.statements.*;
 import parser.syntax.parser.Parser;
 
@@ -31,17 +34,18 @@ public class ProgramStatementVisitor implements NodeVisitor {
 
     @Override
     public void visit(AssignVarStatement node) {
-        RoboValue val = calculateExpression(node.getExpression());
-        ExecutionEnv.getExecEnv().defineVariable(node.getVar(), val, val.getType());
+        RoboValue val = calculateExpression(node.getExpression(), ExecutionEnv.getExecutionEnvironment().getVariableType(node.getVar()));
+        ExecutionEnv.getExecutionEnvironment().defineVariable(node.getVar(), val, val.getType());
     }
 
     @Override
     public void visit(BreakStatement node) {
+        ExecutionEnv.setBreakLoop(true);
     }
 
     @Override
     public void visit(ContinueStatement continueStatement) {
-        // TODO-2 refactor?
+        ExecutionEnv.setContinueLoop(true);
     }
 
     // TODO-1 directly getting Array element by reference and changing the value, maybe sth better through ExecEnv?
@@ -49,27 +53,30 @@ public class ProgramStatementVisitor implements NodeVisitor {
     public void visit(AssignArrayIndexStatement assignArrayStatement) {
         List<RoboValue> rvList = new LinkedList<>();
         for (NodeExpression ne : assignArrayStatement.getIndexes()) {
-            RoboValue val = calculateExpression(ne);
+            RoboValue val = calculateExpression(ne, Type.Int);
             rvList.add(val);
         }
-        RoboValue var = ExecutionEnv.getExecEnv().getVariableValueByReference(assignArrayStatement.getVar()).index(rvList);
-        RoboValue expression = calculateExpression(assignArrayStatement.getExpression());
-        if (var.getType() == expression.getType() ||
-                (var instanceof RoboNumeric && expression instanceof RoboNumeric)) {
-            var.setRoboValue(expression);
-        }
+
+        RoboValue var = ExecutionEnv.getExecutionEnvironment().getVariableValueByReference(assignArrayStatement.getVar()).index(rvList);
+
+        Type type = ((ArraysType)ExecutionEnv.getExecutionEnvironment().getVariableType(assignArrayStatement.getVar())).getType();
+        RoboValue expression = calculateExpression(assignArrayStatement.getExpression(), type);
+        var.setRoboValue(expression);
     }
 
     @Override
     public void visit(DefArrayType defArrayType) {
         // TODO-2 beautify
         RoboValue rows, cols;
-        if(defArrayType.getMatrixDim().size() > 1){
-            rows = calculateExpression(defArrayType.getMatrixDim().get(1));
-            cols = calculateExpression(defArrayType.getMatrixDim().get(1));
-        } else {
+        if (defArrayType.getMatrixDim().size() > 1) {
+            rows = calculateExpression(defArrayType.getMatrixDim().get(0), Type.Int);
+            cols = calculateExpression(defArrayType.getMatrixDim().get(1), Type.Int);
+        } else if (defArrayType.getMatrixDim().size() == 1) {
             rows = new RoboInteger(1);
-            cols = calculateExpression(defArrayType.getMatrixDim().get(0));
+            cols = calculateExpression(defArrayType.getMatrixDim().get(0), Type.Int);
+        } else {
+            ExecutionEnv.createUnknownArrayType(defArrayType.getType());
+            return;
         }
 
         if (!(rows instanceof RoboInteger) || !(cols instanceof RoboInteger)) {
@@ -77,16 +84,17 @@ public class ProgramStatementVisitor implements NodeVisitor {
         }
 
         // pushing the array type into the execution environment so anyone has access to it...
-        if((Integer)rows.getValue() == 1){
-            ExecutionEnv.createArrayType(defArrayType.getType(), (Integer)cols.getValue());
-        } else if ((Integer)rows.getValue() > 1){
+        if ((Integer) rows.getValue() == 1) {
+            ExecutionEnv.createArrayType(defArrayType.getType(), (Integer) cols.getValue());
+        } else if ((Integer) rows.getValue() > 1) {
             ExecutionEnv.createMatrixType((Integer) rows.getValue(), (Integer) cols.getValue(), defArrayType.getType());
         }
     }
 
     @Override
     public void visit(FunctionCallStatement functionCallStatement) {
-        calculateExpression(functionCallStatement.getExpression());
+        calculateExpression(functionCallStatement.getExpression(),
+                ExecutionEnv.getExecutionEnvironment().getFunctionReturnType(functionCallStatement.getFuncName()));
     }
 
     // TODO-1 check if correct extension
@@ -94,17 +102,17 @@ public class ProgramStatementVisitor implements NodeVisitor {
     public void visit(IncludeStatement includeStatement) {
         String file;
         String program;
-        RoboValue progName = calculateExpression(includeStatement.getValue());
-        if(! (progName instanceof RoboString)){
-            throw  new ExecutionException("Include must have path to file in string format.");
+        RoboValue progName = calculateExpression(includeStatement.getValue(), Type.String);
+        if (!(progName instanceof RoboString)) {
+            throw new ExecutionException("Include must have path to file in string format.");
         }
         file = (String) progName.getValue();
         try {
             program = new String(Files.readAllBytes(Paths.get(file)));
         } catch (FileNotFoundException e) {
-            throw  new ExecutionException("Included file: '" + file + "' not found.");
+            throw new ExecutionException("Included file: '" + file + "' not found.");
         } catch (IOException e) {
-            throw  new ExecutionException("Cannot read included file: '" + file + "'.");
+            throw new ExecutionException("Cannot read included file: '" + file + "'.");
         }
 
         Parser parser = new Parser(new Tokenizer(program));
@@ -115,7 +123,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
 
     @Override
     public void visit(DefFunctionStatement node) {
-        ExecutionEnv.getExecEnv().declareFunc(node.getfName(), node);
+        ExecutionEnv.getExecutionEnvironment().declareFunc(node.getfName(), node);
     }
 
     @Override
@@ -140,14 +148,13 @@ public class ProgramStatementVisitor implements NodeVisitor {
     }
 
 
-
     private void declareVar(DefVarStatement node, boolean isConst, Type type) {
-        node.getVariables().stream().forEach(var -> ExecutionEnv.getExecEnv().declareVariable(var, isConst, type));
+        node.getVariables().stream().forEach(var -> ExecutionEnv.getExecutionEnvironment().declareVariable(var, isConst, type));
     }
 
     @Override
     public void visit(DoStatement node) {
-        RoboValue rb = calculateExpression(node.getExpression());
+        RoboValue rb = calculateExpression(node.getExpression(), Type.Bool);
         if (!(rb instanceof RoboBool)) {
             throw new ExecutionException("Only boolean value in 'do-while' condition are allowed.");
         }
@@ -156,19 +163,15 @@ public class ProgramStatementVisitor implements NodeVisitor {
         do {
             for (Node child : node.getStatements()) {
                 child.accept(this);
-                if (child instanceof BreakStatement) {
+                if (ExecutionEnv.isLoopStopped()) {
+                    ExecutionEnv.setBreakLoop(false);
                     break LOOP;
-                } else if (child instanceof ContinueStatement) {
-                    rb = calculateExpression(node.getExpression());
-                    expr = ((RoboBool) rb).getValue();
-                    if (expr) {
-                        continue LOOP;
-                    } else {
-                        break LOOP;
-                    }
+                } else if (ExecutionEnv.isLoopContinued()) {
+                    ExecutionEnv.setContinueLoop(false);
+                    continue LOOP;
                 }
             }
-            rb = calculateExpression(node.getExpression());
+            rb = calculateExpression(node.getExpression(), Type.Bool);
             expr = ((RoboBool) rb).getValue();
         } while (expr);
     }
@@ -177,7 +180,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
     public void visit(IfBlockStatement node) {
         for (Node child : node.getIfStatements()) {
             IfStatement is = (IfStatement) child;
-            RoboValue rb = calculateExpression(is.getExpression());
+            RoboValue rb = calculateExpression(is.getExpression(), Type.Bool);
             boolean cond = ((RoboBool) rb).getValue();
             if (cond) {
                 is.accept(this);
@@ -196,7 +199,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
     @Override
     public void visit(PrintStatement node) {
         for (NodeExpression ne : node.getExpressions()) {
-            RoboValue rb = calculateExpression(ne);
+            RoboValue rb = calculateExpression(ne, Type.Unknown);
             System.out.print(rb + "  ");
         }
         System.out.print("\n");
@@ -204,13 +207,14 @@ public class ProgramStatementVisitor implements NodeVisitor {
 
     @Override
     public void visit(ReturnStatement node) {
-        RoboValue rv = calculateExpression(node.getValue());
-        ExecutionEnv.pushValue(rv);
+        RoboValue rv = calculateExpression(node.getValue(), ExecutionEnv.getCurrentFunctionReturnType());
+        ExecutionEnv.pushExpression(rv);
+        ExecutionEnv.stopFunction();
     }
 
     @Override
     public void visit(WhileStatement node) {
-        RoboValue rb = calculateExpression(node.getExpression());
+        RoboValue rb = calculateExpression(node.getExpression(), Type.Bool);
         if (!(rb instanceof RoboBool)) {
             throw new ExecutionException("Only boolean value in 'do-while' condition are allowed.");
         }
@@ -219,11 +223,15 @@ public class ProgramStatementVisitor implements NodeVisitor {
         while (expr) {
             for (Node child : node.getStatements()) {
                 child.accept(this);
-                if (child instanceof BreakStatement) {
+                if (ExecutionEnv.isLoopStopped()) {
+                    ExecutionEnv.setBreakLoop(false);
                     break LOOP;
+                } else if (ExecutionEnv.isLoopContinued()) {
+                    ExecutionEnv.setContinueLoop(false);
+                    continue LOOP;
                 }
             }
-            rb = calculateExpression(node.getExpression());
+            rb = calculateExpression(node.getExpression(), Type.Bool);
             expr = ((RoboBool) rb).getValue();
         }
     }
@@ -235,9 +243,21 @@ public class ProgramStatementVisitor implements NodeVisitor {
         }
     }
 
-    private RoboValue calculateExpression(NodeExpression node) {
-        ExpressionEvalVisitor visitor = new ExpressionEvalVisitor(this);
+    private RoboValue calculateExpression(NodeExpression node, Type type) {
+        ExpressionEvalVisitor visitor;
+        if(type instanceof ArraysType){
+            visitor = new ExpressionEvalVisitor(this, ((ArraysType) type).getType());
+        } else {
+            visitor = new ExpressionEvalVisitor(this);
+        }
+
+        if(node instanceof NodeFunction){
+            int k = 0;
+            k++;
+        }
         node.accept(visitor);
-        return visitor.getResult();
+        return TypeCheckingHelper.convertType(visitor.getResult(), type);
     }
+
+
 }

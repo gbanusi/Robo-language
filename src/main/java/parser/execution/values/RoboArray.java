@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Created by gregor on 20.08.16..
- * TODO-0 reorganize with arrays everything
+ * TODO-1 reorganize with arrays everything
  */
 public class RoboArray extends RoboArrays {
 
