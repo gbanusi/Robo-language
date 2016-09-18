@@ -37,6 +37,8 @@ public class RoboMatrix extends RoboArrays {
         }
     }
 
+
+
     @Override
     public Type getType() {
         return type;
@@ -44,8 +46,10 @@ public class RoboMatrix extends RoboArrays {
 
     @Override
     public RoboValue index(List<RoboValue> indexes) {
-        if(indexes.size() != 2){
-            throw new ExecutionException("Matrix index must have 2 elements!");
+        if(indexes.size() > 3){
+            throw new ExecutionException("Matrix is maximal 2 dimensional.");
+        } else if (indexes.size() == 1) {
+            return new RoboArray(Arrays.asList(value[((int) indexes.get(0).getValue())]), new TypeArray(this.type.getType(), cols));
         } else {
             int rows = (int) indexes.get(0).getValue();
             int cols = (int) indexes.get(1).getValue();
@@ -87,4 +91,8 @@ public class RoboMatrix extends RoboArrays {
         return Arrays.toString(value);
     }
 
+    @Override
+    public RoboValue getLength() {
+        return new RoboArray(Arrays.asList(new RoboInteger(rows), new RoboInteger(cols)), new TypeArray(Type.Int, 2));
+    }
 }

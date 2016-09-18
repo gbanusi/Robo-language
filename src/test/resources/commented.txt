@@ -1,27 +1,53 @@
 //------------------BREAK I CONTINUE I RETURN---------------------------
 
+
+
+
+//--------------------------------
+include "src/test/resources/functions.txt";
+
+//-----------------------------------------------
+
 double[2;2] matrix = [
                         [0.2, 0.5],
                         [1.1, 9*1 - (2*3)]
                      ];
 kvadrirajMatricu(&matrix);
 
-int k = 0;
-int l = 0;
+//------------------------------------------------
 
-print "Matrica:";
-while( k < 2 ){
-    l = 0;
-    while( l < 2 ){
-        print matrix[k, l];
-        l = l + 1;
-    }
-    print " ";
+
+double[3] array = [1, 2, 3];
+kvadrirajNiz(&array);
+
+int k = 0;
+
+print "Niz:";
+while( k < 3 ){
+    print array[k];
     k = k + 1;
 }
 
+double[5] norma = [1, 2, 3, 4, 5];
+double[5] norma2 = [1.0, 2.0, 3.0, 4.0, 5.0];
+normiraj(&norma);
 
 
+print "Norma:";
+k = 0;
+while( k < 5 ){
+    print norma[k];
+    k = k + 1;
+}
+
+normiraj2(&norma2);
+printaj(norma2);
+
+print "--------------------";
+
+normiraj(&norma2);
+printaj(norma2);
+-------------------------------
 
 // komentari rade
 function int test(double t){
@@ -57,3 +83,6 @@ while( k < 5 ){
 double t = 1;
 print test(&t);
 print t;
+
+
+-------------------------------------------------------------------

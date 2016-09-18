@@ -8,6 +8,8 @@ import parser.execution.ExecutionException;
  */
 public abstract class RoboArrays extends RoboValue {
 
+    public abstract RoboValue getLength();
+
     @Override
     public RoboValue unMinus() {
         throw new ExecutionException("'-' operator not supported for array!");

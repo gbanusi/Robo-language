@@ -5,18 +5,22 @@ function double kvadriraj(int x){
 }
 
 function bool kvadrirajNiz(double[] a){
+
     int i = 0;
-    print "1. check";
     while ( i < 3 ) {
         a[i] = kvadriraj(a[i]);
         i = i + 1;
-        print i;
     }
-    print "ide";
     return true;
 }
 
 function bool kvadrirajMatricu(double[] a){
+
+    function double kvadriraj(int x){
+        print x;
+        return x*x;
+    }
+
     int i = 0, j = 0;
     while ( i < 2 ) {
         while ( j < 2 ){

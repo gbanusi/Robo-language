@@ -32,6 +32,11 @@ public class RoboArray extends RoboArrays {
     }
 
     @Override
+    public RoboValue getLength() {
+        return new RoboInteger(length);
+    }
+
+    @Override
     public Object getValue(){
         return value;
     }

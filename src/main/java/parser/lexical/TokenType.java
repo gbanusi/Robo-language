@@ -2,7 +2,7 @@ package parser.lexical;
 
 /**
  * All peek value
- * TODO-0 implement null, ++, --, +=, -=, *=, /=, void, comments!!
+ * TODO-1 implement null, ++, --, +=, -=, *=, /=, void!!
  */
 public enum TokenType {
 

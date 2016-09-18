@@ -16,6 +16,7 @@ import java.util.Stack;
 
 /**
  * Created by gregor on 28.08.16..
+ * TODO-2 remove every method into his own environment?
  */
 public class ExecutionEnv {
 

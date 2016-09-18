@@ -241,15 +241,21 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
             RoboValue val = ExecutionEnv.popExpression();
             rvList.add(TypeCheckingHelper.convertType(val, arrayElemType));
         }
+        cols = rvList.size();
         ExecutionEnv.pushExpression(new RoboArray(rvList, new TypeArray(arrayElemType, rvList.size())));
     }
 
-    // check if elements are correct
+    /**
+     * Used when matrix generated.
+     */
+    private Integer cols;
+
     @Override
     public void visit(NodeMatrix nodeMatrix) {
         List<RoboValue> rvList = new LinkedList<>();
         TypeArray arrayType = null;
-        Integer rows, cols = 0;
+        Integer rows;
+        cols = 0;
         for (NodeExpression ne : nodeMatrix.getValue()) {
             ne.accept(this);
             RoboValue val = ExecutionEnv.popExpression();
@@ -268,7 +274,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
 
     public RoboValue getResult() {
-//        System.out.println(ExecutionEnv.peekExpression());
         return ExecutionEnv.popExpression();
     }
+
 }
