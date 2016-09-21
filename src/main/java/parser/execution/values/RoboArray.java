@@ -1,11 +1,11 @@
 package parser.execution.values;
 
 import parser.execution.ExecutionException;
-import parser.lexical.Type;
-import parser.lexical.TypeArray;
+import parser.lexical.type.Type;
+import parser.lexical.type.TypeArray;
 
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,7 +74,7 @@ public class RoboArray extends RoboArrays {
 
     @Override
     public RoboValue duplicate() {
-        List<RoboValue> vals = new LinkedList<>();
+        List<RoboValue> vals = new ArrayList<>();
         for(RoboValue rv : value){
             vals.add(rv.duplicate());
         }

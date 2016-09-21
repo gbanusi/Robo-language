@@ -2,15 +2,16 @@ package parser.execution.environment;
 
 import parser.execution.ExecutionException;
 import parser.execution.environment.built.in.LanguageFunctions;
+import parser.execution.environment.built.in.RoboConstructors;
 import parser.execution.values.RoboValue;
 import parser.execution.visitor.expression.ExpressionEvalVisitor;
 import parser.execution.visitor.statement.ProgramStatementVisitor;
-import parser.lexical.Type;
-import parser.lexical.TypeArray;
+import parser.lexical.type.Type;
+import parser.lexical.type.TypeArray;
 import parser.syntax.nodes.Node;
-import parser.syntax.nodes.expression.NodeFunction;
-import parser.syntax.nodes.statements.DefFunctionStatement;
-import parser.syntax.nodes.statements.DefVarStatement;
+import parser.syntax.nodes.expression.value.right.NodeFunction;
+import parser.syntax.nodes.statements.definition.DefFunctionStatement;
+import parser.syntax.nodes.statements.definition.DefVarStatement;
 
 import java.util.*;
 
@@ -33,6 +34,7 @@ public class FunctionEnv {
         builtInFunctions  = new HashSet<>();
         builtInFunctions.add("matrixLength");
         builtInFunctions.add("arrayLength");
+        builtInFunctions.add("Vector3d");
     }
 
     public FunctionEnv(Map<String, DefFunctionStatement> declaredFunctions) {
@@ -50,6 +52,8 @@ public class FunctionEnv {
                     return Type.Int;
                 case "matrixLength":
                     return new TypeArray(Type.Int, 2);
+                case "Vector3d":
+                    return Type.Vector3d;
             }
             throw new ExecutionException("No built in method found, internal error!");
         }
@@ -62,6 +66,10 @@ public class FunctionEnv {
 
     public void declareFunc(String name, DefFunctionStatement val) {
         declaredFunctions.put(name, val);
+    }
+
+    public static boolean isFunctionExecuting(){
+        return funcReturnType.size() > 0;
     }
 
     public void executeFunc(NodeFunction nf, ProgramStatementVisitor funcExec, ExpressionEvalVisitor expEval) {
@@ -109,18 +117,25 @@ public class FunctionEnv {
     }
 
     private void executeBuiltInFunction(String s, ExpressionEvalVisitor expEval, int size) {
+        //TODO-1 error prone -> stack gives variables in reversed order! watch out by defining functions
         switch (s){
             case "matrixLength":
-                if(size > 1){
+                if(size != 1){
                     throw new ExecutionException("'matrixLength' function accepts only one parameter!");
                 }
-                LanguageFunctions.matrixLength(expEval);
+                LanguageFunctions.matrixLength(expEval.getResult());
                 return;
             case "arrayLength":
-                if(size > 1){
+                if(size != 1){
                     throw new ExecutionException("'matrixLength' function accepts only one parameter!");
                 }
-                LanguageFunctions.arrayLength(expEval);
+                LanguageFunctions.arrayLength(expEval.getResult());
+                return;
+            case "Vector3d":
+                if(size != 3 && size != 1){
+                    throw new ExecutionException("'matrixLength' function accepts only one parameter!");
+                }
+                RoboConstructors.roboVector3D(expEval.getResult(), expEval.getResult(), expEval.getResult());
                 return;
         }
         throw new ExecutionException("No built in method found, internal error!");

@@ -3,8 +3,8 @@ package parser.execution.visitor;
 import parser.execution.ExecutionException;
 import parser.execution.values.RoboNumeric;
 import parser.execution.values.RoboValue;
-import parser.lexical.Type;
-import parser.lexical.TypeFuncArray;
+import parser.lexical.type.Type;
+import parser.lexical.type.TypeFuncArray;
 
 /**
  * Created by gregor on 14.09.16..

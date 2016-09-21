@@ -1,0 +1,82 @@
+include "src/test/resources/functions.txt";
+
+double[2;2] matrix = [
+                        [0.2, 0.5],
+                        [1.1, 9*1 - (2*3)]
+                     ];
+
+kvadrirajMatricu(&matrix);
+
+int k = 0;
+int l = 0;
+
+print "Matrica:";
+
+int[2] size = matrixLength(matrix);
+
+while( k < size[0] ){
+    l = 0;
+    while( l < size[1] ){
+        print matrix[k, l];
+        l = l + 1;
+    }
+    print " ";
+    k = k + 1;
+}
+
+
+print "evo i dio matrice:";
+print matrix[0];
+
+int[5] array = [1, 2, 3, 4, 5.0];
+
+ l=0;
+ while( l < arrayLength(array)){
+    print array[l];
+    l = l + 1;
+ }
+
+
+ #trajectory(id = 0, name = "Line"){
+     #segments(thickness="2.0", color = "255, 255, 0, 0"){
+           loop(){
+                Point startPt = Point(0,0,0);
+                Point endPt = moveTo(startPoint, 20, 10);
+                Line line = Line(startPt, endPt);  getEndpoint(line);
+                ...
+                #segment(i, line, ... ){
+                    #movingCurve();
+                }
+           }
+           #transformation() {
+                #rotate(rotationVector="x, y, z", angle=30.0);
+                ...
+           }
+    }
+    #execute{
+
+    }
+ }
+
+ //-----------------------------------
+
+ int x = 0;
+ loop( x < 10 ){
+     print x;
+     x = x + 1;
+ }
+
+ print "---------------";
+
+ loop(int k = 0; k < 10; k = k + 1 ){
+     print k;
+ }
+
+ print "---------------";
+
+ do {
+   print x;
+   x = x - 1;
+ } loop ( x > 0 );
+
+ print "---------------";

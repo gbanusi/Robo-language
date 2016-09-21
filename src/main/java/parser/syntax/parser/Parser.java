@@ -1,14 +1,25 @@
 package parser.syntax.parser;
 
-import parser.lexical.Token;
-import parser.lexical.TokenType;
-import parser.lexical.Tokenizer;
+import parser.lexical.tokenizer.Token;
+import parser.lexical.tokenizer.TokenType;
+import parser.lexical.tokenizer.Tokenizer;
 import parser.syntax.SyntaxException;
 import parser.syntax.nodes.Node;
 import parser.syntax.nodes.ProgramNode;
-import parser.syntax.nodes.statements.*;
+import parser.syntax.nodes.statements.assignation.AssignArrayIndexStatement;
+import parser.syntax.nodes.statements.assignation.AssignVarStatement;
+import parser.syntax.nodes.statements.definition.DefFunctionStatement;
+import parser.syntax.nodes.statements.definition.DefVarStatement;
+import parser.syntax.nodes.statements.function.FunctionCallStatement;
+import parser.syntax.nodes.statements.function.PrintStatement;
+import parser.syntax.nodes.statements.keyword.IfBlockStatement;
+import parser.syntax.nodes.statements.keyword.IncludeStatement;
+import parser.syntax.nodes.statements.keyword.ReturnStatement;
+import parser.syntax.nodes.statements.loop.LoopStatement;
+import parser.syntax.nodes.statements.loop.extra.BreakStatement;
+import parser.syntax.nodes.statements.loop.extra.ContinueStatement;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -52,7 +63,7 @@ public class Parser {
 
 
     public List<Node> parse() {
-        LinkedList<Node> statements = new LinkedList<>();
+        ArrayList<Node> statements = new ArrayList<>();
 
         // include must be on top of document or function...
         while(peek().getTokenType() == TokenType.INCLUDE){
@@ -100,11 +111,10 @@ public class Parser {
             case CONTINUE:
                 return ContinueStatement.parseContinue(parserHelper);
             case DO:
-                return DoStatement.parseDo(parserHelper, this);
+            case LOOP:
+                return LoopStatement.parseLoop(parserHelper, this);
             case RETURN:
                 return ReturnStatement.parseReturn(parserHelper);
-            case WHILE:
-                return WhileStatement.parseWhile(parserHelper, this);
             case FUNCTION:
                 return DefFunctionStatement.parseFunction(parserHelper, this);
             case INCLUDE:

@@ -3,7 +3,7 @@ package parser.execution.environment;
 import parser.execution.ExecutionException;
 import parser.execution.values.RoboValue;
 import parser.execution.values.RoboVariable;
-import parser.lexical.Type;
+import parser.lexical.type.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,5 +75,9 @@ public class VariableEnv {
     public void defineVariable(String name, RoboValue val, Type type) {
         vars.get(name).setType(type);
         vars.get(name).setValue(val);
+    }
+
+    public void removeLoopVariable(String varName) {
+        vars.remove(varName);
     }
 }

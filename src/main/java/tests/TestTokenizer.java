@@ -1,7 +1,7 @@
 package tests;
 
-import parser.lexical.TokenType;
-import parser.lexical.Tokenizer;
+import parser.lexical.tokenizer.TokenType;
+import parser.lexical.tokenizer.Tokenizer;
 
 /**
  * Demonstracija rada tokenizatora.

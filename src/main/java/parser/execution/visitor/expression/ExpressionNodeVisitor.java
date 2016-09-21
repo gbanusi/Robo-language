@@ -1,6 +1,17 @@
 package parser.execution.visitor.expression;
 
-import parser.syntax.nodes.expression.*;
+import parser.syntax.nodes.expression.comparation.*;
+import parser.syntax.nodes.expression.logical.NodeExpressionAnd;
+import parser.syntax.nodes.expression.logical.NodeExpressionNot;
+import parser.syntax.nodes.expression.logical.NodeExpressionOr;
+import parser.syntax.nodes.expression.operations.*;
+import parser.syntax.nodes.expression.other.NodeExpressionUnReference;
+import parser.syntax.nodes.expression.value.left.NodeArray;
+import parser.syntax.nodes.expression.value.left.NodeArrayIndexing;
+import parser.syntax.nodes.expression.value.left.NodeMatrix;
+import parser.syntax.nodes.expression.value.left.NodeVariable;
+import parser.syntax.nodes.expression.value.right.NodeConstant;
+import parser.syntax.nodes.expression.value.right.NodeFunction;
 
 /**
  * Created by gregor on 14.08.16..

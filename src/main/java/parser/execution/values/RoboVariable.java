@@ -1,7 +1,7 @@
 package parser.execution.values;
 
 import parser.execution.ExecutionException;
-import parser.lexical.Type;
+import parser.lexical.type.Type;
 
 import java.util.List;
 
@@ -20,6 +20,8 @@ public class RoboVariable extends RoboValue {
 
     /**
      * For function initialization, if variable is assigned by reference in function.
+     * If we say a variable in function is a reference we have to defined it with RoboVariable, and cannot set
+     * RoboVariable value if it is etc. RoboInteger
      */
     private boolean defaultInit;
 

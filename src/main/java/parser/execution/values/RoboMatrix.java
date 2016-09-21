@@ -1,12 +1,12 @@
 package parser.execution.values;
 
 import parser.execution.ExecutionException;
-import parser.lexical.Type;
-import parser.lexical.TypeArray;
-import parser.lexical.TypeMatrix;
+import parser.lexical.type.Type;
+import parser.lexical.type.TypeArray;
+import parser.lexical.type.TypeMatrix;
 
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,9 +70,9 @@ public class RoboMatrix extends RoboArrays {
 
     @Override
     public RoboValue duplicate() {
-        List<RoboValue> row = new LinkedList<>();
+        List<RoboValue> row = new ArrayList<>();
         for(int i = 0; i < rows; i++){
-            List<RoboValue> col = new LinkedList<>();
+            List<RoboValue> col = new ArrayList<>();
             for(int j = 0; j < cols; j++){
                 col.add(value[i][j]);
             }

@@ -1,37 +1,8 @@
-include "src/test/resources/functions.txt";
 
-double[2;2] matrix = [
-                        [0.2, 0.5],
-                        [1.1, 9*1 - (2*3)]
-                     ];
+vector3d v1 = Vector3d(11, 3.9, 12);
+vector3d v2 = Vector3d(1, 5, 9);
+vector3d v3 = v1 + v2;
 
-kvadrirajMatricu(&matrix);
-
-int k = 0;
-int l = 0;
-
-print "Matrica:";
-
-int[2] size = matrixLength(matrix);
-
-while( k < size[0] ){
-    l = 0;
-    while( l < size[1] ){
-        print matrix[k, l];
-        l = l + 1;
-    }
-    print " ";
-    k = k + 1;
-}
+print v3;
 
 
-print "evo i dio matrice:";
-print matrix[0];
-
-int[5] array = [1, 2, 3, 4, 5.0];
-
- l=0;
- while( l < arrayLength(array)){
-    print array[l];
-    l = l + 1;
- }

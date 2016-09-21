@@ -3,12 +3,12 @@ package parser.execution.environment;
 import parser.execution.values.RoboValue;
 import parser.execution.visitor.expression.ExpressionEvalVisitor;
 import parser.execution.visitor.statement.ProgramStatementVisitor;
-import parser.lexical.Type;
-import parser.lexical.TypeArray;
-import parser.lexical.TypeFuncArray;
-import parser.lexical.TypeMatrix;
-import parser.syntax.nodes.expression.NodeFunction;
-import parser.syntax.nodes.statements.DefFunctionStatement;
+import parser.lexical.type.Type;
+import parser.lexical.type.TypeArray;
+import parser.lexical.type.TypeFuncArray;
+import parser.lexical.type.TypeMatrix;
+import parser.syntax.nodes.expression.value.right.NodeFunction;
+import parser.syntax.nodes.statements.definition.DefFunctionStatement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -111,10 +111,13 @@ public class ExecutionEnv {
         return FunctionEnv.getCurrentReturnType();
     }
 
-    //--
 
     public static void stopFunction(){
         stopFunction = true;
+    }
+
+    public static boolean isFunctionExecuted(){
+        return FunctionEnv.isFunctionExecuting();
     }
 
     protected static boolean isFunctionStopped(){
@@ -177,6 +180,10 @@ public class ExecutionEnv {
 
     public static void setContinueLoop(boolean continueLoop) {
         ExecutionEnv.continueLoop = continueLoop;
+    }
+
+    public static void removeLoopVariable(String varName) {
+        ExecutionEnv.getExecutionEnvironment().varEnv.removeLoopVariable(varName);
     }
 
 }

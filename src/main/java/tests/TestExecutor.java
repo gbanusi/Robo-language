@@ -1,7 +1,7 @@
 package tests;
 
 import parser.execution.RoboExec;
-import parser.lexical.Tokenizer;
+import parser.lexical.tokenizer.Tokenizer;
 import parser.syntax.nodes.ProgramNode;
 import parser.syntax.parser.Parser;
 

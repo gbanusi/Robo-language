@@ -6,31 +6,44 @@ import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.*;
 import parser.execution.visitor.TypeCheckingHelper;
 import parser.execution.visitor.expression.ExpressionEvalVisitor;
-import parser.lexical.ArraysType;
-import parser.lexical.Tokenizer;
-import parser.lexical.Type;
+import parser.lexical.type.ArraysType;
+import parser.lexical.tokenizer.Tokenizer;
+import parser.lexical.type.Type;
 import parser.syntax.SyntaxException;
 import parser.syntax.nodes.Node;
 import parser.syntax.nodes.ProgramNode;
 import parser.syntax.nodes.expression.NodeExpression;
-import parser.syntax.nodes.expression.NodeFunction;
-import parser.syntax.nodes.statements.*;
+import parser.syntax.nodes.expression.value.right.NodeFunction;
+import parser.syntax.nodes.statements.assignation.AssignArrayIndexStatement;
+import parser.syntax.nodes.statements.assignation.AssignVarStatement;
+import parser.syntax.nodes.statements.definition.DefArrayStatement;
+import parser.syntax.nodes.statements.definition.DefArrayType;
+import parser.syntax.nodes.statements.definition.DefFunctionStatement;
+import parser.syntax.nodes.statements.definition.DefVarStatement;
+import parser.syntax.nodes.statements.function.FunctionCallStatement;
+import parser.syntax.nodes.statements.function.PrintStatement;
+import parser.syntax.nodes.statements.loop.DoStatement;
+import parser.syntax.nodes.statements.loop.LoopStatement;
+import parser.syntax.nodes.statements.loop.WhileStatement;
+import parser.syntax.nodes.statements.loop.extra.BreakStatement;
+import parser.syntax.nodes.statements.loop.extra.ContinueStatement;
+import parser.syntax.nodes.statements.keyword.IfBlockStatement;
+import parser.syntax.nodes.statements.keyword.IfStatement;
+import parser.syntax.nodes.statements.keyword.IncludeStatement;
+import parser.syntax.nodes.statements.keyword.ReturnStatement;
 import parser.syntax.parser.Parser;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gregor on 15.08.16..
  */
 public class ProgramStatementVisitor implements NodeVisitor {
-
-    public ProgramStatementVisitor() {
-    }
 
     @Override
     public void visit(AssignVarStatement node) {
@@ -51,7 +64,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
     // TODO-1 directly getting Array element by reference and changing the value, maybe sth better through ExecEnv?
     @Override
     public void visit(AssignArrayIndexStatement assignArrayStatement) {
-        List<RoboValue> rvList = new LinkedList<>();
+        List<RoboValue> rvList = new ArrayList<>();
         for (NodeExpression ne : assignArrayStatement.getIndexes()) {
             RoboValue val = calculateExpression(ne, Type.Int);
             rvList.add(val);
@@ -100,6 +113,10 @@ public class ProgramStatementVisitor implements NodeVisitor {
     // TODO-1 check if correct extension
     @Override
     public void visit(IncludeStatement includeStatement) {
+        //TODO-0 add include statements
+        if(ExecutionEnv.isFunctionExecuted()){
+            throw new ExecutionException("Cannot include file inside function...");
+        }
         String file;
         String program;
         RoboValue progName = calculateExpression(includeStatement.getValue(), Type.String);
@@ -119,6 +136,30 @@ public class ProgramStatementVisitor implements NodeVisitor {
         ProgramNode includedFile = parser.getProgramNode();
         RoboExec exec = new RoboExec(includedFile);
         exec.execute();
+    }
+
+    @Override
+    public void visit(LoopStatement loopStatement) {
+        loopStatement.getVarStmt().accept(this);
+        RoboValue rb = calculateExpression(loopStatement.getCondition(), Type.Bool);
+        boolean expr = ((RoboBool) rb).getValue();
+        LOOP:
+        while (expr){
+            for (Node child : loopStatement.getStatements()) {
+                child.accept(this);
+                if (ExecutionEnv.isLoopStopped()) {
+                    ExecutionEnv.setBreakLoop(false);
+                    break LOOP;
+                } else if (ExecutionEnv.isLoopContinued()) {
+                    ExecutionEnv.setContinueLoop(false);
+                    continue LOOP;
+                }
+            }
+            loopStatement.getStep().accept(this);
+            rb = calculateExpression(loopStatement.getCondition(), Type.Bool);
+            expr = ((RoboBool) rb).getValue();
+        }
+        ExecutionEnv.removeLoopVariable(loopStatement.getVarName());
     }
 
     @Override
@@ -214,7 +255,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
 
     @Override
     public void visit(WhileStatement node) {
-        RoboValue rb = calculateExpression(node.getExpression(), Type.Bool);
+        RoboValue rb = calculateExpression(node.getCondition(), Type.Bool);
         if (!(rb instanceof RoboBool)) {
             throw new ExecutionException("Only boolean value in 'do-while' condition are allowed.");
         }
@@ -231,7 +272,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
                     continue LOOP;
                 }
             }
-            rb = calculateExpression(node.getExpression(), Type.Bool);
+            rb = calculateExpression(node.getCondition(), Type.Bool);
             expr = ((RoboBool) rb).getValue();
         }
     }

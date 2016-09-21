@@ -1,12 +1,17 @@
 package tests;
 
-import parser.lexical.Tokenizer;
+import parser.lexical.tokenizer.Tokenizer;
+import parser.syntax.nodes.ProgramNode;
 import parser.syntax.parser.Parser;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 public class TestParser {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String program = "int const a = 10, b;" +
 				"double[4, 4] d;" +
 				"a = 14;" +
@@ -42,16 +47,14 @@ public class TestParser {
 						"print d[0, 0], \" \", d[0, 1];"+
 						"print d[1, 0], \" \", d[1, 1];";
 
-		String prog = "bool b = ! false;" +
-				"double[2; 2] d = [[1, 2], [3, 5]];" +
-				"if(b){" +
-				"  d[1;1] = 10;" +
-				"}" +
-				"print d[1,1];";
 
+		String main = new String(Files.readAllBytes(Paths.get("src/test/resources/main.txt")));
 
-		Tokenizer tokenizer = new Tokenizer(prog);
-		new Parser(tokenizer);
+		Tokenizer tokenizer = new Tokenizer(main);
+		Parser parser = new Parser(tokenizer);
+
+		ProgramNode pn = parser.getProgramNode();
+
 	}
 
 }

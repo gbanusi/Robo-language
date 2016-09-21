@@ -6,12 +6,24 @@ import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.*;
 import parser.execution.visitor.TypeCheckingHelper;
 import parser.execution.visitor.statement.ProgramStatementVisitor;
-import parser.lexical.Type;
-import parser.lexical.TypeArray;
-import parser.lexical.TypeMatrix;
+import parser.lexical.type.Type;
+import parser.lexical.type.TypeArray;
+import parser.lexical.type.TypeMatrix;
 import parser.syntax.nodes.expression.*;
+import parser.syntax.nodes.expression.comparation.*;
+import parser.syntax.nodes.expression.logical.NodeExpressionAnd;
+import parser.syntax.nodes.expression.logical.NodeExpressionNot;
+import parser.syntax.nodes.expression.logical.NodeExpressionOr;
+import parser.syntax.nodes.expression.operations.*;
+import parser.syntax.nodes.expression.other.NodeExpressionUnReference;
+import parser.syntax.nodes.expression.value.left.NodeArray;
+import parser.syntax.nodes.expression.value.left.NodeArrayIndexing;
+import parser.syntax.nodes.expression.value.left.NodeMatrix;
+import parser.syntax.nodes.expression.value.left.NodeVariable;
+import parser.syntax.nodes.expression.value.right.NodeConstant;
+import parser.syntax.nodes.expression.value.right.NodeFunction;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -202,7 +214,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
     @Override
     public void visit(NodeArrayIndexing nodeArrayIndexing) {
         // TODO-1 cast into Integers indexes...
-        List<RoboValue> rvList = new LinkedList<>();
+        List<RoboValue> rvList = new ArrayList<>();
         for (NodeExpression ne : nodeArrayIndexing.getIndex()) {
             ne.accept(this);
             RoboValue val = ExecutionEnv.popExpression();
@@ -234,7 +246,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
     //  TODO-0  empty array supported?
     @Override
     public void visit(NodeArray nodeArray) {
-        List<RoboValue> rvList = new LinkedList<>();
+        List<RoboValue> rvList = new ArrayList<>();
         Type arrayType = null;
         for (NodeExpression ne : nodeArray.getValue()) {
             ne.accept(this);
@@ -252,7 +264,7 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
 
     @Override
     public void visit(NodeMatrix nodeMatrix) {
-        List<RoboValue> rvList = new LinkedList<>();
+        List<RoboValue> rvList = new ArrayList<>();
         TypeArray arrayType = null;
         Integer rows;
         cols = 0;

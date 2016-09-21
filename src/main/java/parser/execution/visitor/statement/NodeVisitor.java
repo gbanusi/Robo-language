@@ -1,7 +1,23 @@
 package parser.execution.visitor.statement;
 
 import parser.syntax.nodes.ProgramNode;
-import parser.syntax.nodes.statements.*;
+import parser.syntax.nodes.statements.assignation.AssignArrayIndexStatement;
+import parser.syntax.nodes.statements.assignation.AssignVarStatement;
+import parser.syntax.nodes.statements.definition.DefArrayStatement;
+import parser.syntax.nodes.statements.definition.DefArrayType;
+import parser.syntax.nodes.statements.definition.DefFunctionStatement;
+import parser.syntax.nodes.statements.definition.DefVarStatement;
+import parser.syntax.nodes.statements.function.FunctionCallStatement;
+import parser.syntax.nodes.statements.function.PrintStatement;
+import parser.syntax.nodes.statements.loop.DoStatement;
+import parser.syntax.nodes.statements.loop.LoopStatement;
+import parser.syntax.nodes.statements.loop.WhileStatement;
+import parser.syntax.nodes.statements.loop.extra.BreakStatement;
+import parser.syntax.nodes.statements.loop.extra.ContinueStatement;
+import parser.syntax.nodes.statements.keyword.IfBlockStatement;
+import parser.syntax.nodes.statements.keyword.IfStatement;
+import parser.syntax.nodes.statements.keyword.IncludeStatement;
+import parser.syntax.nodes.statements.keyword.ReturnStatement;
 
 /**
  * Created by gregor on 15.08.16..
@@ -41,4 +57,6 @@ public interface NodeVisitor {
     void visit(FunctionCallStatement functionCallStatement);
 
     void visit(IncludeStatement includeStatement);
+
+    void visit(LoopStatement loopStatement);
 }

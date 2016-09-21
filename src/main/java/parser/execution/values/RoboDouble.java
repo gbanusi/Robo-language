@@ -1,7 +1,6 @@
 package parser.execution.values;
 
-import parser.execution.ExecutionException;
-import parser.lexical.Type;
+import parser.lexical.type.Type;
 
 /**
  * Created by gregor on 15.08.16..
