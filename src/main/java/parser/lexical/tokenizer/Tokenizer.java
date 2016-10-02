@@ -38,6 +38,7 @@ public class Tokenizer {
         charMapper.put('[', TokenType.OPEN_SQUARE);
         charMapper.put(']', TokenType.CLOSED_SQUARE);
         charMapper.put('!', TokenType.NOT);
+        charMapper.put('.', TokenType.DOT);
     }
 
     private static final Map<String, Word> keywords;

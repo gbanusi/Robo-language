@@ -36,7 +36,6 @@ public class FunctionCallStatement extends Node {
 
 	@Override
 	public void accept(NodeVisitor visitor) {
-		System.out.println(funcName);
 		visitor.visit(this);
 	}
 }

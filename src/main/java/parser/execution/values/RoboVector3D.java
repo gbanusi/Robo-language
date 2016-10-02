@@ -1,6 +1,7 @@
 package parser.execution.values;
 
 import parser.execution.ExecutionException;
+import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.core.Vector3D;
 import parser.lexical.type.Type;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by gregor on 21.09.16..
  */
-public class RoboVector3D extends RoboValue{
+public class RoboVector3D extends RoboObject{
 
     private Double length;
 
@@ -159,5 +160,13 @@ public class RoboVector3D extends RoboValue{
         int result = getValue().hashCode();
         result = 31 * result + getType().hashCode();
         return result;
+    }
+
+    public void normalize(int size){
+        if(size > 0){
+            throw new ExecutionException("Normalize method accepts no parameters!");
+        }
+        this.value.normalize();
+        ExecutionEnv.pushExpression(this);
     }
 }

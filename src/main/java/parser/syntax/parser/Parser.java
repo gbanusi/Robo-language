@@ -10,6 +10,7 @@ import parser.syntax.nodes.statements.assignation.AssignArrayIndexStatement;
 import parser.syntax.nodes.statements.assignation.AssignVarStatement;
 import parser.syntax.nodes.statements.definition.DefFunctionStatement;
 import parser.syntax.nodes.statements.definition.DefVarStatement;
+import parser.syntax.nodes.statements.function.ClassFunctionCallStatement;
 import parser.syntax.nodes.statements.function.FunctionCallStatement;
 import parser.syntax.nodes.statements.function.PrintStatement;
 import parser.syntax.nodes.statements.keyword.IfBlockStatement;
@@ -133,6 +134,8 @@ public class Parser {
                 return AssignArrayIndexStatement.parseAssignArrayIndex(name, parserHelper);
             case OPEN_PARENTHESES:
                 return FunctionCallStatement.parseFunctionCall(parserHelper, name);
+            case DOT:
+                return ClassFunctionCallStatement.parseClassFunctionCall(parserHelper, name);
             default:
                 return AssignVarStatement.parseAssignVariable(name, parserHelper);
         }

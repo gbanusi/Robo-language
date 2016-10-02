@@ -278,6 +278,18 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
     }
 
     @Override
+    public void visit(NodeExpressionDot ned) {
+        ned.getFirst().accept(this);
+        RoboValue obj = ExecutionEnv.popExpression();
+        if(!(obj instanceof RoboObject)){
+            throw new ExecutionException("Cannot call '.' operator on non class object");
+        }
+        NodeFunction nf = (NodeFunction) ned.getSecond();
+        RoboObject ro = (RoboObject) obj;
+        ro.callFunction(nf, this);
+    }
+
+    @Override
     public void visit(NodeExpressionNot nen) {
         nen.getFirst().accept(this);
         RoboValue rv = ExecutionEnv.popExpression();

@@ -12,6 +12,7 @@ import parser.syntax.nodes.expression.value.left.NodeMatrix;
 import parser.syntax.nodes.expression.value.left.NodeVariable;
 import parser.syntax.nodes.expression.value.right.NodeConstant;
 import parser.syntax.nodes.expression.value.right.NodeFunction;
+import parser.syntax.nodes.expression.operations.NodeExpressionDot;
 
 /**
  * Created by gregor on 14.08.16..
@@ -63,4 +64,6 @@ public interface ExpressionNodeVisitor {
     void visit(NodeExpressionNot nodeExpNot);
 
     void visit(NodeMatrix nodeMatrix);
+
+    void visit(NodeExpressionDot nodeFunctionChain);
 }

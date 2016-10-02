@@ -128,6 +128,10 @@ public class ExecutionEnv {
         return false;
     }
 
+    public void evaluateFunctionParameters(NodeFunction nf, ExpressionEvalVisitor ex){
+        funcEnv.evaluateParams(nf, ex);
+    }
+
     //---------------------------------------EXPRESSION-----------------------------------------
 
     public static RoboValue popExpression() {

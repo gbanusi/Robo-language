@@ -12,6 +12,7 @@ public enum TokenType {
     /** HELPERS **/
     SEMICOLON("HELPER"),
     COMMA("HELPER"),
+    DOT("HELPER"),
 
     /** BRACKETS **/
     OPEN_PARENTHESES("BRACKET"),

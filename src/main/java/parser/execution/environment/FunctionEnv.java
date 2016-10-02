@@ -116,6 +116,13 @@ public class FunctionEnv {
 
     }
 
+    public void evaluateParams(NodeFunction nf, ExpressionEvalVisitor expEval) {
+        // calculate passing expressions and stack them
+        for (int i = 0; i < nf.getVars().size(); i++) {
+            nf.getVars().get(i).accept(expEval);
+        }
+    }
+
     private void executeBuiltInFunction(String s, ExpressionEvalVisitor expEval, int size) {
         //TODO-1 error prone -> stack gives variables in reversed order! watch out by defining functions
         switch (s){
@@ -139,13 +146,6 @@ public class FunctionEnv {
                 return;
         }
         throw new ExecutionException("No built in method found, internal error!");
-    }
-
-    private void evaluateParams(NodeFunction nf, ExpressionEvalVisitor expEval) {
-        // calculate passing expressions and stack them
-        for (int i = 0; i < nf.getVars().size(); i++) {
-            nf.getVars().get(i).accept(expEval);
-        }
     }
 
 }

@@ -3,11 +3,14 @@ package parser.execution.visitor.statement;
 import parser.execution.ExecutionException;
 import parser.execution.RoboExec;
 import parser.execution.environment.ExecutionEnv;
-import parser.execution.values.*;
+import parser.execution.values.RoboBool;
+import parser.execution.values.RoboInteger;
+import parser.execution.values.RoboString;
+import parser.execution.values.RoboValue;
 import parser.execution.visitor.TypeCheckingHelper;
 import parser.execution.visitor.expression.ExpressionEvalVisitor;
-import parser.lexical.type.ArraysType;
 import parser.lexical.tokenizer.Tokenizer;
+import parser.lexical.type.ArraysType;
 import parser.lexical.type.Type;
 import parser.syntax.SyntaxException;
 import parser.syntax.nodes.Node;
@@ -20,17 +23,18 @@ import parser.syntax.nodes.statements.definition.DefArrayStatement;
 import parser.syntax.nodes.statements.definition.DefArrayType;
 import parser.syntax.nodes.statements.definition.DefFunctionStatement;
 import parser.syntax.nodes.statements.definition.DefVarStatement;
+import parser.syntax.nodes.statements.function.ClassFunctionCallStatement;
 import parser.syntax.nodes.statements.function.FunctionCallStatement;
 import parser.syntax.nodes.statements.function.PrintStatement;
+import parser.syntax.nodes.statements.keyword.IfBlockStatement;
+import parser.syntax.nodes.statements.keyword.IfStatement;
+import parser.syntax.nodes.statements.keyword.IncludeStatement;
+import parser.syntax.nodes.statements.keyword.ReturnStatement;
 import parser.syntax.nodes.statements.loop.DoStatement;
 import parser.syntax.nodes.statements.loop.LoopStatement;
 import parser.syntax.nodes.statements.loop.WhileStatement;
 import parser.syntax.nodes.statements.loop.extra.BreakStatement;
 import parser.syntax.nodes.statements.loop.extra.ContinueStatement;
-import parser.syntax.nodes.statements.keyword.IfBlockStatement;
-import parser.syntax.nodes.statements.keyword.IfStatement;
-import parser.syntax.nodes.statements.keyword.IncludeStatement;
-import parser.syntax.nodes.statements.keyword.ReturnStatement;
 import parser.syntax.parser.Parser;
 
 import java.io.FileNotFoundException;
@@ -110,6 +114,8 @@ public class ProgramStatementVisitor implements NodeVisitor {
                 ExecutionEnv.getExecutionEnvironment().getFunctionReturnType(functionCallStatement.getFuncName()));
     }
 
+
+
     // TODO-1 check if correct extension
     @Override
     public void visit(IncludeStatement includeStatement) {
@@ -161,6 +167,12 @@ public class ProgramStatementVisitor implements NodeVisitor {
         }
         ExecutionEnv.removeLoopVariable(loopStatement.getVarName());
     }
+
+    @Override
+    public void visit(ClassFunctionCallStatement classFunctionCallStatement) {
+        calculateExpression(classFunctionCallStatement.getExpression(), Type.Unknown);
+    }
+
 
     @Override
     public void visit(DefFunctionStatement node) {
@@ -237,6 +249,7 @@ public class ProgramStatementVisitor implements NodeVisitor {
         }
     }
 
+    // TODO-2 SEND TO BUILT IN FUNCTIONS
     @Override
     public void visit(PrintStatement node) {
         for (NodeExpression ne : node.getExpressions()) {

@@ -24,6 +24,7 @@ import parser.syntax.nodes.expression.value.left.NodeMatrix;
 import parser.syntax.nodes.expression.value.left.NodeVariable;
 import parser.syntax.nodes.expression.value.right.NodeConstant;
 import parser.syntax.nodes.expression.value.right.NodeFunction;
+import parser.syntax.nodes.expression.operations.NodeExpressionDot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,15 +143,30 @@ public class ParserHelper {
 
     private NodeExpression parseUnary() {
         if (match(TokenType.UN_MINUS)) {
-            return new NodeExpressionUnMinus(factor());
+            return new NodeExpressionUnMinus(parseDot(null));
         } else if (match(TokenType.UN_REFERENCE)) {
-            return new NodeExpressionUnReference(parseIdentFuncArray(true));
+            return new NodeExpressionUnReference(parseDot(null));
         } else if (match(TokenType.NOT)) {
-            return new NodeExpressionNot(factor());
+            return new NodeExpressionNot(parseDot(null));
         } else {
-            return factor();
+            return parseDot(null);
         }
     }
+
+    public NodeExpression parseDot(NodeExpression ident){
+        NodeExpression x;
+        if(ident == null) {
+            x = factor();
+        } else {
+            x = ident;
+        }
+        while (match(TokenType.DOT)) {
+            x = new NodeExpressionDot(x, parseUnary());
+        }
+        return x;
+    }
+
+
 
     private NodeExpression factor() {
         NodeExpression x = null;
@@ -193,18 +209,15 @@ public class ParserHelper {
                 x = new NodeConstant(Type.Bool, new RoboBool(false));
                 return x;
             case IDENT:
-                return parseIdentFuncArray(false);
+                return parseIdentFuncArray();
             default:
                 throw new SyntaxException("Expression not recognized '" + peek().getTokenType() + "' ...");
         }
     }
 
-    private NodeExpression parseIdentFuncArray(boolean isVariable) {
+    private NodeExpression parseIdentFuncArray() {
         String name = (String) pop().getValue();
         if (match(TokenType.OPEN_PARENTHESES)) {
-            if (isVariable) {
-                throw new SyntaxException("Functions cannot have reference operator!");
-            }
             return parseFuncCall(name);
         } else if (match(TokenType.OPEN_SQUARE)) {
             List<NodeExpression> vars;
