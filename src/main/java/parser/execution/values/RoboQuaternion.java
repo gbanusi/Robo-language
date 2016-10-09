@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by gregor on 21.09.16..
  */
-public class RoboVector3D extends RoboObject{
+public class RoboQuaternion extends RoboObject{
 
     private Double length;
 
@@ -18,13 +18,13 @@ public class RoboVector3D extends RoboObject{
 
     private Type type;
 
-    public RoboVector3D(double x, double y, double z) {
+    public RoboQuaternion(double x, double y, double z) {
         this.value = new Vector3D(x, y, z);
         this.length = -1.0;
         this.type = Type.Vector3d;
     }
 
-    public RoboVector3D(Vector3D add) {
+    public RoboQuaternion(Vector3D add) {
         this.value = add;
         this.length = -1.0;
         this.type = Type.Vector3d;
@@ -41,20 +41,20 @@ public class RoboVector3D extends RoboObject{
 
     @Override
     public RoboValue add(RoboValue rv) {
-        if(! (rv instanceof RoboVector3D)){
+        if(! (rv instanceof RoboQuaternion)){
             throw new ExecutionException("Cannot add vector3d with sth that is not v3d.");
         }
-        RoboVector3D v3d = (RoboVector3D) rv;
-        return new RoboVector3D(value.add(v3d.value));
+        RoboQuaternion v3d = (RoboQuaternion) rv;
+        return new RoboQuaternion(value.add(v3d.value));
     }
 
     @Override
     public RoboValue sub(RoboValue rv) {
-        if(! (rv instanceof RoboVector3D)){
+        if(! (rv instanceof RoboQuaternion)){
             throw new ExecutionException("Cannot sub vector3d with sth that is not v3d.");
         }
-        RoboVector3D v3d = (RoboVector3D) rv;
-        return new RoboVector3D(value.sub(v3d.value));
+        RoboQuaternion v3d = (RoboQuaternion) rv;
+        return new RoboQuaternion(value.sub(v3d.value));
     }
 
     @Override
@@ -130,7 +130,7 @@ public class RoboVector3D extends RoboObject{
 
     @Override
     public RoboValue duplicate() {
-        return new RoboVector3D(value.getX(), value.getY(), value.getZ());
+        return new RoboQuaternion(value.getX(), value.getY(), value.getZ());
     }
 
     @Override
@@ -148,7 +148,7 @@ public class RoboVector3D extends RoboObject{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RoboVector3D that = (RoboVector3D) o;
+        RoboQuaternion that = (RoboQuaternion) o;
 
         if (!getValue().equals(that.getValue())) return false;
         return getType().equals(that.getType());
@@ -175,14 +175,14 @@ public class RoboVector3D extends RoboObject{
 
     public void dot(int size){
         checkParamNum(size, 0, "dot");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        RoboQuaternion rv = (RoboQuaternion) ExecutionEnv.popExpression();
         ExecutionEnv.pushExpression(new RoboDouble(this.value.dot((Vector3D) rv.getValue())));
     }
 
     public void cross(int size){
         checkParamNum(size, 1, "cross");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboVector3D(this.value.cross((Vector3D) rv.getValue())));
+        RoboQuaternion rv = (RoboQuaternion) ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(new RoboQuaternion(this.value.cross((Vector3D) rv.getValue())));
     }
 
     public void scalar(int size){

@@ -86,6 +86,12 @@ public class Vector3D {
         return new Vector3D(A.x * t, A.y * t, A.z * t);
     }
 
+    public void scalar(double scalar){
+        x *= scalar;
+        y *= scalar;
+        z *= scalar;
+    }
+
     @Override
     public String toString() {
         return "[" + x + ", " + y + ", " + z + "]";

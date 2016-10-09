@@ -56,6 +56,8 @@ public class Tokenizer {
         keywords.put(Type.Double.getLexeme(), Type.Double);
         keywords.put(Type.Line.getLexeme(), Type.Line);
         keywords.put(Type.Vector3d.getLexeme(), Type.Vector3d);
+        keywords.put(Type.Quaternion.getLexeme(), Type.Quaternion);
+        keywords.put(Type.Frame.getLexeme(), Type.Frame);
         keywords.put(Type.String.getLexeme(), Type.String);
         keywords.put(Type.Bool.getLexeme(), Type.Bool);
         keywords.put(Word._return.getLexeme(), Word._return);

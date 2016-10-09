@@ -24,6 +24,8 @@ public class Type extends Word {
             Bool = new Type("bool", TokenType.BASIC, null, 1),
             String = new Type("string", TokenType.BASIC, null, 1),
             Line = new Type("string", TokenType.BASIC, null, 1),
+            Frame = new Type("frame", TokenType.BASIC, null, 1),
+            Quaternion = new Type("quaternion", TokenType.BASIC, null, 1),
             Vector3d = new Type("vector3d", TokenType.BASIC, null, 1),
             Unknown = new Type("unknown", TokenType.BASIC, null, 1);
 
