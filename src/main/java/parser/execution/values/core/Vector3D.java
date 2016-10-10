@@ -128,4 +128,8 @@ public class Vector3D {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
+
+    public static double length(double x, double y, double z) {
+        return new Vector3D(x, y, z).length();
+    }
 }
