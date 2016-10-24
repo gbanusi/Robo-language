@@ -248,4 +248,9 @@ public final class MathUtils {
     static public double log2(double value) {
         return log(2, value);
     }
+
+    public static Boolean aboutEqual(double x, double y) {
+        double epsilon = Math.max(Math.abs(x), Math.abs(y)) * 1E-7;
+        return Math.abs(x - y) <= epsilon;
+    }
 }

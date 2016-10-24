@@ -35,6 +35,8 @@ public class FunctionEnv {
         builtInFunctions.add("matrixLength");
         builtInFunctions.add("arrayLength");
         builtInFunctions.add("Vector3d");
+        builtInFunctions.add("Matrix4");
+        builtInFunctions.add("Quaternion");
     }
 
     public FunctionEnv(Map<String, DefFunctionStatement> declaredFunctions) {
@@ -53,6 +55,10 @@ public class FunctionEnv {
                 case "matrixLength":
                     return new TypeArray(Type.Int, 2);
                 case "Vector3d":
+                    return Type.Vector3d;
+                case "Matrix4":
+                    return Type.Vector3d;
+                case "Quaternion":
                     return Type.Vector3d;
             }
             throw new ExecutionException("No built in method found, internal error!");
@@ -125,25 +131,50 @@ public class FunctionEnv {
 
     private void executeBuiltInFunction(String s, ExpressionEvalVisitor expEval, int size) {
         //TODO-1 error prone -> stack gives variables in reversed order! watch out by defining functions
+        Stack<RoboValue> reversed = new Stack<>();
+        for(int i=0; i < size; i++){
+            reversed.push(expEval.getResult());
+        }
         switch (s){
             case "matrixLength":
                 if(size != 1){
-                    throw new ExecutionException("'matrixLength' function accepts only one parameter!");
+                    throw new ExecutionException("'matrixLength' function accepts only 1 parameter!");
                 }
-                LanguageFunctions.matrixLength(expEval.getResult());
+                LanguageFunctions.matrixLength(reversed.pop());
                 return;
             case "arrayLength":
                 if(size != 1){
-                    throw new ExecutionException("'matrixLength' function accepts only one parameter!");
+                    throw new ExecutionException("'arrayLength' function accepts only 1 parameter!");
+
                 }
-                LanguageFunctions.arrayLength(expEval.getResult());
+                LanguageFunctions.arrayLength(reversed.pop());
                 return;
             case "Vector3d":
-                if(size != 3 && size != 1){
-                    throw new ExecutionException("'matrixLength' function accepts only one parameter!");
+                if(size != 3){
+                    throw new ExecutionException("'Vector3d' function accepts only 3 parameters!");
+
                 }
-                RoboConstructors.roboVector3D(expEval.getResult(), expEval.getResult(), expEval.getResult());
+                RoboConstructors.roboVector3D(reversed.pop(), reversed.pop(), reversed.pop());
                 return;
+            case "Matrix4":
+                if(size == 2){
+                    RoboConstructors.roboMatrix4(reversed.pop(), reversed.pop());
+                    return;
+                } else if (size == 0){
+                    RoboConstructors.roboMatrix4();
+                    return;
+                }
+                throw new ExecutionException("'Matrix4' function wrong parameters number!");
+            case "Quaternion":
+                if(size == 2){
+                    RoboConstructors.roboQuaternion(reversed.pop(), reversed.pop());
+                    return;
+                }else if(size == 4){
+                    RoboConstructors.roboQuaternion(reversed.pop(), reversed.pop(), reversed.pop(), reversed.pop());
+                    return;
+                }
+                throw new ExecutionException("'Quaternion' function accepts only 4 or 2 parameters!");
+
         }
         throw new ExecutionException("No built in method found, internal error!");
     }

@@ -143,7 +143,7 @@ public class RoboVector3D extends RoboObject {
 
     @Override
     public String toString() {
-        return "Vector3D(" + value.getX() + ", " + value.getY() + ", " + value.getZ() + ")";
+        return this.value.toString();
     }
 
     @Override

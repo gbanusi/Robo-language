@@ -290,4 +290,13 @@ public class Vector3 implements Serializable {
 	public double getZ() {
 		return z;
 	}
+
+	@Override
+	public String toString() {
+		return "Vector3{" +
+				"x=" + x +
+				", y=" + y +
+				", z=" + z +
+				'}';
+	}
 }

@@ -26,6 +26,7 @@ public class Type extends Word {
     public static final Type Frame;
     public static final Type Quaternion;
     public static final Type Vector3d;
+    public static final Type Matrix4;
     public static final Type Unknown;
 
     static {
@@ -37,6 +38,7 @@ public class Type extends Word {
         Frame = new Type("frame", TokenType.BASIC, null, 1);
         Quaternion = new Type("quaternion", TokenType.BASIC, null, 1);
         Vector3d = new Type("vector3d", TokenType.BASIC, null, 1);
+        Matrix4 = new Type("matrix4", TokenType.BASIC, null, 1);
         Unknown = new Type("unknown", TokenType.BASIC, null, 1);
     }
 

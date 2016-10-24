@@ -1,5 +1,6 @@
 package parser.execution.values;
 
+import parser.execution.values.core.MathUtils;
 import parser.lexical.type.Type;
 
 /**
@@ -42,17 +43,12 @@ public class RoboDouble extends RoboNumeric {
 
     @Override
     public RoboValue equal(RoboValue rv) {
-        return new RoboBool(aboutEqual(this.getValue(), ((Number) rv.getValue()).doubleValue()));
-    }
-
-    public static Boolean aboutEqual(double x, double y) {
-        double epsilon = Math.max(Math.abs(x), Math.abs(y)) * 1E-15;
-        return Math.abs(x - y) <= epsilon;
+        return new RoboBool(MathUtils.aboutEqual(this.getValue(), ((Number) rv.getValue()).doubleValue()));
     }
 
     @Override
     public RoboValue notEqual(RoboValue rv) {
-        return new RoboBool(!aboutEqual(this.getValue(), ((Number) rv.getValue()).doubleValue()));
+        return new RoboBool(!MathUtils.aboutEqual(this.getValue(), ((Number) rv.getValue()).doubleValue()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package parser.execution.values.core;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /** Encapsulates a <a href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> 4 by 4 matrix. Like
  * the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For example:
@@ -92,7 +93,6 @@ public class Matrix4 implements Serializable {
     }
 
     public Matrix4 (Vector3 rotation, double angleDeg) {
-        // od rotation i angleDeg napraviti Quaternion ...
         set(new Quaternion(rotation, angleDeg));
     }
 
@@ -605,5 +605,12 @@ public class Matrix4 implements Serializable {
      * @return This matrix for the purpose of chaining methods together */
     public Matrix4 rotate (final Vector3 v1, final Vector3 v2) {
         return rotate(quat.setFromCross(v1, v2));
+    }
+
+    @Override
+    public String toString() {
+        return "Matrix4{" +
+                "val=" + Arrays.toString(val) +
+                '}';
     }
 }
