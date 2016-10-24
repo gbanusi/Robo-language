@@ -114,7 +114,7 @@ public class Vector3 implements Serializable {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 
-	public static double len(double x, double y, double z) {
+	public static double len (double x, double y, double z) {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 
@@ -169,8 +169,8 @@ public class Vector3 implements Serializable {
 	public Vector3 mul (final Matrix4 matrix) {
 		final double l_mat[] = matrix.val;
 		return new Vector3(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M01] + z * l_mat[Matrix4.M02] + l_mat[Matrix4.M03], x
-			* l_mat[Matrix4.M10] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M12] + l_mat[Matrix4.M13], x * l_mat[Matrix4.M20] + y
-			* l_mat[Matrix4.M21] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M23]);
+				* l_mat[Matrix4.M10] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M12] + l_mat[Matrix4.M13], x * l_mat[Matrix4.M20] + y
+				* l_mat[Matrix4.M21] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M23]);
 	}
 
 	/** Multiplies the vector by the transpose of the given matrix, assuming the fourth (w) component of the vector is 1.
@@ -179,8 +179,8 @@ public class Vector3 implements Serializable {
 	public Vector3 traMul (final Matrix4 matrix) {
 		final double l_mat[] = matrix.val;
 		return new Vector3(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M10] + z * l_mat[Matrix4.M20] + l_mat[Matrix4.M30], x
-			* l_mat[Matrix4.M01] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21] + l_mat[Matrix4.M31], x * l_mat[Matrix4.M02] + y
-			* l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M32]);
+				* l_mat[Matrix4.M01] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21] + l_mat[Matrix4.M31], x * l_mat[Matrix4.M02] + y
+				* l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M32]);
 	}
 
 	/** Multiplies the vector by the given {@link Quaternion}.
@@ -206,7 +206,7 @@ public class Vector3 implements Serializable {
 	public Vector3 unrotate (final Matrix4 matrix) {
 		final double l_mat[] = matrix.val;
 		return new Vector3(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M10] + z * l_mat[Matrix4.M20], x * l_mat[Matrix4.M01] + y
-			* l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21], x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22]);
+				* l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21], x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22]);
 	}
 
 	/** Translates this vector in the direction opposite to the translation of the matrix and the multiplies this vector by the
@@ -220,7 +220,7 @@ public class Vector3 implements Serializable {
 		y -= l_mat[Matrix4.M03];
 		z -= l_mat[Matrix4.M03];
 		return new Vector3(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M10] + z * l_mat[Matrix4.M20], x * l_mat[Matrix4.M01] + y
-			* l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21], x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22]);
+				* l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21], x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22]);
 	}
 
 	/** Rotates this vector by the given angle in degrees around the given axis.

@@ -9,4 +9,3 @@ print v2.normalize();
 
 print v2;
 
-

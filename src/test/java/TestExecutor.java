@@ -1,3 +1,5 @@
+package test.java;
+
 import org.junit.Test;
 import parser.execution.RoboExec;
 import parser.lexical.tokenizer.Tokenizer;
