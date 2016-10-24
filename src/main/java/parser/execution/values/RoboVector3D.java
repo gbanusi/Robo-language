@@ -2,29 +2,32 @@ package parser.execution.values;
 
 import parser.execution.ExecutionException;
 import parser.execution.environment.ExecutionEnv;
-import parser.execution.values.core.Vector3D;
+import parser.execution.values.core.Vector3;
 import parser.lexical.type.Type;
 
 import java.util.List;
 
+import static parser.lexical.type.Type.Double;
+import static parser.lexical.type.Type.Vector3d;
+
 /**
  * Created by gregor on 21.09.16..
  */
-public class RoboVector3D extends RoboObject{
+public class RoboVector3D extends RoboObject {
 
     private Double length;
 
-    private Vector3D value;
+    private Vector3 value;
 
     private Type type;
 
     public RoboVector3D(double x, double y, double z) {
-        this.value = new Vector3D(x, y, z);
+        this.value = new Vector3(x, y, z);
         this.length = -1.0;
         this.type = Type.Vector3d;
     }
 
-    public RoboVector3D(Vector3D add) {
+    public RoboVector3D(Vector3 add) {
         this.value = add;
         this.length = -1.0;
         this.type = Type.Vector3d;
@@ -41,7 +44,7 @@ public class RoboVector3D extends RoboObject{
 
     @Override
     public RoboValue add(RoboValue rv) {
-        if(! (rv instanceof RoboVector3D)){
+        if (!(rv instanceof RoboVector3D)) {
             throw new ExecutionException("Cannot add vector3d with sth that is not v3d.");
         }
         RoboVector3D v3d = (RoboVector3D) rv;
@@ -50,7 +53,7 @@ public class RoboVector3D extends RoboObject{
 
     @Override
     public RoboValue sub(RoboValue rv) {
-        if(! (rv instanceof RoboVector3D)){
+        if (!(rv instanceof RoboVector3D)) {
             throw new ExecutionException("Cannot sub vector3d with sth that is not v3d.");
         }
         RoboVector3D v3d = (RoboVector3D) rv;
@@ -125,7 +128,7 @@ public class RoboVector3D extends RoboObject{
 
     @Override
     protected void setValue(RoboValue rv) {
-        this.value = (Vector3D) rv.getValue();
+        this.value = (Vector3) rv.getValue();
     }
 
     @Override
@@ -162,45 +165,78 @@ public class RoboVector3D extends RoboObject{
         return result;
     }
 
-    public void normalize(int size){
+    public void normalize(int size) {
         checkParamNum(size, 0, "normalize");
-        this.value.normalize();
-        ExecutionEnv.pushExpression(this);
+        ExecutionEnv.pushExpression(new RoboVector3D(this.value.normalize()));
     }
 
-    public void length(int size){
+    public void length(int size) {
         checkParamNum(size, 0, "length");
-        ExecutionEnv.pushExpression(new RoboDouble(this.value.length()));
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.len()));
     }
 
-    public void dot(int size){
+    public void length2(int size) {
+        checkParamNum(size, 0, "length2");
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.len2()));
+    }
+
+    public void dot(int size) {
         checkParamNum(size, 0, "dot");
         RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboDouble(this.value.dot((Vector3D) rv.getValue())));
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.dot((Vector3) rv.getValue())));
     }
 
-    public void cross(int size){
+    public void cross(int size) {
         checkParamNum(size, 1, "cross");
         RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboVector3D(this.value.cross((Vector3D) rv.getValue())));
+        ExecutionEnv.pushExpression(new RoboVector3D(this.value.cross((Vector3) rv.getValue())));
     }
 
-    public void scalar(int size){
+    public void rotate(int size) {
+        checkParamNum(size, 2, "rotate");
+        RoboDouble degree = (RoboDouble) ExecutionEnv.popExpression();
+        RoboVector3D axis = (RoboVector3D) ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(new RoboVector3D(this.value.rotate((Vector3) axis.getValue(), degree.getValue())));
+    }
+
+    public void distance(int size) {
+        checkParamNum(size, 1, "distance");
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.distance((Vector3) rv.getValue())));
+    }
+
+    public void distance2(int size) {
+        checkParamNum(size, 1, "distance");
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.distance2((Vector3) rv.getValue())));
+    }
+
+    public void scalar(int size) {
         checkParamNum(size, 1, "scalar");
-        RoboDouble rv = (RoboDouble) ExecutionEnv.popExpression();
-        this.value.scalar(rv.getValue());
-        ExecutionEnv.pushExpression(this);
+        RoboValue rv = ExecutionEnv.popExpression();
+        if (rv.getType() == Double) {
+            this.value.scl((double) rv.getValue());
+            ExecutionEnv.pushExpression(this);
+            return;
+        } else if (rv.getType() == Vector3d) {
+            this.value.scl((Vector3) rv.getValue());
+            ExecutionEnv.pushExpression(this);
+            return;
+        }
+        throw new ExecutionException("Illegal parameter");
     }
 
-    public void negate(int size){
+
+
+    public void negate(int size) {
         checkParamNum(size, 1, "negate");
-        this.value.scalar(-1);
+        this.value.scl(-1);
         ExecutionEnv.pushExpression(this);
     }
 
     private void checkParamNum(int size, int expectedSize, String name) {
-        if(size > 0){
-            throw new ExecutionException("'" + name + "' method accepts no parameters!");
+        if (expectedSize != size) {
+            throw new ExecutionException("'" + name + "' method accepts " + expectedSize + " parameters!");
         }
     }
 

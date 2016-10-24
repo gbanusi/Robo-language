@@ -18,16 +18,28 @@ public class Type extends Word {
         width = w;
     }
 
-    public static final Type
-            Int = new Type("int", TokenType.BASIC, null, 4),
-            Double = new Type("double", TokenType.BASIC, null, 8),
-            Bool = new Type("bool", TokenType.BASIC, null, 1),
-            String = new Type("string", TokenType.BASIC, null, 1),
-            Line = new Type("string", TokenType.BASIC, null, 1),
-            Frame = new Type("frame", TokenType.BASIC, null, 1),
-            Quaternion = new Type("quaternion", TokenType.BASIC, null, 1),
-            Vector3d = new Type("vector3d", TokenType.BASIC, null, 1),
-            Unknown = new Type("unknown", TokenType.BASIC, null, 1);
+    public static final Type Int;
+    public static final Type Double;
+    public static final Type Bool;
+    public static final Type String;
+    public static final Type Line;
+    public static final Type Frame;
+    public static final Type Quaternion;
+    public static final Type Vector3d;
+    public static final Type Unknown;
+
+    static {
+        Int = new Type("int", TokenType.BASIC, null, 4);
+        Double = new Type("double", TokenType.BASIC, null, 8);
+        Bool = new Type("bool", TokenType.BASIC, null, 1);
+        String = new Type("string", TokenType.BASIC, null, 1);
+        Line = new Type("line", TokenType.BASIC, null, 1);
+        Frame = new Type("frame", TokenType.BASIC, null, 1);
+        Quaternion = new Type("quaternion", TokenType.BASIC, null, 1);
+        Vector3d = new Type("vector3d", TokenType.BASIC, null, 1);
+        Unknown = new Type("unknown", TokenType.BASIC, null, 1);
+    }
+
 
     public static Map<Type, RoboValue> defaultVals;
 
@@ -46,7 +58,7 @@ public class Type extends Word {
         return false;
     }
 
-    public static RoboValue getDefaultValue(Type type){
+    public static RoboValue getDefaultValue(Type type) {
         return defaultVals.get(type) != null ? defaultVals.get(type).duplicate() : RoboNull.roboNull;
     }
 
