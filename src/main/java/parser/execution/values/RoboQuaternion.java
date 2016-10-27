@@ -124,7 +124,7 @@ public class RoboQuaternion extends RoboObject{
     }
 
     @Override
-    public Object getValue() {
+    public Quaternion getValue() {
         return value;
     }
 
@@ -151,11 +151,6 @@ public class RoboQuaternion extends RoboObject{
         return result;
     }
 
-    private void checkParamNum(int size, int expectedSize, String name) {
-        if(size > 0){
-            throw new ExecutionException("'" + name + "' method accepts no parameters!");
-        }
-    }
 
     public void setEulerAngles(int size) {
         checkParamNum(size, 3, "rotate");

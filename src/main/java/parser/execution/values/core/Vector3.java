@@ -200,7 +200,7 @@ public class Vector3 implements Serializable {
 	}
 
 	/** Multiplies this vector by the transpose of the first three columns of the matrix. Note: only works for translation and
-	 * rotation, does not work for scaling. For those, use {@link #rot(Matrix4)} with {@link Matrix4#inv()}.
+	 * rotation, does not work for scaling. For those, use {@link #rot(Matrix4)} with {@link Matrix4#invert()}.
 	 * @param matrix The transformation matrix
 	 * @return The vector for chaining */
 	public Vector3 unrotate (final Matrix4 matrix) {
@@ -211,7 +211,7 @@ public class Vector3 implements Serializable {
 
 	/** Translates this vector in the direction opposite to the translation of the matrix and the multiplies this vector by the
 	 * transpose of the first three columns of the matrix. Note: only works for translation and rotation, does not work for
-	 * scaling. For those, use {@link #mul(Matrix4)} with {@link Matrix4#inv()}.
+	 * scaling. For those, use {@link #mul(Matrix4)} with {@link Matrix4#invert()}.
 	 * @param matrix The transformation matrix
 	 * @return The vector for chaining */
 	public Vector3 untransform (final Matrix4 matrix) {

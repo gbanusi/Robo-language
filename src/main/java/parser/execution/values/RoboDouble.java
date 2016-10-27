@@ -91,6 +91,7 @@ public class RoboDouble extends RoboNumeric {
         return value.toString();
     }
 
+    @Override
     public Double getValue() {
         return value;
     }

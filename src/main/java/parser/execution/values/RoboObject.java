@@ -22,10 +22,14 @@ public abstract class RoboObject extends RoboValue {
         } catch (SecurityException e) {}
         catch (NoSuchMethodException e) {
             throw new ExecutionException("Method does not exist.");
-        } catch (InvocationTargetException e) {
-            throw new ExecutionException("Call the dealer.");
-        } catch (IllegalAccessException e) {
-            throw new ExecutionException("Call the dealer.");
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new ExecutionException(e.getMessage());
+        }
+    }
+
+    protected void checkParamNum(int size, int expectedSize, String name) {
+        if(size != expectedSize){
+            throw new ExecutionException("'" + name + "' method accepts no parameters!");
         }
     }
 }

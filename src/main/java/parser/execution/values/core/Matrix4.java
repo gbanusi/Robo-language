@@ -273,7 +273,7 @@ public class Matrix4 implements Serializable {
      *
      * @param vector The translation vector to add to the current matrix. (This vector is not modified)
      * @return This matrix for the purpose of chaining methods together. */
-    public Matrix4 trn (Vector3 vector) {
+    public Matrix4 addTranslation (Vector3 vector) {
         val[M03] += vector.x;
         val[M13] += vector.y;
         val[M23] += vector.z;
@@ -293,12 +293,26 @@ public class Matrix4 implements Serializable {
         return this;
     }
 
-    /** Multiplies the matrix mata with matrix matb, storing the result in mata. The arrays are assumed to hold 4x4 column major
-     * matrices as you can get from {@link Matrix4#val}. This is the same as {@link Matrix4#mul(Matrix4)}.
-     *
-     * @param mata the first matrix.
-     * @param matb the second matrix. */
-    public static native void mul (double[] mata, double[] matb) /*-{ }-*/; /*
+    static void mul(double[] mata, double[] matb) {
+        double[] tmp = new double[16];
+        tmp[M00] = mata[M00] * matb[M00] + mata[M01] * matb[M10] + mata[M02] * matb[M20] + mata[M03] * matb[M30];
+        tmp[M01] = mata[M00] * matb[M01] + mata[M01] * matb[M11] + mata[M02] * matb[M21] + mata[M03] * matb[M31];
+        tmp[M02] = mata[M00] * matb[M02] + mata[M01] * matb[M12] + mata[M02] * matb[M22] + mata[M03] * matb[M32];
+        tmp[M03] = mata[M00] * matb[M03] + mata[M01] * matb[M13] + mata[M02] * matb[M23] + mata[M03] * matb[M33];
+        tmp[M10] = mata[M10] * matb[M00] + mata[M11] * matb[M10] + mata[M12] * matb[M20] + mata[M13] * matb[M30];
+        tmp[M11] = mata[M10] * matb[M01] + mata[M11] * matb[M11] + mata[M12] * matb[M21] + mata[M13] * matb[M31];
+        tmp[M12] = mata[M10] * matb[M02] + mata[M11] * matb[M12] + mata[M12] * matb[M22] + mata[M13] * matb[M32];
+        tmp[M13] = mata[M10] * matb[M03] + mata[M11] * matb[M13] + mata[M12] * matb[M23] + mata[M13] * matb[M33];
+        tmp[M20] = mata[M20] * matb[M00] + mata[M21] * matb[M10] + mata[M22] * matb[M20] + mata[M23] * matb[M30];
+        tmp[M21] = mata[M20] * matb[M01] + mata[M21] * matb[M11] + mata[M22] * matb[M21] + mata[M23] * matb[M31];
+        tmp[M22] = mata[M20] * matb[M02] + mata[M21] * matb[M12] + mata[M22] * matb[M22] + mata[M23] * matb[M32];
+        tmp[M23] = mata[M20] * matb[M03] + mata[M21] * matb[M13] + mata[M22] * matb[M23] + mata[M23] * matb[M33];
+        tmp[M30] = mata[M30] * matb[M00] + mata[M31] * matb[M10] + mata[M32] * matb[M20] + mata[M33] * matb[M30];
+        tmp[M31] = mata[M30] * matb[M01] + mata[M31] * matb[M11] + mata[M32] * matb[M21] + mata[M33] * matb[M31];
+        tmp[M32] = mata[M30] * matb[M02] + mata[M31] * matb[M12] + mata[M32] * matb[M22] + mata[M33] * matb[M32];
+        tmp[M33] = mata[M30] * matb[M03] + mata[M31] * matb[M13] + mata[M32] * matb[M23] + mata[M33] * matb[M33];
+        System.arraycopy(mata, 0, tmp, 0, tmp.length);
+    }
 
 	/** Premultiplies this matrix with the given matrix, storing the result in this matrix. For example:
 	 * 
@@ -317,7 +331,7 @@ public class Matrix4 implements Serializable {
     /** Transposes the matrix.
      *
      * @return This matrix for the purpose of chaining methods together. */
-    public Matrix4 tra () {
+    public Matrix4 transpose() {
         tmp[M00] = val[M00];
         tmp[M01] = val[M10];
         tmp[M02] = val[M20];
@@ -364,7 +378,7 @@ public class Matrix4 implements Serializable {
      *
      * @return This matrix for the purpose of chaining methods together.
      * @throws RuntimeException if the matrix is singular (not invertible) */
-    public Matrix4 inv () {
+    public Matrix4 invert() {
         double l_det = val[M30] * val[M21] * val[M12] * val[M03] - val[M20] * val[M31] * val[M12] * val[M03] - val[M30] * val[M11]
                 * val[M22] * val[M03] + val[M10] * val[M31] * val[M22] * val[M03] + val[M20] * val[M11] * val[M32] * val[M03] - val[M10]
                 * val[M21] * val[M32] * val[M03] - val[M30] * val[M21] * val[M02] * val[M13] + val[M20] * val[M31] * val[M02] * val[M13]
@@ -484,6 +498,7 @@ public class Matrix4 implements Serializable {
      * @param v1 The base vector
      * @param v2 The target vector
      * @return This matrix for the purpose of chaining methods together */
+    //TODO
     public Matrix4 setToRotation (final Vector3 v1, final Vector3 v2) {
         return set(quat.setFromCross(v1, v2));
     }
@@ -572,7 +587,7 @@ public class Matrix4 implements Serializable {
         val[M03] = 0;
         val[M13] = 0;
         val[M23] = 0;
-        return inv().tra();
+        return invert().transpose();
     }
 
 

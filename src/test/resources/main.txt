@@ -1,17 +1,5 @@
-
-vector3d v1 = Vector3d(11, 3.9, 12);
-vector3d v2 = Vector3d(1, 5, 9);
-vector3d v3 = v1 + v2;
-
-print v2.normalize();
-
-matrix4 m4 = Matrix4(v1, 15);
-
-quaternion q1 = Quaternion(v2.normalize(), 38.2);
-quaternion q2 = Quaternion(11, 38.2, 1, 90.2);
-
-print v2;
+vector3d v1 = Vector3d(1, 1, 1);
+matrix4 m4 = Matrix4(v1, 1/2);
 print m4;
-print q1;
-print q2;
+print m4.invert().mul(m4);
 

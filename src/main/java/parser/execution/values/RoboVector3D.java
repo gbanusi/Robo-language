@@ -137,7 +137,7 @@ public class RoboVector3D extends RoboObject {
     }
 
     @Override
-    public Object getValue() {
+    public Vector3 getValue() {
         return value;
     }
 
@@ -226,19 +226,10 @@ public class RoboVector3D extends RoboObject {
         throw new ExecutionException("Illegal parameter");
     }
 
-
-
     public void negate(int size) {
         checkParamNum(size, 1, "negate");
         this.value.scl(-1);
         ExecutionEnv.pushExpression(this);
     }
-
-    private void checkParamNum(int size, int expectedSize, String name) {
-        if (expectedSize != size) {
-            throw new ExecutionException("'" + name + "' method accepts " + expectedSize + " parameters!");
-        }
-    }
-
 
 }

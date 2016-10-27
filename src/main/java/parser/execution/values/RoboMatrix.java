@@ -82,7 +82,7 @@ public class RoboMatrix extends RoboArrays {
     }
 
     @Override
-    public Object getValue() {
+    public RoboValue[][] getValue() {
         return value;
     }
 

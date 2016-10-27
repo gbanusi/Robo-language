@@ -284,9 +284,15 @@ public class ExpressionEvalVisitor implements ExpressionNodeVisitor {
         if(!(obj instanceof RoboObject)){
             throw new ExecutionException("Cannot call '.' operator on non class object");
         }
-        NodeFunction nf = (NodeFunction) ned.getSecond();
-        RoboObject ro = (RoboObject) obj;
-        ro.callFunction(nf, this);
+        while(ned.getSecond() instanceof NodeExpressionDot){
+            NodeExpressionDot nd = (NodeExpressionDot) ned.getSecond();
+            ned = (NodeExpressionDot) ned.getSecond();
+            NodeFunction nf = (NodeFunction) nd.getFirst();
+            RoboObject ro = (RoboObject) obj;
+            ro.callFunction(nf, this);
+            obj = ExecutionEnv.popExpression();
+        }
+        ExecutionEnv.pushExpression(obj);
     }
 
     @Override

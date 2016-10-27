@@ -81,11 +81,6 @@ public abstract class RoboNumeric extends RoboValue {
     }
 
     @Override
-    public Object getValue() {
-        return null;
-    }
-
-    @Override
     public String toString() {
         return null;
     }

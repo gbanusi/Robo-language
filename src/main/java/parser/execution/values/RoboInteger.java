@@ -43,6 +43,8 @@ public class RoboInteger extends RoboNumeric {
     @Override
     public RoboValue div(RoboValue rv) {
         if (rv instanceof RoboInteger) {
+            if(this.getValue() % (Integer)rv.getValue() != 0)
+                return new RoboDouble(value.doubleValue() / (Integer) rv.getValue());
             return new RoboInteger(value / (Integer) rv.getValue());
         } else if(rv instanceof  RoboDouble){
             return new RoboDouble(value.doubleValue() / (Double) rv.getValue());
@@ -127,6 +129,7 @@ public class RoboInteger extends RoboNumeric {
         return value.toString();
     }
 
+    @Override
     public Integer getValue() {
         return value;
     }
