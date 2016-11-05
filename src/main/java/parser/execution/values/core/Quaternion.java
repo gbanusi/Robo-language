@@ -363,6 +363,12 @@ public class Quaternion implements Serializable {
         matrix[Matrix4.M33] = 1;
     }
 
+    public Matrix4 toMatrix() {
+        final double[] matrix = new double[16];
+        toMatrix(matrix);
+        return new Matrix4(matrix);
+    }
+
     /**
      * Set this quaternion to the rotation between two vectors.
      *

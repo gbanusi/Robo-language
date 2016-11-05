@@ -96,6 +96,10 @@ public class Matrix4 implements Serializable {
         set(new Quaternion(rotation, angleDeg));
     }
 
+    public Matrix4(double[] matrix) {
+        System.arraycopy(matrix, 0, val, 0, 16);
+    }
+
     /** Sets the matrix to the given matrix.
      *
      * @param matrix The matrix that is to be copied. (The given matrix is not modified)
@@ -250,6 +254,46 @@ public class Matrix4 implements Serializable {
         return this;
     }
 
+    public Matrix4 add(Matrix4 m4){
+        val[M00] += m4.val[M00];
+        val[M01] += m4.val[M01];
+        val[M02] += m4.val[M02];
+        val[M10] += m4.val[M10];
+        val[M11] += m4.val[M11];
+        val[M12] += m4.val[M12];
+        val[M20] += m4.val[M20];
+        val[M21] += m4.val[M21];
+        val[M22] += m4.val[M22];
+        val[M03] += m4.val[M03];
+        val[M13] += m4.val[M13];
+        val[M23] += m4.val[M23];
+        val[M30] += m4.val[M30];
+        val[M31] += m4.val[M31];
+        val[M32] += m4.val[M32];
+        val[M33] += m4.val[M33];
+        return this;
+    }
+
+    public Matrix4 sub(Matrix4 m4){
+        val[M00] -= m4.val[M00];
+        val[M01] -= m4.val[M01];
+        val[M02] -= m4.val[M02];
+        val[M10] -= m4.val[M10];
+        val[M11] -= m4.val[M11];
+        val[M12] -= m4.val[M12];
+        val[M20] -= m4.val[M20];
+        val[M21] -= m4.val[M21];
+        val[M22] -= m4.val[M22];
+        val[M03] -= m4.val[M03];
+        val[M13] -= m4.val[M13];
+        val[M23] -= m4.val[M23];
+        val[M30] -= m4.val[M30];
+        val[M31] -= m4.val[M31];
+        val[M32] -= m4.val[M32];
+        val[M33] -= m4.val[M33];
+        return this;
+    }
+
     public Vector3 getxAxis() {
         return new Vector3(val[M00], val[M01], val[M02]);
     }
@@ -311,7 +355,7 @@ public class Matrix4 implements Serializable {
         tmp[M31] = mata[M30] * matb[M01] + mata[M31] * matb[M11] + mata[M32] * matb[M21] + mata[M33] * matb[M31];
         tmp[M32] = mata[M30] * matb[M02] + mata[M31] * matb[M12] + mata[M32] * matb[M22] + mata[M33] * matb[M32];
         tmp[M33] = mata[M30] * matb[M03] + mata[M31] * matb[M13] + mata[M32] * matb[M23] + mata[M33] * matb[M33];
-        System.arraycopy(mata, 0, tmp, 0, tmp.length);
+        System.arraycopy(tmp, 0, mata, 0, tmp.length);
     }
 
 	/** Premultiplies this matrix with the given matrix, storing the result in this matrix. For example:
@@ -627,5 +671,9 @@ public class Matrix4 implements Serializable {
         return "Matrix4{" +
                 "val=" + Arrays.toString(val) +
                 '}';
+    }
+
+    public double[] getVal() {
+        return val.clone();
     }
 }

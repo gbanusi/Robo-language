@@ -2,6 +2,7 @@ package test.java;
 
 import org.junit.Test;
 import parser.execution.RoboExec;
+import parser.lexical.tokenizer.TokenType;
 import parser.lexical.tokenizer.Tokenizer;
 import parser.syntax.nodes.ProgramNode;
 import parser.syntax.parser.Parser;

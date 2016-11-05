@@ -26,6 +26,9 @@ public class FunctionEnv {
         funcReturnType = new Stack<>();
     }
 
+    private static Stack<RoboValue> funcParamStack = new Stack<>();
+
+    // TODO-1 change to sth else so multiple functions with same name can be declared
     private Map<String, DefFunctionStatement> declaredFunctions = new HashMap<>();
 
     private static Set<String> builtInFunctions;
@@ -57,9 +60,9 @@ public class FunctionEnv {
                 case "Vector3d":
                     return Type.Vector3d;
                 case "Matrix4":
-                    return Type.Vector3d;
+                    return Type.Matrix4;
                 case "Quaternion":
-                    return Type.Vector3d;
+                    return Type.Quaternion;
             }
             throw new ExecutionException("No built in method found, internal error!");
         }
@@ -83,7 +86,7 @@ public class FunctionEnv {
         evaluateParams(nf, expEval);
 
         if(builtInFunctions.contains(nf.getfName())){
-            executeBuiltInFunction(nf.getfName(), expEval, nf.getVars().size());
+            executeBuiltInFunction(nf.getfName(), nf.getVars().size());
             return;
         }
 
@@ -99,14 +102,10 @@ public class FunctionEnv {
             throw new ExecutionException("Number of passed parameters must equal number of function parameters!");
         }
 
-
-            // last expression is on top of stack!
-        Collections.reverse(params);
-
         for (int i = 0; i < nf.getVars().size(); i++) {
             params.get(i).accept(funcExec);
             String varName = ((DefVarStatement) params.get(i)).getVariables().get(0);
-            RoboValue rv = expEval.getResult();
+            RoboValue rv = funcParamStack.pop();
             ExecutionEnv.getExecutionEnvironment().defineVariable(varName, rv, rv.getType());
         }
 
@@ -127,50 +126,56 @@ public class FunctionEnv {
         for (int i = 0; i < nf.getVars().size(); i++) {
             nf.getVars().get(i).accept(expEval);
         }
+
+        for(int i = 0; i < nf.getVars().size(); i++){
+            funcParamStack.push(ExecutionEnv.popExpression());
+        }
     }
 
-    private void executeBuiltInFunction(String s, ExpressionEvalVisitor expEval, int size) {
-        //TODO-1 error prone -> stack gives variables in reversed order! watch out by defining functions
-        Stack<RoboValue> reversed = new Stack<>();
-        for(int i=0; i < size; i++){
-            reversed.push(expEval.getResult());
-        }
+    public RoboValue popFunctionParam(){
+        return funcParamStack.pop();
+    }
+
+    private void executeBuiltInFunction(String s, int size) {
         switch (s){
             case "matrixLength":
                 if(size != 1){
                     throw new ExecutionException("'matrixLength' function accepts only 1 parameter!");
                 }
-                LanguageFunctions.matrixLength(reversed.pop());
+                LanguageFunctions.matrixLength(funcParamStack.pop());
                 return;
             case "arrayLength":
                 if(size != 1){
                     throw new ExecutionException("'arrayLength' function accepts only 1 parameter!");
 
                 }
-                LanguageFunctions.arrayLength(reversed.pop());
+                LanguageFunctions.arrayLength(funcParamStack.pop());
                 return;
             case "Vector3d":
                 if(size != 3){
                     throw new ExecutionException("'Vector3d' function accepts only 3 parameters!");
 
                 }
-                RoboConstructors.roboVector3D(reversed.pop(), reversed.pop(), reversed.pop());
+                RoboConstructors.roboVector3D(funcParamStack.pop(), funcParamStack.pop(), funcParamStack.pop());
                 return;
             case "Matrix4":
                 if(size == 2){
-                    RoboConstructors.roboMatrix4(reversed.pop(), reversed.pop());
+                    RoboConstructors.roboMatrix4(funcParamStack.pop(), funcParamStack.pop());
                     return;
                 } else if (size == 0){
                     RoboConstructors.roboMatrix4();
+                    return;
+                }else if (size == 1){
+                    RoboConstructors.roboMatrix4(funcParamStack.pop());
                     return;
                 }
                 throw new ExecutionException("'Matrix4' function wrong parameters number!");
             case "Quaternion":
                 if(size == 2){
-                    RoboConstructors.roboQuaternion(reversed.pop(), reversed.pop());
+                    RoboConstructors.roboQuaternion(funcParamStack.pop(), funcParamStack.pop());
                     return;
                 }else if(size == 4){
-                    RoboConstructors.roboQuaternion(reversed.pop(), reversed.pop(), reversed.pop(), reversed.pop());
+                    RoboConstructors.roboQuaternion(funcParamStack.pop(), funcParamStack.pop(), funcParamStack.pop(), funcParamStack.pop());
                     return;
                 }
                 throw new ExecutionException("'Quaternion' function accepts only 4 or 2 parameters!");

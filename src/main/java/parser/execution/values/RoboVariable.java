@@ -20,8 +20,9 @@ public class RoboVariable extends RoboValue {
 
     /**
      * For function initialization, if variable is assigned by reference in function.
-     * If we say a variable in function is a reference we have to defined it with RoboVariable, and cannot set
-     * RoboVariable value if it is etc. RoboInteger
+     * If we say a variable in function is a reference we have to define it with RoboVariable,
+     * and cannot set RoboVariable value if it is etc. RoboInteger
+     * EG. func(1, random) -> function bool func(int& a, b);
      */
     private boolean defaultInit;
 
@@ -127,9 +128,10 @@ public class RoboVariable extends RoboValue {
     }
 
     public void setValue(RoboValue rv) {
-
+        // TODO-1 check if reference and deal with it like a reference...
         if(this.value == RoboNull.roboNull) {
             this.value = rv;
+            defaultInit = false;
         } else if (defaultInit){
             defaultInit = false;
             this.value = rv;

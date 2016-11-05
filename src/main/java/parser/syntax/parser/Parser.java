@@ -57,6 +57,8 @@ public class Parser {
     }
 
     public Token pop() {
+        //TODO-DEBUG remove
+        System.out.println(tokenizer.getCurrentToken().getTokenType() + "  " + tokenizer.getCurrentToken().getValue().toString() );
         Token t = tokenizer.getCurrentToken();
         tokenizer.nextToken();
         return t;
@@ -91,7 +93,7 @@ public class Parser {
 
             // ili ključna riječ
             if (!peek().getTokenType().getCode().equals("KEYWORD")) {
-                throw new SyntaxException("Keyword expected instead of: !");
+                throw new SyntaxException("Keyword expected instead of: " + peek().getTokenType() + "!");
             } else {
                 statements.add(parseKeyword());
             }

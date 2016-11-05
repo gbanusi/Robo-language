@@ -3,6 +3,7 @@ package parser.execution.environment.built.in;
 import parser.execution.ExecutionException;
 import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.*;
+import parser.execution.values.core.Matrix4;
 import parser.execution.values.core.Quaternion;
 import parser.execution.values.core.Vector3;
 import parser.lexical.type.Type;
@@ -57,13 +58,29 @@ public class RoboConstructors {
         RoboVector3D vectord = (RoboVector3D) vector;
         if(angle instanceof  RoboNumeric){
             RoboDouble angled = (RoboDouble) RoboNumeric.convert((RoboNumeric) angle, Type.Double);
-            ExecutionEnv.pushExpression(new RoboMatrix4((Vector3)vectord.getValue(), angled.getValue()));
+            ExecutionEnv.pushExpression(new RoboMatrix4(vectord.getValue(), angled.getValue()));
             return;
         } else if(angle instanceof RoboQuaternion){
             RoboQuaternion angled = (RoboQuaternion) angle;
-            ExecutionEnv.pushExpression(new RoboMatrix4((Vector3)vectord.getValue(), (Quaternion)angled.getValue()));
+            ExecutionEnv.pushExpression(new RoboMatrix4(vectord.getValue(), (Quaternion)angled.getValue()));
             return;
         }
         throw new ExecutionException("Matrix4 constructor wrong.");
+    }
+
+    public static void roboMatrix4(RoboValue matrix) {
+        if(!(matrix instanceof RoboMatrix)){
+            throw new ExecutionException("Matrix4 constructor wrong.");
+        }
+        RoboMatrix rm = (RoboMatrix) matrix;
+        if(rm.getCols() != 4 || rm.getRows() != 4){
+            throw new ExecutionException("Matrix dimension false.");
+        } else {
+            double[] mat = new double[16];
+            for(int i = 0; i < 16; i++){
+                mat[i] = (double)rm.index(i/4, i%4).getValue();
+            }
+            ExecutionEnv.pushExpression(new RoboMatrix4(new Matrix4(mat)));
+        }
     }
 }

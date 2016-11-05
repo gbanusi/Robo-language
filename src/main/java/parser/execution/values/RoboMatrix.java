@@ -37,6 +37,17 @@ public class RoboMatrix extends RoboArrays {
         }
     }
 
+    public RoboMatrix(double[] matrix4) {
+        this.type = new TypeMatrix(Type.Double, 4, 4);
+        rows = 4;
+        cols = 4;
+        for(int i = 0; i < rows + 1; i++){
+            this.value[i] = new RoboValue[4];
+            for(int j=0; j<cols; j++){
+                this.value[i][j] = new RoboDouble(matrix4[i*4 + j]);
+            }
+        }
+    }
 
 
     @Override
@@ -55,6 +66,10 @@ public class RoboMatrix extends RoboArrays {
             int cols = (int) indexes.get(1).getValue();
             return value[rows][cols];
         }
+    }
+
+    public RoboValue index(int x, int y) {
+        return value[x][y];
     }
 
     @Override
@@ -94,5 +109,13 @@ public class RoboMatrix extends RoboArrays {
     @Override
     public RoboValue getLength() {
         return new RoboArray(Arrays.asList(new RoboInteger(rows), new RoboInteger(cols)), new TypeArray(Type.Int, 2));
+    }
+
+    public Integer getRows() {
+        return rows;
+    }
+
+    public Integer getCols() {
+        return cols;
     }
 }

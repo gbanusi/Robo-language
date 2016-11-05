@@ -18,8 +18,7 @@ function double sumSquares(double[] x){
         sum = sum + x[i] * x[i];
         i = i + 1;
     }
-    print "Suma je: ";
-    print sum;
+    print "Suma je: ", sum;
     return sum;
 }
 

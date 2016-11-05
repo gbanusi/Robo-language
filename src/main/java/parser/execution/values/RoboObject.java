@@ -17,13 +17,15 @@ public abstract class RoboObject extends RoboValue {
         ExecutionEnv.getExecutionEnvironment().evaluateFunctionParameters(nf, ex);
         Method method;
         try {
+            // TODO-1 give direct parameters instead of int.class...
+            // polymorphism added then
             method = this.getClass().getMethod(nf.getfName(), int.class );
             method.invoke(this, nf.getVars().size());
         } catch (SecurityException e) {}
         catch (NoSuchMethodException e) {
             throw new ExecutionException("Method does not exist.");
         } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new ExecutionException(e.getMessage());
+            throw new ExecutionException();
         }
     }
 

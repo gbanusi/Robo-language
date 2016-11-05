@@ -45,12 +45,16 @@ public class RoboMatrix4 extends RoboObject {
 
     @Override
     public RoboValue add(RoboValue rv) {
-        throw new ExecutionException("'+' for Matrix4 is not implemented.");
+        RoboMatrix4 m4 = (RoboMatrix4) rv;
+        this.value.add(m4.getValue());
+        return this;
     }
 
     @Override
     public RoboValue sub(RoboValue rv) {
-        throw new ExecutionException("'-' for Matrix4 is not implemented.");
+        RoboMatrix4 m4 = (RoboMatrix4) rv;
+        this.value.sub(m4.getValue());
+        return this;
     }
 
     @Override
@@ -184,19 +188,19 @@ public class RoboMatrix4 extends RoboObject {
 
     public void addTranslation(int size) {
         checkParamNum(size, 1, "addTranslation");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.addTranslation(rv.getValue())));
     }
 
     public void mul(int size) {
         checkParamNum(size, 1, "mul");
-        RoboMatrix4 rv = (RoboMatrix4) ExecutionEnv.popExpression();
+        RoboMatrix4 rv = (RoboMatrix4) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.mul(rv.getValue())));
     }
 
     public void mulLeft(int size) {
         checkParamNum(size, 1, "mulLeft");
-        RoboMatrix4 rv = (RoboMatrix4) ExecutionEnv.popExpression();
+        RoboMatrix4 rv = (RoboMatrix4) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.mulLeft(rv.getValue())));
     }
 
@@ -211,7 +215,7 @@ public class RoboMatrix4 extends RoboObject {
     }
 
     public void invert(int size) {
-        checkParamNum(size, 0, "makeIdentity");
+        checkParamNum(size, 0, "invert");
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.invert()));
     }
 
@@ -222,44 +226,44 @@ public class RoboMatrix4 extends RoboObject {
 
     public void setTranslation(int size) {
         checkParamNum(size, 1, "setTranslation");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.setTranslation(rv.getValue())));
     }
 
     public void setToTranslation(int size) {
         checkParamNum(size, 1, "setToTranslation");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.setToTranslation(rv.getValue())));
     }
 
     public void setToRotation(int size) {
         checkParamNum(size, 2, "setToRotation");
-        RoboVector3D v1 = (RoboVector3D) ExecutionEnv.popExpression();
-        RoboVector3D v2 = (RoboVector3D) ExecutionEnv.popExpression();
+        RoboVector3D v1 = (RoboVector3D) ExecutionEnv.getFunctionParam();
+        RoboVector3D v2 = (RoboVector3D) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.setToRotation(v1.getValue(), v2.getValue())));
     }
 
     public void setFromEulerAngles(int size) {
         checkParamNum(size, 3, "setFromEulerAngles");
-        RoboDouble yaw = (RoboDouble) ExecutionEnv.popExpression();
-        RoboDouble pitch = (RoboDouble) ExecutionEnv.popExpression();
-        RoboDouble roll = (RoboDouble) ExecutionEnv.popExpression();
+        RoboDouble yaw = (RoboDouble) ExecutionEnv.getFunctionParam();
+        RoboDouble pitch = (RoboDouble) ExecutionEnv.getFunctionParam();
+        RoboDouble roll = (RoboDouble) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboMatrix4(this.value.setFromEulerAngles(yaw.getValue(), pitch.getValue(), roll.getValue())));
     }
 
     public void getTranslation(int size) {
         checkParamNum(size, 1, "getTranslation");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboVector3D(this.value.getTranslation(rv.getValue())));
     }
 
     public void getRotation(int size) {
         if (size == 1) {
-            RoboQuaternion quat = (RoboQuaternion) ExecutionEnv.popExpression();
+            RoboQuaternion quat = (RoboQuaternion) ExecutionEnv.getFunctionParam();
             ExecutionEnv.pushExpression(new RoboQuaternion(this.value.getRotation(quat.getValue())));
         } else if (size == 2) {
-            RoboQuaternion quat = (RoboQuaternion) ExecutionEnv.popExpression();
-            RoboBool normalizeAxes = (RoboBool) ExecutionEnv.popExpression();
+            RoboQuaternion quat = (RoboQuaternion) ExecutionEnv.getFunctionParam();
+            RoboBool normalizeAxes = (RoboBool) ExecutionEnv.getFunctionParam();
             ExecutionEnv.pushExpression(new RoboQuaternion(this.value.getRotation(quat.getValue(), normalizeAxes.getValue())));
         } else {
             checkParamNum(size, -1, "getRotation");
@@ -299,7 +303,7 @@ public class RoboMatrix4 extends RoboObject {
 
     public void getScale(int size) {
         checkParamNum(size, 1, "getScale");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
         ExecutionEnv.pushExpression(new RoboVector3D(this.value.getScale(rv.getValue())));
     }
 
@@ -310,12 +314,12 @@ public class RoboMatrix4 extends RoboObject {
 
     public void rotate(int size) {
         if (size == 1) {
-            RoboQuaternion quat = (RoboQuaternion) ExecutionEnv.popExpression();
+            RoboQuaternion quat = (RoboQuaternion) ExecutionEnv.getFunctionParam();
             ExecutionEnv.pushExpression(new RoboMatrix4(this.value.rotate(quat.getValue())));
         } else if (size == 2) {
-            RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-            RoboValue val = ExecutionEnv.popExpression();
-            if(val instanceof RoboDouble) {
+            RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
+            RoboValue val = ExecutionEnv.getFunctionParam();
+            if (val instanceof RoboDouble) {
                 RoboDouble degrees = (RoboDouble) val;
                 ExecutionEnv.pushExpression(new RoboMatrix4(this.value.rotate(rv.getValue(), degrees.getValue())));
             } else {
@@ -325,5 +329,10 @@ public class RoboMatrix4 extends RoboObject {
         } else {
             checkParamNum(size, -1, "getRotation");
         }
+    }
+
+    public void getMatrix(int size) {
+        checkParamNum(size, 0, "getMatrix");
+        ExecutionEnv.pushExpression(new RoboMatrix(this.value.getVal()));
     }
 }

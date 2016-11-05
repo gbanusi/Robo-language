@@ -182,38 +182,38 @@ public class RoboVector3D extends RoboObject {
 
     public void dot(int size) {
         checkParamNum(size, 0, "dot");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboDouble(this.value.dot((Vector3) rv.getValue())));
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.dot( rv.getValue())));
     }
 
     public void cross(int size) {
         checkParamNum(size, 1, "cross");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboVector3D(this.value.cross((Vector3) rv.getValue())));
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
+        ExecutionEnv.pushExpression(new RoboVector3D(this.value.cross( rv.getValue())));
     }
 
     public void rotate(int size) {
         checkParamNum(size, 2, "rotate");
-        RoboDouble degree = (RoboDouble) ExecutionEnv.popExpression();
-        RoboVector3D axis = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboVector3D(this.value.rotate((Vector3) axis.getValue(), degree.getValue())));
+        RoboVector3D axis = (RoboVector3D) ExecutionEnv.getFunctionParam();
+        RoboDouble degree = (RoboDouble) ExecutionEnv.getFunctionParam();
+        ExecutionEnv.pushExpression(new RoboVector3D(this.value.rotate( axis.getValue(), degree.getValue())));
     }
 
     public void distance(int size) {
         checkParamNum(size, 1, "distance");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboDouble(this.value.distance((Vector3) rv.getValue())));
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.distance( rv.getValue())));
     }
 
     public void distance2(int size) {
         checkParamNum(size, 1, "distance");
-        RoboVector3D rv = (RoboVector3D) ExecutionEnv.popExpression();
-        ExecutionEnv.pushExpression(new RoboDouble(this.value.distance2((Vector3) rv.getValue())));
+        RoboVector3D rv = (RoboVector3D) ExecutionEnv.getFunctionParam();
+        ExecutionEnv.pushExpression(new RoboDouble(this.value.distance2( rv.getValue())));
     }
 
     public void scalar(int size) {
         checkParamNum(size, 1, "scalar");
-        RoboValue rv = ExecutionEnv.popExpression();
+        RoboValue rv = ExecutionEnv.getFunctionParam();
         if (rv.getType() == Double) {
             this.value.scl((double) rv.getValue());
             ExecutionEnv.pushExpression(this);

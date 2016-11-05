@@ -45,6 +45,8 @@ public class ParserHelper {
     }
 
     public Token pop() {
+        //TODO-DEBUG remove
+        System.out.println(tokenizer.getCurrentToken().getTokenType() + "  " + tokenizer.getCurrentToken().getValue() );
         Token t = tokenizer.getCurrentToken();
         tokenizer.nextToken();
         return t;
@@ -52,6 +54,8 @@ public class ParserHelper {
 
     public boolean match(TokenType t) {
         if (peek().getTokenType() == t) {
+            //TODO-DEBUG remove
+            System.out.println(tokenizer.getCurrentToken().getTokenType() + "  " + tokenizer.getCurrentToken().getValue() );
             if (TokenType.EOF != t) {
                 tokenizer.nextToken();
             }

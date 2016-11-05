@@ -132,6 +132,10 @@ public class ExecutionEnv {
         funcEnv.evaluateParams(nf, ex);
     }
 
+    public static RoboValue getFunctionParam(){
+        return getExecutionEnvironment().funcEnv.popFunctionParam();
+    }
+
     //---------------------------------------EXPRESSION-----------------------------------------
 
     public static RoboValue popExpression() {
