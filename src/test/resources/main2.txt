@@ -31,27 +31,46 @@ print matrix[0];
 int[5] array = [1, 2, 3, 4, 5.0];
 
 
+            loop(int i = 0; i < 10; i = i + 1){
+                 Point startPt = Point(0,0,0);
+                 Point endPt = moveTo(startPoint, 20, 10);
+                 Line line = Line(startPt, endPt);  getEndpoint(line);
+                 ...
 
- //#trajectory(id = 0, name = "Line"){
- //    #segments(thickness="2.0", color = "255, 255, 0, 0"){
- //          loop(){
- //               Point startPt = Point(0,0,0);
- //               Point endPt = moveTo(startPoint, 20, 10);
- //               Line line = Line(startPt, endPt);  getEndpoint(line);
- //               ...
- //               #segment(i, line, ... ){
- //                   #movingCurve();
- //               }
- //          }
- //          #transformation() {
- //               #rotate(rotationVector="x, y, z", angle=30.0);
- //               ...
- //          }
- //   }
- //   #execute{
+ #trajectory(id: "Line"){
+     #segments(thickness:"2.0", color : "255, 255, 0, 0"){
 
-//    }
-// }
+                #segment(id: "segment1", entity : lin1, alignTo : lin2, ...){
+                    #style(visible : true, color : red, )
+                    #velocityProfile(function: velocityRobo1(x, y, z), ...);
+                    #transformation() {
+                        #rotate(rotationVector:"x, y, z", angle:30.0);
+                    }
+                    if(uvjet){
+                        #toolMovingCurve(function: sin(xt), ...);
+                    } else {
+                        #toolMovingCurve(function: cos(xt), ...);
+                    }
+                }
+                #segment(id: "segment2", entity : lin1, alignTo : lin2, ...){
+                }
+                #segment(id: "segment3", entity : lin1, alignTo : lin2, ...){
+                }
+           }
+    }
+ }
+
+ #path(trajId: "Line"){
+     #repeat(numOfTimes: 3) {
+        #execute(segment1);
+        #repeat(numOfTimes: 2){
+            #execute(segment2);
+            #execute(segment3);
+        }
+     }
+
+     }
+ }
 
  //-----------------------------------
 
