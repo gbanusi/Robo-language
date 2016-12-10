@@ -2,7 +2,7 @@ package parser.execution.values;
 
 import parser.execution.ExecutionException;
 import parser.execution.environment.ExecutionEnv;
-import parser.execution.values.core.Vector3;
+import parser.execution.values.core.Vector;
 import parser.lexical.type.Type;
 
 import java.util.List;
@@ -17,17 +17,17 @@ public class RoboVector3D extends RoboObject {
 
     private Double length;
 
-    private Vector3 value;
+    private Vector value;
 
     private Type type;
 
     public RoboVector3D(double x, double y, double z) {
-        this.value = new Vector3(x, y, z);
+        this.value = new Vector(x, y, z);
         this.length = -1.0;
         this.type = Type.Vector3d;
     }
 
-    public RoboVector3D(Vector3 add) {
+    public RoboVector3D(Vector add) {
         this.value = add;
         this.length = -1.0;
         this.type = Type.Vector3d;
@@ -128,7 +128,7 @@ public class RoboVector3D extends RoboObject {
 
     @Override
     protected void setValue(RoboValue rv) {
-        this.value = (Vector3) rv.getValue();
+        this.value = (Vector) rv.getValue();
     }
 
     @Override
@@ -137,7 +137,7 @@ public class RoboVector3D extends RoboObject {
     }
 
     @Override
-    public Vector3 getValue() {
+    public Vector getValue() {
         return value;
     }
 
@@ -219,7 +219,7 @@ public class RoboVector3D extends RoboObject {
             ExecutionEnv.pushExpression(this);
             return;
         } else if (rv.getType() == Vector3d) {
-            this.value.scl((Vector3) rv.getValue());
+            this.value.scl((Vector) rv.getValue());
             ExecutionEnv.pushExpression(this);
             return;
         }

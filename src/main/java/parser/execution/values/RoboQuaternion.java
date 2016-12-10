@@ -3,7 +3,7 @@ package parser.execution.values;
 import parser.execution.ExecutionException;
 import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.core.Quaternion;
-import parser.execution.values.core.Vector3;
+import parser.execution.values.core.Vector;
 import parser.lexical.type.Type;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class RoboQuaternion extends RoboObject {
         this.type = Type.Quaternion;
     }
 
-    public RoboQuaternion(Vector3 add, double angle) {
+    public RoboQuaternion(Vector add, double angle) {
         this.value = new Quaternion(add, angle);
         this.type = Type.Quaternion;
     }

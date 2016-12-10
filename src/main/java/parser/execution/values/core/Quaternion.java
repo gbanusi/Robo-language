@@ -67,7 +67,7 @@ public class Quaternion implements Serializable {
      * @param axis  The axis
      * @param angle The angle in degrees.
      */
-    public Quaternion(Vector3 axis, double angle) {
+    public Quaternion(Vector axis, double angle) {
         this.set(axis, angle);
     }
 
@@ -105,8 +105,8 @@ public class Quaternion implements Serializable {
      * @param angle The angle in degrees
      * @return This quaternion for chaining.
      */
-    public Quaternion set(Vector3 axis, double angle) {
-        return setFromAxis(new Vector3(axis), angle);
+    public Quaternion set(Vector axis, double angle) {
+        return setFromAxis(new Vector(axis), angle);
     }
 
     /**
@@ -276,7 +276,7 @@ public class Quaternion implements Serializable {
      *
      * @param v Vector to transform
      */
-    public Vector3 transform(Vector3 v) {
+    public Vector transform(Vector v) {
         tmp2.set(this);
         tmp2.conjugate();
         tmp2.mulLeft(tmp1.set(v.x, v.y, v.z, 0)).mulLeft(this);
@@ -376,13 +376,13 @@ public class Quaternion implements Serializable {
      * @param v2 The target vector, which should be normalized.
      * @return This quaternion for chaining
      */
-    public Quaternion setFromCross(final Vector3 v1, final Vector3 v2) {
+    public Quaternion setFromCross(final Vector v1, final Vector v2) {
         final double dot = MathUtils.clamp(v1.dot(v2), -1f, 1f);
         final double angle = Math.acos(dot);
-        return setFromAxisRad(new Vector3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x), angle);
+        return setFromAxisRad(new Vector(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x), angle);
     }
 
-    public Quaternion setFromAxisRad(final Vector3 axis, final double radians) {
+    public Quaternion setFromAxisRad(final Vector axis, final double radians) {
         return setFromAxisRad(axis.x, axis.y, axis.z, radians);
     }
 
@@ -396,7 +396,7 @@ public class Quaternion implements Serializable {
      * @return This quaternion for chaining.
      */
     public Quaternion setFromAxisRad(final double x, final double y, final double z, final double radians) {
-        double d = Vector3.len(x, y, z);
+        double d = Vector.len(x, y, z);
         if (d == 0f) return idt();
         d = 1f / d;
         double l_ang = radians < 0 ? MathUtils.PI2 - (-radians % MathUtils.PI2) : radians % MathUtils.PI2;
@@ -431,8 +431,8 @@ public class Quaternion implements Serializable {
      * @param degrees The angle in degrees
      * @return This quaternion for chaining.
      */
-    public Quaternion setFromAxis(final Vector3 axis, final double degrees) {
-        double d = Vector3.len(axis.x, axis.y, axis.z);
+    public Quaternion setFromAxis(final Vector axis, final double degrees) {
+        double d = Vector.len(axis.x, axis.y, axis.z);
         if (d == 0f) return idt();
         d = 1f / d;
         double radians = degrees * MathUtils.degreesToRadians;
@@ -482,9 +482,9 @@ public class Quaternion implements Serializable {
     public Quaternion setFromAxes(boolean normalizeAxes, double xx, double xy, double xz, double yx, double yy, double yz, double zx,
                                   double zy, double zz) {
         if (normalizeAxes) {
-            final double lx = 1f / Vector3.len(xx, xy, xz);
-            final double ly = 1f / Vector3.len(yx, yy, yz);
-            final double lz = 1f / Vector3.len(zx, zy, zz);
+            final double lx = 1f / Vector.len(xx, xy, xz);
+            final double ly = 1f / Vector.len(yx, yy, yz);
+            final double lz = 1f / Vector.len(zx, zy, zz);
             xx *= lx;
             xy *= lx;
             xz *= lx;
@@ -546,7 +546,7 @@ public class Quaternion implements Serializable {
      * @see <a href="http://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation">wikipedia</a>
      * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle">calculation</a>
      */
-    public double getAxisAngle(Vector3 axis) {
+    public double getAxisAngle(Vector axis) {
         return getAxisAngleRad(axis) * MathUtils.radiansToDegrees;
     }
 
@@ -562,7 +562,7 @@ public class Quaternion implements Serializable {
      * @see <a href="http://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation">wikipedia</a>
      * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle">calculation</a>
      */
-    public double getAxisAngleRad(Vector3 axis) {
+    public double getAxisAngleRad(Vector axis) {
         if (this.w > 1)
             this.nor(); // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
         double angle = (2.0 * Math.acos(this.w));
@@ -583,7 +583,7 @@ public class Quaternion implements Serializable {
 
     /**
      * Get the angle in radians of the rotation this quaternion represents. Does not normalize the quaternion. Use
-     * {@link #getAxisAngleRad(Vector3)} to get both the axis and the angle of this rotation. Use
+     * {@link #getAxisAngleRad(Vector)} to get both the axis and the angle of this rotation. Use
      *
      * @return the angle in radians of the rotation
      */
@@ -592,7 +592,7 @@ public class Quaternion implements Serializable {
     }
 
     /**
-     * Get the angle in degrees of the rotation this quaternion represents. Use {@link #getAxisAngle(Vector3)} to get both the axis
+     * Get the angle in degrees of the rotation this quaternion represents. Use {@link #getAxisAngle(Vector)} to get both the axis
      * and the angle of this rotation. to get the angle around a specific axis.
      *
      * @return the angle in degrees of the rotation

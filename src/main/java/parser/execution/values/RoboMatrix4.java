@@ -4,7 +4,7 @@ import parser.execution.ExecutionException;
 import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.core.Matrix4;
 import parser.execution.values.core.Quaternion;
-import parser.execution.values.core.Vector3;
+import parser.execution.values.core.Vector;
 import parser.lexical.type.Type;
 
 import java.util.List;
@@ -23,12 +23,12 @@ public class RoboMatrix4 extends RoboObject {
         this.type = Type.Matrix4;
     }
 
-    public RoboMatrix4(Vector3 add, double angle) {
+    public RoboMatrix4(Vector add, double angle) {
         this.value = new Matrix4(add, angle);
         this.type = Type.Matrix4;
     }
 
-    public RoboMatrix4(Vector3 position, Quaternion rotation) {
+    public RoboMatrix4(Vector position, Quaternion rotation) {
         this.value = new Matrix4(position, rotation);
         this.type = Type.Matrix4;
     }
@@ -215,8 +215,8 @@ public class RoboMatrix4 extends RoboObject {
     }
 
     public void invert(int size) {
-        checkParamNum(size, 0, "invert");
-        ExecutionEnv.pushExpression(new RoboMatrix4(this.value.invert()));
+        checkParamNum(size, 0, "inverse");
+        ExecutionEnv.pushExpression(new RoboMatrix4(this.value.inverse()));
     }
 
     public void determinant(int size) {

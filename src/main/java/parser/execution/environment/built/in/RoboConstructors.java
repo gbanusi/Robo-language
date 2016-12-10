@@ -5,7 +5,7 @@ import parser.execution.environment.ExecutionEnv;
 import parser.execution.values.*;
 import parser.execution.values.core.Matrix4;
 import parser.execution.values.core.Quaternion;
-import parser.execution.values.core.Vector3;
+import parser.execution.values.core.Vector;
 import parser.lexical.type.Type;
 
 /**
@@ -34,7 +34,7 @@ public class RoboConstructors {
         }
         RoboVector3D vectord = (RoboVector3D) vector;
         RoboDouble angled = (RoboDouble) RoboNumeric.convert((RoboNumeric) angle, Type.Double);
-        ExecutionEnv.pushExpression(new RoboQuaternion((Vector3)vectord.getValue(), angled.getValue()));
+        ExecutionEnv.pushExpression(new RoboQuaternion((Vector)vectord.getValue(), angled.getValue()));
     }
 
     public static void roboQuaternion(RoboValue x, RoboValue y, RoboValue z, RoboValue w) {

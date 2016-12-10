@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /** Encapsulates a <a href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> 4 by 4 matrix. Like
- * the {@link Vector3} class it allows the chaining of methods by returning a reference to itself. For example:
+ * the {@link Vector} class it allows the chaining of methods by returning a reference to itself. For example:
  *
  * <pre>
  * Matrix4 mat = new Matrix4().trn(position).mul(camera.combined);
@@ -14,46 +14,48 @@ import java.util.Arrays;
 public class Matrix4 implements Serializable {
     private static final long serialVersionUID = -2717655254359579617L;
     /** XX: Typically the unrotated X component for scaling, also the cosine of the angle when rotated on the Y and/or Z axis. On
-     * Vector3 multiplication this value is multiplied with the source X component and added to the target X component. */
+     * Vector multiplication this value is multiplied with the source X component and added to the target X component. */
     public static final int M00 = 0;
-    /** XY: Typically the negative sine of the angle when rotated on the Z axis. On Vector3 multiplication this value is multiplied
+    /** XY: Typically the negative sine of the angle when rotated on the Z axis. On Vector multiplication this value is multiplied
      * with the source Y component and added to the target X component. */
     public static final int M01 = 4;
-    /** XZ: Typically the sine of the angle when rotated on the Y axis. On Vector3 multiplication this value is multiplied with the
+    /** XZ: Typically the sine of the angle when rotated on the Y axis. On Vector multiplication this value is multiplied with the
      * source Z component and added to the target X component. */
     public static final int M02 = 8;
-    /** XW: Typically the translation of the X component. On Vector3 multiplication this value is added to the target X component. */
+    /** XW: Typically the translation of the X component. On Vector multiplication this value is added to the target X component. */
     public static final int M03 = 12;
-    /** YX: Typically the sine of the angle when rotated on the Z axis. On Vector3 multiplication this value is multiplied with the
+    /** YX: Typically the sine of the angle when rotated on the Z axis. On Vector multiplication this value is multiplied with the
      * source X component and added to the target Y component. */
     public static final int M10 = 1;
     /** YY: Typically the unrotated Y component for scaling, also the cosine of the angle when rotated on the X and/or Z axis. On
-     * Vector3 multiplication this value is multiplied with the source Y component and added to the target Y component. */
+     * Vector multiplication this value is multiplied with the source Y component and added to the target Y component. */
     public static final int M11 = 5;
-    /** YZ: Typically the negative sine of the angle when rotated on the X axis. On Vector3 multiplication this value is multiplied
+    /** YZ: Typically the negative sine of the angle when rotated on the X axis. On Vector multiplication this value is multiplied
      * with the source Z component and added to the target Y component. */
     public static final int M12 = 9;
-    /** YW: Typically the translation of the Y component. On Vector3 multiplication this value is added to the target Y component. */
+    /** YW: Typically the translation of the Y component. On Vector multiplication this value is added to the target Y component. */
     public static final int M13 = 13;
-    /** ZX: Typically the negative sine of the angle when rotated on the Y axis. On Vector3 multiplication this value is multiplied
+    /** ZX: Typically the negative sine of the angle when rotated on the Y axis. On Vector multiplication this value is multiplied
      * with the source X component and added to the target Z component. */
     public static final int M20 = 2;
-    /** ZY: Typical the sine of the angle when rotated on the X axis. On Vector3 multiplication this value is multiplied with the
+    /** ZY: Typical the sine of the angle when rotated on the X axis. On Vector multiplication this value is multiplied with the
      * source Y component and added to the target Z component. */
     public static final int M21 = 6;
     /** ZZ: Typically the unrotated Z component for scaling, also the cosine of the angle when rotated on the X and/or Y axis. On
-     * Vector3 multiplication this value is multiplied with the source Z component and added to the target Z component. */
+     * Vector multiplication this value is multiplied with the source Z component and added to the target Z component. */
     public static final int M22 = 10;
-    /** ZW: Typically the translation of the Z component. On Vector3 multiplication this value is added to the target Z component. */
+    /** ZW: Typically the translation of the Z component. On Vector multiplication this value is added to the target Z component. */
     public static final int M23 = 14;
-    /** WX: Typically the value zero. On Vector3 multiplication this value is ignored. */
+    /** WX: Typically the value zero. On Vector multiplication this value is ignored. */
     public static final int M30 = 3;
-    /** WY: Typically the value zero. On Vector3 multiplication this value is ignored. */
+    /** WY: Typically the value zero. On Vector multiplication this value is ignored. */
     public static final int M31 = 7;
-    /** WZ: Typically the value zero. On Vector3 multiplication this value is ignored. */
+    /** WZ: Typically the value zero. On Vector multiplication this value is ignored. */
     public static final int M32 = 11;
-    /** WW: Typically the value one. On Vector3 multiplication this value is ignored. */
+    /** WW: Typically the value one. On Vector multiplication this value is ignored. */
     public static final int M33 = 15;
+
+    Quaternion quat = new Quaternion();
 
     private static final double tmp[] = new double[16];
     public final double val[] = new double[16];
@@ -71,28 +73,32 @@ public class Matrix4 implements Serializable {
      * @param matrix The matrix to copy. (This matrix is not modified) */
     public Matrix4 (Matrix4 matrix) {
         this.set(matrix);
+        this.quat = new Quaternion(val[M03], val[M13], val[M23], val[M33]);
     }
 
     /** Constructs a rotation matrix from the given {@link Quaternion}.
      * @param quaternion The quaternion to be copied. (The quaternion is not modified) */
     public Matrix4 (Quaternion quaternion) {
         this.set(quaternion);
+        this.quat = new Quaternion(val[M03], val[M13], val[M23], val[M33]);
     }
 
     /** Construct a matrix from the given translation, rotation and scale.
      * @param position The translation
      * @param rotation The rotation, must be normalized
      */
-    public Matrix4 (Vector3 position, Quaternion rotation) {
+    public Matrix4 (Vector position, Quaternion rotation) {
         set(position, rotation);
+        this.quat = new Quaternion(val[M03], val[M13], val[M23], val[M33]);
+
     }
 
-    public Matrix4 (Vector3 position, Vector3 rotation, double angleDeg) {
+    public Matrix4 (Vector position, Vector rotation, double angleDeg) {
         // od rotation i angleDeg napraviti Quaternion ...
         set(position, new Quaternion(rotation, angleDeg));
     }
 
-    public Matrix4 (Vector3 rotation, double angleDeg) {
+    public Matrix4 (Vector rotation, double angleDeg) {
         set(new Quaternion(rotation, angleDeg));
     }
 
@@ -142,7 +148,7 @@ public class Matrix4 implements Serializable {
      * @param position The translation
      * @param orientation The rotation, must be normalized
      * @return This matrix for chaining */
-    public Matrix4 set (Vector3 position, Quaternion orientation) {
+    public Matrix4 set (Vector position, Quaternion orientation) {
         return set(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, orientation.w);
     }
 
@@ -234,7 +240,7 @@ public class Matrix4 implements Serializable {
      * @param yAxis The y-axis.
      * @param zAxis The z-axis.
      * @param pos The translation vector. */
-    public Matrix4 set (Vector3 xAxis, Vector3 yAxis, Vector3 zAxis, Vector3 pos) {
+    public Matrix4 set (Vector xAxis, Vector yAxis, Vector zAxis, Vector pos) {
         val[M00] = xAxis.x;
         val[M01] = xAxis.y;
         val[M02] = xAxis.z;
@@ -294,18 +300,18 @@ public class Matrix4 implements Serializable {
         return this;
     }
 
-    public Vector3 getxAxis() {
-        return new Vector3(val[M00], val[M01], val[M02]);
+    public Vector getxAxis() {
+        return new Vector(val[M00], val[M01], val[M02]);
     }
-    public Vector3 getyAxis() {
-        return new Vector3(val[M10], val[M11], val[M12]);
+    public Vector getyAxis() {
+        return new Vector(val[M10], val[M11], val[M12]);
     }
-    public Vector3 getzAxis() {
-        return new Vector3(val[M20], val[M21], val[M22]);
+    public Vector getzAxis() {
+        return new Vector(val[M20], val[M21], val[M22]);
     }
 
-    public Vector3 getPos() {
-        return new Vector3(val[M30], val[M31], val[M32]);
+    public Vector getPos() {
+        return new Vector(val[M30], val[M31], val[M32]);
     }
 
     /** @return a copy of this matrix */
@@ -317,7 +323,7 @@ public class Matrix4 implements Serializable {
      *
      * @param vector The translation vector to add to the current matrix. (This vector is not modified)
      * @return This matrix for the purpose of chaining methods together. */
-    public Matrix4 addTranslation (Vector3 vector) {
+    public Matrix4 addTranslation (Vector vector) {
         val[M03] += vector.x;
         val[M13] += vector.y;
         val[M23] += vector.z;
@@ -422,7 +428,7 @@ public class Matrix4 implements Serializable {
      *
      * @return This matrix for the purpose of chaining methods together.
      * @throws RuntimeException if the matrix is singular (not invertible) */
-    public Matrix4 invert() {
+    public Matrix4 inverse() {
         double l_det = val[M30] * val[M21] * val[M12] * val[M03] - val[M20] * val[M31] * val[M12] * val[M03] - val[M30] * val[M11]
                 * val[M22] * val[M03] + val[M10] * val[M31] * val[M22] * val[M03] + val[M20] * val[M11] * val[M32] * val[M03] - val[M10]
                 * val[M21] * val[M32] * val[M03] - val[M30] * val[M21] * val[M02] * val[M13] + val[M20] * val[M31] * val[M02] * val[M13]
@@ -502,7 +508,7 @@ public class Matrix4 implements Serializable {
      *
      * @param vector The translation vector
      * @return This matrix for the purpose of chaining methods together. */
-    public Matrix4 setTranslation (Vector3 vector) {
+    public Matrix4 setTranslation (Vector vector) {
         val[M03] = vector.x;
         val[M13] = vector.y;
         val[M23] = vector.z;
@@ -514,7 +520,7 @@ public class Matrix4 implements Serializable {
      *
      * @param vector The translation vector
      * @return This matrix for the purpose of chaining methods together. */
-    public Matrix4 setToTranslation (Vector3 vector) {
+    public Matrix4 setToTranslation (Vector vector) {
         idt();
         val[M03] = vector.x;
         val[M13] = vector.y;
@@ -522,15 +528,12 @@ public class Matrix4 implements Serializable {
         return this;
     }
 
-    static Quaternion quat = new Quaternion();
-    static Quaternion quat2 = new Quaternion();
-
     /** Sets the matrix to a rotation matrix around the given axis.
      *
      * @param axis The axis
      * @param degrees The angle in degrees
      * @return This matrix for the purpose of chaining methods together. */
-    public Matrix4 setToRotation (Vector3 axis, double degrees) {
+    public Matrix4 setToRotation (Vector axis, double degrees) {
         if (degrees == 0) {
             idt();
             return this;
@@ -543,7 +546,7 @@ public class Matrix4 implements Serializable {
      * @param v2 The target vector
      * @return This matrix for the purpose of chaining methods together */
     //TODO
-    public Matrix4 setToRotation (final Vector3 v1, final Vector3 v2) {
+    public Matrix4 setToRotation (final Vector v1, final Vector v2) {
         return set(quat.setFromCross(v1, v2));
     }
 
@@ -557,15 +560,15 @@ public class Matrix4 implements Serializable {
         return set(quat);
     }
 
-    static final Vector3 l_vez = new Vector3();
-    static final Vector3 l_vex = new Vector3();
-    static final Vector3 l_vey = new Vector3();
+    static final Vector l_vez = new Vector();
+    static final Vector l_vex = new Vector();
+    static final Vector l_vey = new Vector();
 
-    static final Vector3 tmpVec = new Vector3();
+    static final Vector tmpVec = new Vector();
     static final Matrix4 tmpMat = new Matrix4();
 
 
-    public Vector3 getTranslation (Vector3 position) {
+    public Vector getTranslation (Vector position) {
         position.x = val[M03];
         position.y = val[M13];
         position.z = val[M23];
@@ -622,7 +625,7 @@ public class Matrix4 implements Serializable {
 
     /** @param scale The vector which will receive the (non-negative) scale components on each axis.
      * @return The provided vector for chaining. */
-    public Vector3 getScale (Vector3 scale) {
+    public Vector getScale (Vector scale) {
         return scale.set(getScaleX(), getScaleY(), getScaleZ());
     }
 
@@ -631,7 +634,7 @@ public class Matrix4 implements Serializable {
         val[M03] = 0;
         val[M13] = 0;
         val[M23] = 0;
-        return invert().transpose();
+        return inverse().transpose();
     }
 
 
@@ -641,7 +644,7 @@ public class Matrix4 implements Serializable {
      * @param axis The vector axis to rotate around.
      * @param degrees The angle in degrees.
      * @return This matrix for the purpose of chaining methods together. */
-    public Matrix4 rotate (Vector3 axis, double degrees) {
+    public Matrix4 rotate (Vector axis, double degrees) {
         if (degrees == 0) return this;
         quat.set(axis, degrees);
         return rotate(quat);
@@ -662,7 +665,7 @@ public class Matrix4 implements Serializable {
      * @param v1 The base vector
      * @param v2 The target vector
      * @return This matrix for the purpose of chaining methods together */
-    public Matrix4 rotate (final Vector3 v1, final Vector3 v2) {
+    public Matrix4 rotate (final Vector v1, final Vector v2) {
         return rotate(quat.setFromCross(v1, v2));
     }
 
@@ -675,5 +678,31 @@ public class Matrix4 implements Serializable {
 
     public double[] getVal() {
         return val.clone();
+    }
+
+    public void setxAxis(Vector xAxis) {
+        this.val[M00] = xAxis.getX();
+        this.val[M10] = xAxis.getY();
+        this.val[M20] = xAxis.getZ();
+    }
+
+    public void setyAxis(Vector yAxis) {
+        this.val[M01] = yAxis.getX();
+        this.val[M11] = yAxis.getY();
+        this.val[M21] = yAxis.getZ();
+    }
+
+    public void setzAxis(Vector zAxis) {
+        this.val[M02] = zAxis.getX();
+        this.val[M12] = zAxis.getY();
+        this.val[M22] = zAxis.getZ();
+    }
+
+    public Vector getRotation() {
+        return new Vector(this.val[M03], this.val[M13], this.val[M23]);
+    }
+
+    public double getAngelDeg() {
+        return quat.getAngle();
     }
 }
