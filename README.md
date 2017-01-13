@@ -1,5 +1,9 @@
 # Robo-language
 
-A C like language developing for controling robots.
+A C like language to control robots.
+
+Consisting of:
+
+lexical analisys, syntax analisys and executing environment.
 
 Implemented in Java.
